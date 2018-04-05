@@ -1,10 +1,17 @@
-import "sample.wdl" as sample
+import "sample.wdl" as sampleWorkflow
 import "tasks/biopet.wdl" as biopet
-import "tasks/mergecounts.wdl" as mergeCounts
+import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
+import "quantification/multi-bam-quantify.wdl" as expressionQuantification
 
 workflow main {
     Array[File] sampleConfigs
     String outputDir
+    File ref_fasta
+    File ref_dict
+    File ref_fasta_index
+    File ref_refflat
+    File ref_gtf
+    String strandedness
 
     #parse sample configs
     call biopet.SampleConfig as config {
@@ -13,49 +20,33 @@ workflow main {
     }
 
     scatter (sm in config.keys){
-        call sample.sample  as sample_call {
+        call sampleWorkflow.sample  as sample {
             input:
                 sampleDir = outputDir + "/samples/" + sm + "/",
-                expressionDir = outputDir + "/expression_measures/",
                 sampleConfigs = sampleConfigs,
                 sampleId = sm
         }
     }
 
-    # Merge count tables into one multisample count table per count type
-    call mergeCounts.MergeCounts as mergedTPMs {
+    call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            inputFiles = sample_call.TPMTable,
-            outputFile = outputDir + "/expression_measures/TPM/all_samples.TPM",
-            idVar = "'Gene ID'",
-            measurementVar = "TPM"
+            bams = zip(sample.sampleName, sample.bam),
+            outputDir = outputDir + "/expression_measures/",
+            strandedness = strandedness,
+            ref_gtf = ref_gtf,
+            ref_refflat = ref_refflat
     }
 
-    call mergeCounts.MergeCounts as mergedFPKMs {
+    call jointgenotyping.JointGenotyping {
         input:
-            inputFiles = sample_call.FPKMTable,
-            outputFile = outputDir + "/expression_measures/FPKM/all_samples.FPKM",
-            idVar = "'Gene ID'",
-            measurementVar = "FPKM"
+            ref_fasta = ref_fasta,
+            ref_dict = ref_dict,
+            ref_fasta_index = ref_fasta_index,
+            outputDir = outputDir,
+            gvcfFiles = sample.gvcfFile,
+            gvcfIndexes = sample.gvcfFileIndex,
+            vcf_basename = "multisample"
     }
-
-    call mergeCounts.MergeCounts as mergedFragmentsPerGenes {
-        input:
-            inputFiles = sample_call.fragmentsPerGeneTable,
-            outputFile = outputDir + "/expression_measures/fragments_per_gene/all_samples.fragments_per_gene",
-            idVar = "feature",
-            measurementVar = "counts"
-    }
-
-    call mergeCounts.MergeCounts as mergedBaseCountsPerGene {
-        input:
-            inputFiles = sample_call.baseCountsPerGeneTable,
-            outputFile = outputDir + "/BaseCounter/all_samples.base.gene.counts",
-            idVar = "X1",
-            measurementVar = "X2"
-        }
-
-    #TODO merge vcfs
 
     output {
         Array[String] samples = config.keys

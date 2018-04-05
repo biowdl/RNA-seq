@@ -22,3 +22,6 @@
     branch = master
 	path = bam-to-gvcf
 	url = https://github.com/biowdl/bam-to-gvcf.git
+[submodule "jointgenotyping"]
+	path = jointgenotyping
+	url = https://github.com/biowdl/jointgenotyping.git
