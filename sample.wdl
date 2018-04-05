@@ -1,4 +1,5 @@
 import "tasks/biopet.wdl" as biopet
+import "tasks/common.wdl" as common
 import "library.wdl" as libraryWorkflow
 import "tasks/samtools.wdl" as samtools
 import "bam-to-gvcf/gvcf.wdl" as gvcf
@@ -40,9 +41,21 @@ workflow sample {
             outputBamPath = sampleDir + "/" + sampleId + ".bam"
     }
 
-    call samtools.Index as mergedIndex {
-        input:
-            bamFilePath = mergeLibraries.outputBam
+    Boolean multiple_bams = length(library.bamFile) > 1
+
+    if (multiple_bams) {
+        call samtools.Index as mergedIndex {
+            input:
+                bamFilePath = mergeLibraries.outputBam
+        }
+    }
+
+    if (! multiple_bams) {
+        call common.createLink as linkIndex {
+            input:
+                inputFile = library.bamIndexFile,
+                outputPath = library.bamFile + ".bai"
+        }
     }
 
     # variant calling, requires different bam file than counting
@@ -59,7 +72,7 @@ workflow sample {
     output {
         String sampleName = sampleId
         File bam = mergeLibraries.outputBam
-        File bai = mergedIndex.indexFile
+        File bai = select_first(if multiple_bams then mergedIndex.indexFile else linkIndex.link)
         File gvcfFile = createGvcf.output_gvcf
         File gvcfFileIndex = createGvcf.output_gvcf_index
     }
