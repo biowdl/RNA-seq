@@ -1,18 +1,24 @@
 [submodule "QC"]
+    branch = master
 	path = QC
 	url = https://github.com/biowdl/QC.git
 [submodule "tasks"]
+    branch = master
 	path = tasks
 	url = https://github.com/biowdl/tasks.git
 [submodule "aligning"]
+    branch = master
 	path = aligning
 	url = https://github.com/biowdl/aligning.git
 [submodule "quantification"]
+    branch = master
 	path = quantification
 	url = https://github.com/biowdl/quantification.git
 [submodule "bqsr"]
+    branch = master
 	path = bqsr
 	url = https://github.com/biowdl/bqsr.git
 [submodule "bam-to-gvcf"]
+    branch = master
 	path = bam-to-gvcf
 	url = https://github.com/biowdl/bam-to-gvcf.git
