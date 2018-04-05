@@ -79,5 +79,7 @@ workflow sample {
         File FPKMTable = expression.FPKMTable
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
         File baseCountsPerGeneTable = expression.baseCountsPerGeneTable
+        File gvcfFile = createGvcf.output_gvcf
+        File gvcfFileIndex = createGvcf.output_gvcf_index
     }
 }

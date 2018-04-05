@@ -1,5 +1,5 @@
 import "tasks/biopet.wdl" as biopet
-import "readgroup.wdl" as readgroup
+import "readgroup.wdl" as readgroupWorkflow
 import "aligning/align-star.wdl" as star
 import "tasks/picard.wdl" as picard
 import "bqsr/bqsr.wdl" as bqsr
@@ -23,7 +23,7 @@ workflow library {
 
     scatter (rg in config.keys) {
         if (rg != "") {
-            call readgroup.readgroup as readgroup_call {
+            call readgroupWorkflow.readgroup as readgroup {
                 input:
                     outputDir = outputDir + "rg_" + rg + "/",
                     sampleConfigs = sampleConfigs,
@@ -36,12 +36,12 @@ workflow library {
 
     call star.AlignStar as starAlignment {
         input:
-            inputR1 = readgroup_call.cleanR1,
-            inputR2 = readgroup_call.cleanR2,
+            inputR1 = readgroup.cleanR1,
+            inputR2 = readgroup.cleanR2,
             outputDir = outputDir + "star/",
             sample = sampleId,
             library = libraryId,
-            rgLine = readgroup_call.starRGline
+            rgLine = readgroup.starRGline
     }
 
     # Preprocess BAM for variant calling
