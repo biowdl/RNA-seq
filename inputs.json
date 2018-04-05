@@ -1,0 +1,10 @@
+{
+  "pipeline.outputDir": "/home/dcats/testWDL/",
+  "pipeline.sample_call.library_call.starMapping.star.preCommand": "",
+  "pipeline.sample_call.library_call.starMapping.star.genomeDir": "",
+  "pipeline.sample_call.library_call.readgroup_call.qc_call.extractAdaptersFastqcJar":"ExtractAdaptersFastqc-assembly-0.2.jar",
+  "pipeline.sample_call.library_call.readgroup_call.qc_call.cutadapt.preCommand":"",
+  "pipeline.sample_call.library_call.readgroup_call.qc_call.fastqcRead2.preCommand":"",
+  "pipeline.sample_call.library_call.readgroup_call.qc_call.fastqcRead1.preCommand":"",
+  "pipeline.sample_call.library_call.readgroup_call.qc_call.getFastqcConfiguration.preCommand": ""
+}
