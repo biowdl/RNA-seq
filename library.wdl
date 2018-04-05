@@ -66,7 +66,7 @@ workflow library {
     output {
         File bamFile = markDuplicates.output_bam
         File bamIndexFile = markDuplicates.output_bam_index
-        File bqsrBamFile = baseRecalibration.outputBamFile
-        File bqsrBamIndexFile = baseRecalibration.outputBamIndex
+        File preprocessBamFile = baseRecalibration.outputBamFile
+        File preprocessBamIndexFile = baseRecalibration.outputBamIndex
     }
 }
