@@ -10,10 +10,6 @@
     branch = master
 	path = aligning
 	url = https://github.com/biowdl/aligning.git
-[submodule "bqsr"]
-    branch = master
-	path = bqsr
-	url = https://github.com/biowdl/bqsr.git
 [submodule "bam-to-gvcf"]
     branch = master
 	path = bam-to-gvcf
@@ -24,3 +20,6 @@
 [submodule "expression-quantification"]
 	path = expression-quantification
 	url = https://github.com/biowdl/expression-quantification.git
+[submodule "gatk-preprocess"]
+	path = gatk-preprocess
+	url = https://github.com/biowdl/gatk-preprocess.git

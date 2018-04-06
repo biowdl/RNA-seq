@@ -2,7 +2,7 @@ import "tasks/biopet.wdl" as biopet
 import "readgroup.wdl" as readgroupWorkflow
 import "aligning/align-star.wdl" as star
 import "tasks/picard.wdl" as picard
-import "bqsr/bqsr.wdl" as bqsr
+import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 
 workflow library {
     Array[File] sampleConfigs
@@ -52,7 +52,7 @@ workflow library {
             metrics_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
     }
 
-    call bqsr.BaseRecalibration as baseRecalibration {
+    call preprocess.GatkPreprocess as preprocessing {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
@@ -66,7 +66,7 @@ workflow library {
     output {
         File bamFile = markDuplicates.output_bam
         File bamIndexFile = markDuplicates.output_bam_index
-        File preprocessBamFile = baseRecalibration.outputBamFile
-        File preprocessBamIndexFile = baseRecalibration.outputBamIndex
+        File preprocessBamFile = preprocessing.outputBamFile
+        File preprocessBamIndexFile = preprocessing.outputBamIndex
     }
 }
