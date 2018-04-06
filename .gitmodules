@@ -10,10 +10,6 @@
     branch = master
 	path = aligning
 	url = https://github.com/biowdl/aligning.git
-[submodule "quantification"]
-    branch = master
-	path = quantification
-	url = https://github.com/biowdl/quantification.git
 [submodule "bqsr"]
     branch = master
 	path = bqsr
@@ -25,3 +21,6 @@
 [submodule "jointgenotyping"]
 	path = jointgenotyping
 	url = https://github.com/biowdl/jointgenotyping.git
+[submodule "expression-quantification"]
+	path = expression-quantification
+	url = https://github.com/biowdl/expression-quantification.git

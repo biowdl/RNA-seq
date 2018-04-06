@@ -1,7 +1,7 @@
 import "sample.wdl" as sampleWorkflow
 import "tasks/biopet.wdl" as biopet
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
-import "quantification/multi-bam-quantify.wdl" as expressionQuantification
+import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 
 workflow main {
     Array[File] sampleConfigs
