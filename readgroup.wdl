@@ -1,4 +1,4 @@
-import "QC/QC.wdl" as qc
+import "QC/QC.wdl" as qcWorkflow
 import "tasks/biopet.wdl" as biopet
 
 
@@ -28,7 +28,7 @@ workflow readgroup {
             readgroup = readgroupId
     }
 
-    call qc.QC as qc_call {
+    call qcWorkflow.QC as qc {
         input:
             read1 = config.values.R1,
             read2 = config.values.R2,
@@ -36,8 +36,8 @@ workflow readgroup {
     }
 
     output {
-        File cleanR1 = qc_call.read1afterQC
-        File? cleanR2 = qc_call.read2afterQC
+        File cleanR1 = qc.read1afterQC
+        File? cleanR2 = qc.read2afterQC
         String? starRGline = rgLine.rgLine
     }
 }

@@ -24,7 +24,10 @@ workflow main {
             input:
                 sampleDir = outputDir + "/samples/" + sm + "/",
                 sampleConfigs = sampleConfigs,
-                sampleId = sm
+                sampleId = sm,
+                ref_fasta = ref_fasta,
+                ref_dict = ref_dict,
+                ref_fasta_index = ref_fasta_index
         }
     }
 

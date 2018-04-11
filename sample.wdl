@@ -34,7 +34,7 @@ workflow sample {
         }
     }
 
-    # merge library (mdup) bams into one
+    # merge library (mdup) bams into one (for counting)
     call samtools.Merge as mergeLibraries {
         input:
             bamFiles = library.bamFile,
