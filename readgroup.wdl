@@ -46,11 +46,11 @@ workflow readgroup {
 task makeStarRGline {
     String sample
     String library
-    String platform
+    String? platform
     String readgroup
 
     command {
-        printf '"ID:${readgroup}" "LB:${default="illumina" library}" "PU:${platform}" "SM:${sample}"'
+        printf '"ID:${readgroup}" "LB:${library}" "PU:${default="illumina" platform}" "SM:${sample}"'
     }
 
     output {
