@@ -3,7 +3,7 @@ import "tasks/biopet.wdl" as biopet
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 
-workflow main {
+workflow pipeline {
     Array[File] sampleConfigs
     String outputDir
     File ref_fasta

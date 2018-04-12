@@ -54,7 +54,7 @@ workflow sample {
         call common.createLink as linkIndex {
             input:
                 inputFile = library.bamIndexFile,
-                outputPath = library.bamFile + ".bai"
+                outputPath = select([library.bamFile[0]]) + ".bai"
         }
     }
 
@@ -72,7 +72,7 @@ workflow sample {
     output {
         String sampleName = sampleId
         File bam = mergeLibraries.outputBam
-        File bai = select_first(if multiple_bams then mergedIndex.indexFile else linkIndex.link)
+        File bai = select_first([if multiple_bams then mergedIndex.indexFile else linkIndex.link])
         File gvcfFile = createGvcf.output_gvcf
         File gvcfFileIndex = createGvcf.output_gvcf_index
     }

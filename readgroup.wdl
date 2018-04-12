@@ -7,7 +7,7 @@ workflow readgroup {
     String readgroupId
     String libraryId
     String sampleId
-    String? platform = "illumina"
+    String? platform
     String outputDir
 
     call biopet.SampleConfig as config {
@@ -38,7 +38,7 @@ workflow readgroup {
     output {
         File cleanR1 = qc.read1afterQC
         File? cleanR2 = qc.read2afterQC
-        String? starRGline = rgLine.rgLine
+        String starRGline = rgLine.rgLine
     }
 }
 
@@ -50,10 +50,10 @@ task makeStarRGline {
     String readgroup
 
     command {
-        echo '"ID:${readgroup}" "LB:${library}" "PU:${platform}" "SM:${sample}"'
+        printf '"ID:${readgroup}" "LB:${default="illumina" library}" "PU:${platform}" "SM:${sample}"'
     }
 
     output {
-        String? rgLine = stdout()
+        String rgLine = read_string(stdout())
     }
 }

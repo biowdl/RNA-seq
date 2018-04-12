@@ -36,12 +36,12 @@ workflow library {
 
     call star.AlignStar as starAlignment {
         input:
-            inputR1 = readgroup.cleanR1,
-            inputR2 = readgroup.cleanR2,
+            inputR1 = select_all(readgroup.cleanR1),
+            inputR2 = select_all(readgroup.cleanR2),
             outputDir = outputDir + "star/",
             sample = sampleId,
             library = libraryId,
-            rgLine = readgroup.starRGline
+            rgLine = select_all(readgroup.starRGline)
     }
 
     # Preprocess BAM for variant calling
