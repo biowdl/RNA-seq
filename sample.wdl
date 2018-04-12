@@ -54,7 +54,7 @@ workflow sample {
         call common.createLink as linkIndex {
             input:
                 inputFile = library.bamIndexFile,
-                outputPath = select([library.bamFile[0]]) + ".bai"
+                outputPath = select_first([library.bamFile[0]]) + ".bai"
         }
     }
 
