@@ -50,7 +50,7 @@ task makeStarRGline {
     String readgroup
 
     command {
-        printf '"ID:${readgroup}" "LB:${library}" "PU:${default="illumina" platform}" "SM:${sample}"'
+        printf '"ID:${readgroup}" "LB:${library}" "PL:${default="ILLUMINA" platform}" "SM:${sample}"'
     }
 
     output {
