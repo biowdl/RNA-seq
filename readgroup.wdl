@@ -16,8 +16,13 @@ workflow readgroup {
              sample = sampleId,
              library = libraryId,
              readgroup = readgroupId,
-             tsvOutputPath = outputDir + "/" + readgroupId + ".config.tsv"
+             tsvOutputPath = outputDir + "/" + readgroupId + ".config.tsv",
+             stdoutFile = outputDir + "/" + readgroupId + ".config.keys"
     }
+
+    Object configValues = if (defined(config.tsvOutput) && size(config.tsvOutput) > 0)
+        then read_map(config.tsvOutput)
+        else { "": "" }
 
     # make the readgroup line for STAR
     call makeStarRGline as rgLine {
@@ -30,8 +35,8 @@ workflow readgroup {
 
     call qcWorkflow.QC as qc {
         input:
-            read1 = config.values.R1,
-            read2 = config.values.R2,
+            read1 = configValues.R1,
+            read2 = configValues.R2,
             outputDir = outputDir + "QC/"
     }
 

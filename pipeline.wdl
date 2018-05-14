@@ -16,10 +16,11 @@ workflow pipeline {
     #parse sample configs
     call biopet.SampleConfig as config {
         input:
-            inputFiles = sampleConfigs
+            inputFiles = sampleConfigs,
+            stdoutFile = outputDir + "/config.keys"
     }
 
-    scatter (sm in config.keys){
+    scatter (sm in read_lines(config.keysFile)){
         call sampleWorkflow.sample  as sample {
             input:
                 sampleDir = outputDir + "/samples/" + sm + "/",

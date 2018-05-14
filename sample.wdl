@@ -16,10 +16,11 @@ workflow sample {
         input:
             inputFiles = sampleConfigs,
             sample = sampleId,
-            tsvOutputPath = sampleId + ".config.tsv"
+            tsvOutputPath = sampleDir + "/" + sampleId + ".config.tsv",
+            stdoutFile = sampleDir + "/" + sampleId + ".config.keys"
     }
 
-    scatter (lib in config.keys) {
+    scatter (lib in read_lines(config.keysFile)) {
         if (lib != "") {
             call libraryWorkflow.library as library {
                 input:

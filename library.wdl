@@ -18,10 +18,11 @@ workflow library {
             inputFiles = sampleConfigs,
             sample = sampleId,
             library = libraryId,
-            tsvOutputPath = libraryId + ".config.tsv"
+            tsvOutputPath = outputDir + "/" + libraryId + ".config.tsv",
+            stdoutFile = outputDir + "/" + libraryId + ".config.keys"
     }
 
-    scatter (rg in config.keys) {
+    scatter (rg in read_lines(config.keysFile)) {
         if (rg != "") {
             call readgroupWorkflow.readgroup as readgroup {
                 input:
