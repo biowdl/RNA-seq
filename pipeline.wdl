@@ -53,6 +53,6 @@ workflow pipeline {
     }
 
     output {
-        Array[String] samples = config.keys
+        Array[String] samples = read_lines(config.keysFile)
     }
 }
