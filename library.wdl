@@ -18,8 +18,7 @@ workflow library {
             inputFiles = sampleConfigs,
             sample = sampleId,
             library = libraryId,
-            tsvOutputPath = outputDir + "/" + libraryId + ".config.tsv",
-            stdoutFile = outputDir + "/" + libraryId + ".config.keys"
+            tsvOutputPath = outputDir + "/" + libraryId + ".config.tsv"
     }
 
     scatter (rg in read_lines(config.keysFile)) {
