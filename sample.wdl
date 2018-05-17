@@ -37,7 +37,7 @@ workflow sample {
     # merge library (mdup) bams into one (for counting)
     call samtools.Merge as mergeLibraries {
         input:
-            bamFiles = library.bamFile,
+            bamFiles = select_all(library.bamFile),
             outputBamPath = sampleDir + "/" + sampleId + ".bam"
     }
 
@@ -53,7 +53,7 @@ workflow sample {
     if (! multiple_bams) {
         call common.createLink as linkIndex {
             input:
-                inputFile = library.bamIndexFile,
+                inputFile = select_first([library.bamIndexFile[0]]),
                 outputPath = select_first([library.bamFile[0]]) + ".bai"
         }
     }
