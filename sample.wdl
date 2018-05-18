@@ -47,7 +47,8 @@ workflow sample {
     if (multiple_bams) {
         call samtools.Index as mergedIndex {
             input:
-                bamFilePath = mergeLibraries.outputBam
+                bamFilePath = mergeLibraries.outputBam,
+                bamIndexPath = mergeLibraries.outputBam + ".bai"
         }
     }
 
