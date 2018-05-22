@@ -34,7 +34,7 @@ workflow pipeline {
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sample.sampleName, sample.bam),
+            bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
             outputDir = outputDir + "/expression_measures/",
             strandedness = strandedness,
             ref_gtf = ref_gtf,
