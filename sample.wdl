@@ -55,7 +55,7 @@ workflow sample {
     if (! multiple_bams) {
         call common.createLink as linkIndex {
             input:
-                inputFile = select_first([library.bamIndexFile]),
+                inputFile = select_first(library.bamIndexFile),
                 outputPath = mergeLibraries.outputBam + ".bai"
         }
     }
