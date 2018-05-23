@@ -24,7 +24,7 @@ workflow sample {
         if (lib != "") {
             call libraryWorkflow.library as library {
                 input:
-                    outputDir = sampleDir + "lib_" + lib + "/",
+                    outputDir = sampleDir + "/lib_" + lib + "/",
                     sampleConfigs = sampleConfigs,
                     sampleId = sampleId,
                     libraryId = lib,
@@ -55,8 +55,8 @@ workflow sample {
     if (! multiple_bams) {
         call common.createLink as linkIndex {
             input:
-                inputFile = select_first([library.bamIndexFile[0]]),
-                outputPath = select_first([library.bamFile[0]]) + ".bai"
+                inputFile = select_first([library.bamIndexFile]),
+                outputPath = mergeLibraries.outputBam + ".bai"
         }
     }
 
