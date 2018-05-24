@@ -26,7 +26,7 @@ workflow library {
         if (rg != "") {
             call readgroupWorkflow.readgroup as readgroup {
                 input:
-                    outputDir = outputDir + "rg_" + rg + "/",
+                    outputDir = outputDir + "/rg_" + rg + "/",
                     sampleConfigs = sampleConfigs,
                     sampleId = sampleId,
                     libraryId = libraryId,
@@ -39,7 +39,7 @@ workflow library {
         input:
             inputR1 = select_all(readgroup.cleanR1),
             inputR2 = select_all(readgroup.cleanR2),
-            outputDir = outputDir + "star/",
+            outputDir = outputDir + "/star/",
             sample = sampleId,
             library = libraryId,
             rgLine = select_all(readgroup.starRGline)
