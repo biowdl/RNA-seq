@@ -1,0 +1,58 @@
+import "sample.wdl" as sampleWorkflow
+import "tasks/biopet.wdl" as biopet
+import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
+import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
+
+workflow pipeline {
+    Array[File] sampleConfigs
+    String outputDir
+    File refFasta
+    File refDict
+    File refFastaIndex
+    File refRefflat
+    File refGtf
+    String strandedness
+
+    #parse sample configs
+    call biopet.SampleConfig as config {
+        input:
+            inputFiles = sampleConfigs,
+            keyFilePath = outputDir + "/config.keys"
+    }
+
+    scatter (sm in read_lines(config.keysFile)){
+        call sampleWorkflow.sample  as sample {
+            input:
+                sampleDir = outputDir + "/samples/" + sm + "/",
+                sampleConfigs = sampleConfigs,
+                sampleId = sm,
+                refFasta = refFasta,
+                refDict = refDict,
+                refFastaIndex = refFastaIndex
+        }
+    }
+
+    call expressionQuantification.MultiBamExpressionQuantification as expression {
+        input:
+            bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
+            outputDir = outputDir + "/expression_measures/",
+            strandedness = strandedness,
+            ref_gtf = refGtf,
+            ref_refflat = refRefflat
+    }
+
+    call jointgenotyping.JointGenotyping {
+        input:
+            ref_fasta = refFasta,
+            ref_dict = refDict,
+            ref_fasta_index = refFastaIndex,
+            outputDir = outputDir,
+            gvcfFiles = sample.gvcfFile,
+            gvcfIndexes = sample.gvcfFileIndex,
+            vcf_basename = "multisample"
+    }
+
+    output {
+        Array[String] samples = read_lines(config.keysFile)
+    }
+}
