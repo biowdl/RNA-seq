@@ -6,11 +6,11 @@ import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantific
 workflow pipeline {
     Array[File] sampleConfigs
     String outputDir
-    File ref_fasta
-    File ref_dict
-    File ref_fasta_index
-    File ref_refflat
-    File ref_gtf
+    File refFasta
+    File refDict
+    File refFastaIndex
+    File refRefflat
+    File refGtf
     String strandedness
 
     #parse sample configs
@@ -26,9 +26,9 @@ workflow pipeline {
                 sampleDir = outputDir + "/samples/" + sm + "/",
                 sampleConfigs = sampleConfigs,
                 sampleId = sm,
-                ref_fasta = ref_fasta,
-                ref_dict = ref_dict,
-                ref_fasta_index = ref_fasta_index
+                refFasta = refFasta,
+                refDict = refDict,
+                refFastaIndex = refFastaIndex
         }
     }
 
@@ -37,15 +37,15 @@ workflow pipeline {
             bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
             outputDir = outputDir + "/expression_measures/",
             strandedness = strandedness,
-            ref_gtf = ref_gtf,
-            ref_refflat = ref_refflat
+            ref_gtf = refGtf,
+            ref_refflat = refRefflat
     }
 
     call jointgenotyping.JointGenotyping {
         input:
-            ref_fasta = ref_fasta,
-            ref_dict = ref_dict,
-            ref_fasta_index = ref_fasta_index,
+            ref_fasta = refFasta,
+            ref_dict = refDict,
+            ref_fasta_index = refFastaIndex,
             outputDir = outputDir,
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,

@@ -8,9 +8,9 @@ workflow sample {
     Array[File] sampleConfigs
     String sampleId
     String sampleDir
-    File ref_fasta
-    File ref_dict
-    File ref_fasta_index
+    File refFasta
+    File refDict
+    File refFastaIndex
 
     call biopet.SampleConfig as config {
         input:
@@ -28,44 +28,51 @@ workflow sample {
                     sampleConfigs = sampleConfigs,
                     sampleId = sampleId,
                     libraryId = lib,
-                    ref_fasta = ref_fasta,
-                    ref_dict = ref_dict,
-                    ref_fasta_index = ref_fasta_index
+                    ref_fasta = refFasta,
+                    ref_dict = refDict,
+                    ref_fasta_index = refFastaIndex
             }
         }
     }
 
-    # merge library (mdup) bams into one (for counting)
-    call samtools.Merge as mergeLibraries {
-        input:
-            bamFiles = select_all(library.bamFile),
-            outputBamPath = sampleDir + "/" + sampleId + ".bam"
-    }
+    Boolean multipleBams = length(library.bamFile) > 1
 
-    Boolean multiple_bams = length(library.bamFile) > 1
+    # Merge library (mdup) bams into one (for counting).
+    if (multipleBams) {
+        call samtools.Merge as mergeLibraries {
+            input:
+                bamFiles = select_all(library.bamFile),
+                outputBamPath = sampleDir + "/" + sampleId + ".bam"
+        }
 
-    if (multiple_bams) {
         call samtools.Index as mergedIndex {
             input:
                 bamFilePath = mergeLibraries.outputBam,
-                bamIndexPath = mergeLibraries.outputBam + ".bai"
+                bamIndexPath = sampleDir + "/" + sampleId + ".bai"
         }
     }
 
-    if (! multiple_bams) {
+    # Create links instead if only one bam, to retain output structure.
+    if (! multipleBams) {
+        call common.createLink as linkBam {
+            input:
+                inputFile = select_first(library.bamFile),
+                outputPath = sampleDir + "/" + sampleId + ".bam"
+        }
+
         call common.createLink as linkIndex {
             input:
                 inputFile = select_first(library.bamIndexFile),
-                outputPath = mergeLibraries.outputBam + ".bai"
+                outputPath = sampleDir + "/" + sampleId + ".bai"
         }
     }
 
     # variant calling, requires different bam file than counting
     call gvcf.Gvcf as createGvcf {
         input:
-            ref_fasta = ref_fasta,
-            ref_dict = ref_dict,
-            ref_fasta_index = ref_fasta_index,
+            ref_fasta = refFasta,
+            ref_dict = refDict,
+            ref_fasta_index = refFastaIndex,
             bamFiles = select_all(library.preprocessBamFile),
             bamIndexes = select_all(library.preprocessBamIndexFile),
             gvcf_basename = sampleDir + "/" + sampleId + ".g"
@@ -73,8 +80,8 @@ workflow sample {
 
     output {
         String sampleName = sampleId
-        File bam = mergeLibraries.outputBam
-        File bai = select_first([if multiple_bams then mergedIndex.indexFile else linkIndex.link])
+        File bam = if multipleBams then select_first([mergeLibraries.outputBam]) else select_first(library.bamFile)
+        File bai = if multipleBams then select_first([mergedIndex.indexFile]) else select_first(library.bamIndexFile)
         File gvcfFile = createGvcf.output_gvcf
         File gvcfFileIndex = createGvcf.output_gvcf_index
     }
