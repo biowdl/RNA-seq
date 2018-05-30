@@ -1,5 +1,6 @@
 import "QC/QC.wdl" as qcWorkflow
 import "tasks/biopet.wdl" as biopet
+import "tasks/star.wdl" as star
 
 
 workflow readgroup {
@@ -25,7 +26,7 @@ workflow readgroup {
         else { "": "" }
 
     # make the readgroup line for STAR
-    call makeStarRGline as rgLine {
+    call star.makeStarRGline as rgLine {
         input:
             sample = sampleId,
             library = libraryId,
@@ -44,21 +45,5 @@ workflow readgroup {
         File cleanR1 = qc.read1afterQC
         File? cleanR2 = qc.read2afterQC
         String starRGline = rgLine.rgLine
-    }
-}
-
-
-task makeStarRGline {
-    String sample
-    String library
-    String? platform
-    String readgroup
-
-    command {
-        printf '"ID:${readgroup}" "LB:${library}" "PL:${default="ILLUMINA" platform}" "SM:${sample}"'
-    }
-
-    output {
-        String rgLine = read_string(stdout())
     }
 }
