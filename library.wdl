@@ -9,9 +9,9 @@ workflow library {
     String sampleId
     String libraryId
     String outputDir
-    File ref_fasta
-    File ref_dict
-    File ref_fasta_index
+    File refFasta
+    File refDict
+    File refFastaIndex
 
     call biopet.SampleConfig as config {
         input:
@@ -58,9 +58,9 @@ workflow library {
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
                 outputBamPath = sub(markDuplicates.output_bam, ".bam$", ".bqsr.bam"),
-                ref_fasta = ref_fasta,
-                ref_dict = ref_dict,
-                ref_fasta_index = ref_fasta_index,
+                refFasta = refFasta,
+                refDict = refDict,
+                refFastaIndex = refFastaIndex,
                 splitSplicedReads = true
     }
 

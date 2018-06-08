@@ -28,9 +28,9 @@ workflow sample {
                     sampleConfigs = sampleConfigs,
                     sampleId = sampleId,
                     libraryId = lib,
-                    ref_fasta = refFasta,
-                    ref_dict = refDict,
-                    ref_fasta_index = refFastaIndex
+                    refFasta = refFasta,
+                    refDict = refDict,
+                    refFastaIndex = refFastaIndex
             }
         }
     }
@@ -70,19 +70,19 @@ workflow sample {
     # variant calling, requires different bam file than counting
     call gvcf.Gvcf as createGvcf {
         input:
-            ref_fasta = refFasta,
-            ref_dict = refDict,
-            ref_fasta_index = refFastaIndex,
+            refFasta = refFasta,
+            refDict = refDict,
+            refFastaIndex = refFastaIndex,
             bamFiles = select_all(library.preprocessBamFile),
             bamIndexes = select_all(library.preprocessBamIndexFile),
-            gvcf_basename = sampleDir + "/" + sampleId + ".g"
+            gvcfPath = sampleDir + "/" + sampleId + ".g.vcf.gz"
     }
 
     output {
         String sampleName = sampleId
         File bam = if multipleBams then select_first([mergeLibraries.outputBam]) else select_first(library.bamFile)
         File bai = if multipleBams then select_first([mergedIndex.indexFile]) else select_first(library.bamIndexFile)
-        File gvcfFile = createGvcf.output_gvcf
-        File gvcfFileIndex = createGvcf.output_gvcf_index
+        File gvcfFile = createGvcf.outputGVCF
+        File gvcfFileIndex = createGvcf.outputGVCFindex
     }
 }
