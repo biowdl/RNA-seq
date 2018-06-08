@@ -57,7 +57,7 @@ workflow library {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
-                outputBamPath = sub(markDuplicates.output_bam, ".bam$", ".bqsr.bam"),
+                outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr.bam",
                 refFasta = refFasta,
                 refDict = refDict,
                 refFastaIndex = refFastaIndex,
