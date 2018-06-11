@@ -1,8 +1,8 @@
-import "tasks/biopet.wdl" as biopet
-import "readgroup.wdl" as readgroupWorkflow
 import "aligning/align-star.wdl" as star
-import "tasks/picard.wdl" as picard
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
+import "readgroup.wdl" as readgroupWorkflow
+import "tasks/biopet.wdl" as biopet
+import "tasks/picard.wdl" as picard
 
 workflow library {
     Array[File] sampleConfigs
