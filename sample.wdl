@@ -32,6 +32,9 @@ workflow sample {
                     refDict = refDict,
                     refFastaIndex = refFastaIndex
             }
+
+            # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
+            String libraryId = lib
         }
     }
 
@@ -52,17 +55,18 @@ workflow sample {
         }
     }
 
-    # Create links instead if only one bam, to retain output structure.
+    # Create links instead, if ther is only one bam, to retain output structure.
     if (! multipleBams) {
+        String lib = select_first(libraryId)
         call common.createLink as linkBam {
             input:
-                inputFile = select_first(library.bamFile),
+                inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bam",
                 outputPath = sampleDir + "/" + sampleId + ".bam"
         }
 
         call common.createLink as linkIndex {
             input:
-                inputFile = select_first(library.bamIndexFile),
+                inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bai",
                 outputPath = sampleDir + "/" + sampleId + ".bai"
         }
     }
