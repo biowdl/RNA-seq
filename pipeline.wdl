@@ -1,7 +1,7 @@
+import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
+import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
 import "tasks/biopet.wdl" as biopet
-import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
-import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 
 workflow pipeline {
     Array[File] sampleConfigs
@@ -43,13 +43,13 @@ workflow pipeline {
 
     call jointgenotyping.JointGenotyping {
         input:
-            ref_fasta = refFasta,
-            ref_dict = refDict,
-            ref_fasta_index = refFastaIndex,
+            refFasta = refFasta,
+            refDict = refDict,
+            refFastaIndex = refFastaIndex,
             outputDir = outputDir,
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,
-            vcf_basename = "multisample"
+            vcfBasename = "multisample"
     }
 
     output {

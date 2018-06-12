@@ -1,8 +1,8 @@
+import "bam-to-gvcf/gvcf.wdl" as gvcf
+import "library.wdl" as libraryWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
-import "library.wdl" as libraryWorkflow
 import "tasks/samtools.wdl" as samtools
-import "bam-to-gvcf/gvcf.wdl" as gvcf
 
 workflow sample {
     Array[File] sampleConfigs
@@ -28,10 +28,13 @@ workflow sample {
                     sampleConfigs = sampleConfigs,
                     sampleId = sampleId,
                     libraryId = lib,
-                    ref_fasta = refFasta,
-                    ref_dict = refDict,
-                    ref_fasta_index = refFastaIndex
+                    refFasta = refFasta,
+                    refDict = refDict,
+                    refFastaIndex = refFastaIndex
             }
+
+            # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
+            String libraryId = lib
         }
     }
 
@@ -52,17 +55,18 @@ workflow sample {
         }
     }
 
-    # Create links instead if only one bam, to retain output structure.
+    # Create links instead, if ther is only one bam, to retain output structure.
     if (! multipleBams) {
+        String lib = select_first(libraryId)
         call common.createLink as linkBam {
             input:
-                inputFile = select_first(library.bamFile),
+                inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bam",
                 outputPath = sampleDir + "/" + sampleId + ".bam"
         }
 
         call common.createLink as linkIndex {
             input:
-                inputFile = select_first(library.bamIndexFile),
+                inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bai",
                 outputPath = sampleDir + "/" + sampleId + ".bai"
         }
     }
@@ -70,19 +74,19 @@ workflow sample {
     # variant calling, requires different bam file than counting
     call gvcf.Gvcf as createGvcf {
         input:
-            ref_fasta = refFasta,
-            ref_dict = refDict,
-            ref_fasta_index = refFastaIndex,
+            refFasta = refFasta,
+            refDict = refDict,
+            refFastaIndex = refFastaIndex,
             bamFiles = select_all(library.preprocessBamFile),
             bamIndexes = select_all(library.preprocessBamIndexFile),
-            gvcf_basename = sampleDir + "/" + sampleId + ".g"
+            gvcfPath = sampleDir + "/" + sampleId + ".g.vcf.gz"
     }
 
     output {
         String sampleName = sampleId
         File bam = if multipleBams then select_first([mergeLibraries.outputBam]) else select_first(library.bamFile)
         File bai = if multipleBams then select_first([mergedIndex.indexFile]) else select_first(library.bamIndexFile)
-        File gvcfFile = createGvcf.output_gvcf
-        File gvcfFileIndex = createGvcf.output_gvcf_index
+        File gvcfFile = createGvcf.outputGVCF
+        File gvcfFileIndex = createGvcf.outputGVCFindex
     }
 }

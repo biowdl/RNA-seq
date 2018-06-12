@@ -1,17 +1,17 @@
-import "tasks/biopet.wdl" as biopet
-import "readgroup.wdl" as readgroupWorkflow
 import "aligning/align-star.wdl" as star
-import "tasks/picard.wdl" as picard
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
+import "readgroup.wdl" as readgroupWorkflow
+import "tasks/biopet.wdl" as biopet
+import "tasks/picard.wdl" as picard
 
 workflow library {
     Array[File] sampleConfigs
     String sampleId
     String libraryId
     String outputDir
-    File ref_fasta
-    File ref_dict
-    File ref_fasta_index
+    File refFasta
+    File refDict
+    File refFastaIndex
 
     call biopet.SampleConfig as config {
         input:
@@ -57,10 +57,10 @@ workflow library {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
-                outputBamPath = sub(markDuplicates.output_bam, ".bam$", ".bqsr.bam"),
-                ref_fasta = ref_fasta,
-                ref_dict = ref_dict,
-                ref_fasta_index = ref_fasta_index,
+                outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr.bam",
+                refFasta = refFasta,
+                refDict = refDict,
+                refFastaIndex = refFastaIndex,
                 splitSplicedReads = true
     }
 
