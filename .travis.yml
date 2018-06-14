@@ -2,4 +2,4 @@ language: java
 script:
   - set -e
   - wget https://github.com/broadinstitute/cromwell/releases/download/30.2/womtool-30.2.jar
-  - for F in `find -name "*.wdl"`; echo $F; do java -jar womtool-30.2.jar validate $F; done
+  - for F in `find -name "*.wdl"`; do echo $F; java -jar womtool-30.2.jar validate $F; done
