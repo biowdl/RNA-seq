@@ -37,8 +37,8 @@ workflow pipeline {
             bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
             outputDir = outputDir + "/expression_measures/",
             strandedness = strandedness,
-            ref_gtf = refGtf,
-            ref_refflat = refRefflat
+            refGtf = refGtf,
+            refRefflat = refRefflat
     }
 
     call jointgenotyping.JointGenotyping {
