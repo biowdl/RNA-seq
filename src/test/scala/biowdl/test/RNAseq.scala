@@ -25,12 +25,11 @@ import java.io.File
 
 import nl.biopet.utils.biowdl.multisample.MultisamplePipeline
 import nl.biopet.utils.biowdl.references.Reference
-import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+import nl.biopet.utils.biowdl.annotations.Annotation
 
-trait RNAseq
-    extends MultisamplePipeline with Reference {
+trait RNAseq extends MultisamplePipeline with Reference with Annotation {
 
-  def dbsnpFile: File
+  def strandedness: String
 
   override def inputs: Map[String, Any] =
     super.inputs ++
@@ -39,10 +38,9 @@ trait RNAseq
         "pipeline.refFasta" -> referenceFasta.getAbsolutePath,
         "pipeline.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
         "pipeline.refDict" -> referenceFastaDictFile.getAbsolutePath,
-        "pipeline.sample.library.readgroup.mapping.bwaMem.referenceFasta" -> bwaMemFasta.getOrElse(throw new IllegalStateException),
-        "pipeline.sample.library.readgroup.mapping.bwaMem.indexFiles" -> bwaMemIndexFiles.map(_.getAbsolutePath),
-        "pipeline.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
+        "pipeline.strandedness" -> strandedness,
+        "pipeline.refRefflat" -> referenceRefflat.map(_.getAbsolutePath),
+        "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath)
       )
 
   def startFile: File = new File("./pipeline.wdl")

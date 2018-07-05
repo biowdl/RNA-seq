@@ -21,10 +21,16 @@
 
 package biowdl.test
 
-import java.io.File
-
 import nl.biopet.utils.biowdl.PipelineSuccess
 
-trait RNASeqSuccess extends GermlineDNA with PipelineSuccess {
+trait RNAseqSuccess extends RNAseq with PipelineSuccess {
   //TODO: add tests
+  addMustHaveFile("multisample.vcf.gz")
+  addMustHaveFile("multisample.vcf.gz.tbi")
+  addMustHaveFile("expression_measures/TPM/all_samples.TPM")
+  addMustHaveFile("expression_measures/FPKM/all_samples.FPKM")
+  addMustHaveFile(
+    "expression_measures/BaseCounter/all_samples.base.gene.counts")
+  addMustHaveFile(
+    "expression_measures/fragments_per_gene/all_samples.fragments_per_gene")
 }

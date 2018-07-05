@@ -21,14 +21,22 @@
 
 package biowdl.test
 
-import java.io.File
-
-import nl.biopet.utils.biowdl.fixtureFile
+import nl.biopet.utils.biowdl.annotations.TestAnnotation
 import nl.biopet.utils.biowdl.references.TestReference
-import nl.biopet.utils.biowdl.samples.{Wgs1PairedEnd, Wgs2PairedEnd}
+import nl.biopet.utils.biowdl.samples.{Rna3PairedEnd, Rna3SingleEnd}
 
-class RNAseqTest extends GermlineDNASuccess with TestReference
-  with Wgs1PairedEnd
-  with Wgs2PairedEnd {
-  def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+class RNAseqTestSingleEnd
+    extends RNAseqSuccess
+    with TestReference
+    with TestAnnotation
+    with Rna3SingleEnd {
+  def strandedness: String = "None"
+}
+
+class RNAseqTestPairedEnd
+    extends RNAseqSuccess
+    with TestReference
+    with TestAnnotation
+    with Rna3PairedEnd {
+  def strandedness: String = "None"
 }
