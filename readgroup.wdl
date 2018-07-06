@@ -26,15 +26,6 @@ workflow readgroup {
         then read_map(config.tsvOutput)
         else { "": "" }
 
-    # make the readgroup line for STAR
-    call star.makeStarRGline as rgLine {
-        input:
-            sample = sampleId,
-            library = libraryId,
-            platform = platform,
-            readgroup = readgroupId
-    }
-
     #TODO: Change everything below to the QC workflow once imports are fixed.
 
     # Raw quality report
@@ -91,6 +82,5 @@ workflow readgroup {
         File? cleanR2 = if runAdapterClipping
             then select_first([adapterClipping.read1afterClipping])
             else configValues.R1
-        String starRGline = rgLine.rgLine
     }
 }
