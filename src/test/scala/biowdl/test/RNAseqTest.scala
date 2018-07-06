@@ -21,6 +21,9 @@
 
 package biowdl.test
 
+import java.io.File
+
+import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.annotations.TestAnnotation
 import nl.biopet.utils.biowdl.references.TestReference
 import nl.biopet.utils.biowdl.samples.{Rna3PairedEnd, Rna3SingleEnd}
@@ -31,6 +34,7 @@ class RNAseqTestSingleEnd
     with TestAnnotation
     with Rna3SingleEnd {
   def strandedness: String = "None"
+  def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }
 
 class RNAseqTestPairedEnd
@@ -39,4 +43,5 @@ class RNAseqTestPairedEnd
     with TestAnnotation
     with Rna3PairedEnd {
   def strandedness: String = "None"
+  def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }

@@ -27,9 +27,12 @@ import nl.biopet.utils.biowdl.multisample.MultisamplePipeline
 import nl.biopet.utils.biowdl.references.Reference
 import nl.biopet.utils.biowdl.annotations.Annotation
 
+import nl.biopet.utils.ngs.vcf.getVcfIndexFile
+
 trait RNAseq extends MultisamplePipeline with Reference with Annotation {
 
   def strandedness: String
+  def dbsnpFile: File
 
   override def inputs: Map[String, Any] =
     super.inputs ++
@@ -40,7 +43,16 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
         "pipeline.refDict" -> referenceFastaDictFile.getAbsolutePath,
         "pipeline.strandedness" -> strandedness,
         "pipeline.refRefflat" -> referenceRefflat.map(_.getAbsolutePath),
-        "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath)
+        "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath),
+        "pipeline.sample.createGvcf.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
+        "pipeline.sample.library.preprocessing.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
+        "pipeline.sample.library.preprocessing.dbsnpVCFindex" -> getVcfIndexFile(
+          dbsnpFile).getAbsolutePath,
+        "pipeline.sample.library.starAlignment.star.genomeDir" -> starGenomeDir
+          .map(_.getAbsolutePath),
+        "pipeline.JointGenotyping.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
+        "pipeline.sample.createGvcf.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath,
+        "pipeline.JointGenotyping.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
       )
 
   def startFile: File = new File("./pipeline.wdl")
