@@ -4,7 +4,7 @@ import "sample.wdl" as sampleWorkflow
 import "tasks/biopet.wdl" as biopet
 
 workflow pipeline {
-    Array[File] sampleConfigs
+    Array[File] sampleConfigFiles
     String outputDir
     File refFasta
     File refDict
@@ -16,7 +16,7 @@ workflow pipeline {
     #parse sample configs
     call biopet.SampleConfig as config {
         input:
-            inputFiles = sampleConfigs,
+            inputFiles = sampleConfigFiles,
             keyFilePath = outputDir + "/config.keys"
     }
 
@@ -24,7 +24,7 @@ workflow pipeline {
         call sampleWorkflow.sample  as sample {
             input:
                 sampleDir = outputDir + "/samples/" + sm + "/",
-                sampleConfigs = sampleConfigs,
+                sampleConfigs = sampleConfigFiles,
                 sampleId = sm,
                 refFasta = refFasta,
                 refDict = refDict,
