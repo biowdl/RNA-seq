@@ -22,7 +22,7 @@ workflow readgroup {
              keyFilePath = outputDir + "/" + readgroupId + ".config.keys"
     }
 
-    Object configValues = if (defined(config.tsvOutput) && size(config.tsvOutput) > 0)
+    Map[String,String] configValues = if (defined(config.tsvOutput) && size(config.tsvOutput) > 0)
         then read_map(config.tsvOutput)
         else { "": "" }
 
@@ -31,15 +31,15 @@ workflow readgroup {
     # Raw quality report
     call qualityReportWorkflow.QualityReport as rawQualityReportR1 {
         input:
-            read = configValues.R1,
+            read = configValues["R1"],
             outputDir = outputDir + "/QC/read1/",
             extractAdapters = true
     }
 
-    if (defined(configValues.R2)) {
+    if (defined(configValues["R2"])) {
         call qualityReportWorkflow.QualityReport as rawQualityReportR2 {
             input:
-                read = configValues.R2,
+                read = configValues["R2"],
                 outputDir = outputDir + "/QC/read2",
                 extractAdapters = true
         }
@@ -78,9 +78,9 @@ workflow readgroup {
     output {
         File cleanR1 = if runAdapterClipping
             then select_first([adapterClipping.read1afterClipping])
-            else configValues.R1
+            else configValues["R1"]
         File? cleanR2 = if runAdapterClipping
             then select_first([adapterClipping.read1afterClipping])
-            else configValues.R1
+            else configValues["R2"]
     }
 }
