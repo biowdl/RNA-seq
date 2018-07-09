@@ -27,8 +27,8 @@ trait RNAseqSuccess extends RNAseq with PipelineSuccess {
   //TODO: add tests
   addMustHaveFile("multisample.vcf.gz")
   addMustHaveFile("multisample.vcf.gz.tbi")
-  addMustHaveFile("expression_measures/TPM/all_samples.TPM")
-  addMustHaveFile("expression_measures/FPKM/all_samples.FPKM")
+  addMustHaveFile("expression_measures/stringtie/TPM/all_samples.TPM")
+  addMustHaveFile("expression_measures/stringtie/FPKM/all_samples.FPKM")
   addMustHaveFile(
     "expression_measures/BaseCounter/all_samples.base.gene.counts")
   addMustHaveFile(

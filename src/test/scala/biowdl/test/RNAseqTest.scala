@@ -38,7 +38,7 @@ class RNAseqTestSingleEnd
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }
-*/
+ */
 
 class RNAseqTestPairedEnd
     extends RNAseqSuccess
