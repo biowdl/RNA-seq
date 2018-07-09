@@ -50,8 +50,8 @@ workflow readgroup {
     if (runAdapterClipping) {
         call adapterClippingWorkflow.AdapterClipping as adapterClipping {
             input:
-                read1 = configValues.R1,
-                read2 = configValues.R2,
+                read1 = configValues["R1"],
+                read2 = configValues["R2"],
                 outputDir = outputDir + "AdapterClipping/",
                 adapterListRead1 = rawQualityReportR1.adapters,
                 adapterListRead2 = rawQualityReportR2.adapters
