@@ -19,3 +19,5 @@ dependencies:
   - r-reshape2==1.4.3
   - biopet-basecounter==0.1
   - biopet-seqstat==0.1
+  - star==2.6.0c
+
