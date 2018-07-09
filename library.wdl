@@ -43,7 +43,7 @@ workflow library {
             outputDir = outputDir + "/star/",
             sample = sampleId,
             library = libraryId,
-            readgroups = readgroups
+            readgroups = select_all(readgroups)
     }
 
     # Preprocess BAM for variant calling
