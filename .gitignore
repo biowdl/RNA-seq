@@ -1,1 +1,6 @@
 .idea/
+*.jar
+cromwell-executions/
+cromwell-workflow-logs/
+output/
+target/

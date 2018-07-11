@@ -32,6 +32,7 @@ workflow library {
                     libraryId = libraryId,
                     readgroupId = rg
             }
+            String readgroups = rg
         }
     }
 
@@ -42,7 +43,7 @@ workflow library {
             outputDir = outputDir + "/star/",
             sample = sampleId,
             library = libraryId,
-            rgLine = select_all(readgroup.starRGline)
+            readgroups = select_all(readgroups)
     }
 
     # Preprocess BAM for variant calling
