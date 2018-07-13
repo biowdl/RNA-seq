@@ -1,6 +1,7 @@
 import "QC/AdapterClipping.wdl" as adapterClippingWorkflow
 import "QC/QualityReport.wdl" as qualityReportWorkflow
 import "tasks/biopet.wdl" as biopet
+import "tasks/common.wdl" as common
 import "tasks/star.wdl" as star
 
 
@@ -25,6 +26,22 @@ workflow readgroup {
     Map[String,String] configValues = if (defined(config.tsvOutput) && size(config.tsvOutput) > 0)
         then read_map(config.tsvOutput)
         else { "": "" }
+
+    if (configValues["R1_md5"]) {
+        call common.CheckFileMD5 as md5CheckR1 {
+            input:
+                file=configValues["R1"],
+                MD5sum=configValues["R1_md5"]
+        }
+    }
+
+    if (configValues["R2_md5"]) {
+        call common.CheckFileMD5 as md5CheckR2 {
+            input:
+                file=configValues["R2"],
+                MD5sum=configValues["R2_md5"]
+        }
+    }
 
     #TODO: Change everything below to the QC workflow once imports are fixed.
 
