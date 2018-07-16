@@ -23,3 +23,6 @@
 [submodule "gatk-preprocess"]
 	path = gatk-preprocess
 	url = https://github.com/biowdl/gatk-preprocess.git
+[submodule "BamMetrics"]
+	path = BamMetrics
+	url = https://github.com/biowdl/BamMetrics

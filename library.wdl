@@ -1,4 +1,5 @@
 import "aligning/align-star.wdl" as star
+import "BamMetrics/bammetrics.wdl" as metrics
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "readgroup.wdl" as readgroupWorkflow
 import "tasks/biopet.wdl" as biopet
@@ -53,6 +54,19 @@ workflow library {
             output_bam_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
             metrics_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
     }
+
+
+    # Gather BAM Metrics
+    call metrics.BamMetrics {
+        input:
+            bamFile = markDuplicates.output_bam,
+            bamindex = markDuplicates.output_bam_index,
+            outputDir = outputDir + "/metrics",
+            refFasta = refFasta,
+            refDict = refDict,
+            refFastaIndex = refFastaIndex
+    }
+
 
     call preprocess.GatkPreprocess as preprocessing {
             input:
