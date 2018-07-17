@@ -13,6 +13,9 @@ workflow library {
     File refFasta
     File refDict
     File refFastaIndex
+    File refRefflat
+    File dbsnpVCF
+    File dbsnpVCFindex
 
     call biopet.SampleConfig as config {
         input:
@@ -55,18 +58,18 @@ workflow library {
             metrics_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
     }
 
-
     # Gather BAM Metrics
     call metrics.BamMetrics {
         input:
             bamFile = markDuplicates.output_bam,
-            bamindex = markDuplicates.output_bam_index,
+            bamIndex = markDuplicates.output_bam_index,
             outputDir = outputDir + "/metrics",
             refFasta = refFasta,
             refDict = refDict,
-            refFastaIndex = refFastaIndex
+            refFastaIndex = refFastaIndex,
+            rnaMetrics = true,
+            refRefflat = refRefflat
     }
-
 
     call preprocess.GatkPreprocess as preprocessing {
             input:
@@ -76,7 +79,9 @@ workflow library {
                 refFasta = refFasta,
                 refDict = refDict,
                 refFastaIndex = refFastaIndex,
-                splitSplicedReads = true
+                splitSplicedReads = true,
+                dbsnpVCF = dbsnpVCF,
+                dbsnpVCFIndex = dbsnpVCFindex
     }
 
     output {

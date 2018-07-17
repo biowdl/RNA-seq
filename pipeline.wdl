@@ -12,6 +12,8 @@ workflow pipeline {
     File refRefflat
     File refGtf
     String strandedness
+    File dbsnpVCF
+    File dbsnpVCFindex
 
     #parse sample configs
     call biopet.SampleConfig as config {
@@ -19,6 +21,9 @@ workflow pipeline {
             inputFiles = sampleConfigFiles,
             keyFilePath = outputDir + "/config.keys"
     }
+
+    #TODO validate annotation
+    #TODO validate dbsnp
 
     scatter (sm in read_lines(config.keysFile)){
         call sampleWorkflow.sample  as sample {
@@ -28,7 +33,10 @@ workflow pipeline {
                 sampleId = sm,
                 refFasta = refFasta,
                 refDict = refDict,
-                refFastaIndex = refFastaIndex
+                refFastaIndex = refFastaIndex,
+                refRefflat = refRefflat,
+                dbsnpVCF = dbsnpVCF,
+                dbsnpVCFindex = dbsnpVCFindex
         }
     }
 
@@ -49,7 +57,9 @@ workflow pipeline {
             outputDir = outputDir,
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,
-            vcfBasename = "multisample"
+            vcfBasename = "multisample",
+            dbsnpVCF = dbsnpVCF,
+            dbsnpVCFindex = dbsnpVCFindex
     }
 
     output {

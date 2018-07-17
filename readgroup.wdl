@@ -43,6 +43,13 @@ workflow readgroup {
         }
     }
 
+    call biopet.ValidateFastq {
+        input:
+            fastq1 = configValues["R1"],
+            fastq2 = configValues["R2"]
+    }
+
+
     #TODO: Change everything below to the QC workflow once imports are fixed.
 
     # Raw quality report

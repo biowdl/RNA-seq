@@ -11,6 +11,9 @@ workflow sample {
     File refFasta
     File refDict
     File refFastaIndex
+    File refRefflat
+    File dbsnpVCF
+    File dbsnpVCFindex
 
     call biopet.SampleConfig as config {
         input:
@@ -30,7 +33,10 @@ workflow sample {
                     libraryId = lib,
                     refFasta = refFasta,
                     refDict = refDict,
-                    refFastaIndex = refFastaIndex
+                    refFastaIndex = refFastaIndex,
+                    refRefflat = refRefflat,
+                    dbsnpVCF = dbsnpVCF,
+                    dbsnpVCFIndex = dbsnpVCFindex
             }
 
             # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
@@ -79,7 +85,9 @@ workflow sample {
             refFastaIndex = refFastaIndex,
             bamFiles = select_all(library.preprocessBamFile),
             bamIndexes = select_all(library.preprocessBamIndexFile),
-            gvcfPath = sampleDir + "/" + sampleId + ".g.vcf.gz"
+            gvcfPath = sampleDir + "/" + sampleId + ".g.vcf.gz",
+            dbsnpVCF = dbsnpVCF,
+            dbsnpVCFIndex = dbsnpVCFindex
     }
 
     output {
