@@ -14,6 +14,7 @@ workflow sample {
     File refRefflat
     File dbsnpVCF
     File dbsnpVCFindex
+    String strandedness
 
     call biopet.SampleConfig as config {
         input:
@@ -36,7 +37,8 @@ workflow sample {
                     refFastaIndex = refFastaIndex,
                     refRefflat = refRefflat,
                     dbsnpVCF = dbsnpVCF,
-                    dbsnpVCFIndex = dbsnpVCFindex
+                    dbsnpVCFindex = dbsnpVCFindex,
+                    strandedness = strandedness
             }
 
             # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
@@ -64,13 +66,13 @@ workflow sample {
     # Create links instead, if ther is only one bam, to retain output structure.
     if (! multipleBams) {
         String lib = select_first(libraryId)
-        call common.createLink as linkBam {
+        call common.CreateLink as linkBam {
             input:
                 inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bam",
                 outputPath = sampleDir + "/" + sampleId + ".bam"
         }
 
-        call common.createLink as linkIndex {
+        call common.CreateLink as linkIndex {
             input:
                 inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bai",
                 outputPath = sampleDir + "/" + sampleId + ".bai"
@@ -87,7 +89,7 @@ workflow sample {
             bamIndexes = select_all(library.preprocessBamIndexFile),
             gvcfPath = sampleDir + "/" + sampleId + ".g.vcf.gz",
             dbsnpVCF = dbsnpVCF,
-            dbsnpVCFIndex = dbsnpVCFindex
+            dbsnpVCFindex = dbsnpVCFindex
     }
 
     output {

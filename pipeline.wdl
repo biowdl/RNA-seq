@@ -36,7 +36,8 @@ workflow pipeline {
                 refFastaIndex = refFastaIndex,
                 refRefflat = refRefflat,
                 dbsnpVCF = dbsnpVCF,
-                dbsnpVCFindex = dbsnpVCFindex
+                dbsnpVCFindex = dbsnpVCFindex,
+                strandedness = strandedness
         }
     }
 

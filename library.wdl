@@ -16,6 +16,7 @@ workflow library {
     File refRefflat
     File dbsnpVCF
     File dbsnpVCFindex
+    String strandedness
 
     call biopet.SampleConfig as config {
         input:
@@ -67,7 +68,7 @@ workflow library {
             refFasta = refFasta,
             refDict = refDict,
             refFastaIndex = refFastaIndex,
-            rnaMetrics = true,
+            strandedness = strandedness,
             refRefflat = refRefflat
     }
 
@@ -81,7 +82,7 @@ workflow library {
                 refFastaIndex = refFastaIndex,
                 splitSplicedReads = true,
                 dbsnpVCF = dbsnpVCF,
-                dbsnpVCFIndex = dbsnpVCFindex
+                dbsnpVCFindex = dbsnpVCFindex
     }
 
     output {
