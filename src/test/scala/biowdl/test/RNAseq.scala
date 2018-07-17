@@ -44,15 +44,10 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
         "pipeline.strandedness" -> strandedness,
         "pipeline.refRefflat" -> referenceRefflat.map(_.getAbsolutePath),
         "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath),
-        "pipeline.sample.createGvcf.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.sample.library.preprocessing.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.sample.library.preprocessing.dbsnpVCFindex" -> getVcfIndexFile(
-          dbsnpFile).getAbsolutePath,
         "pipeline.sample.library.starAlignment.star.genomeDir" -> starGenomeDir
           .map(_.getAbsolutePath),
-        "pipeline.JointGenotyping.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.sample.createGvcf.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath,
-        "pipeline.JointGenotyping.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
+        "pipeline.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
+        "pipeline.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
       )
 
   def startFile: File = new File("./pipeline.wdl")
