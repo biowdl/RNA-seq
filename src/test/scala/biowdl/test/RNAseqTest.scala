@@ -48,3 +48,5 @@ class RNAseqTestPairedEnd
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }
+
+//TODO test without MD5sums

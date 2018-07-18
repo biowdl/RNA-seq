@@ -27,7 +27,7 @@ workflow readgroup {
         then read_map(config.tsvOutput)
         else { "": "" }
 
-    if (configValues["R1_md5"]) {
+    if (defined(configValues["R1_md5"])) {
         call common.CheckFileMD5 as md5CheckR1 {
             input:
                 file=configValues["R1"],
@@ -35,7 +35,7 @@ workflow readgroup {
         }
     }
 
-    if (configValues["R2_md5"]) {
+    if (defined(configValues["R2_md5"])) {
         call common.CheckFileMD5 as md5CheckR2 {
             input:
                 file=configValues["R2"],
