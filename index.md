@@ -36,12 +36,8 @@ to see all available inputs.
 | refDict | `File` | The dict file for the referene fasta. |
 | refRefflat | `File` | Reference annotation Refflat file. This will be used for expression quantification. |
 | refGtf | `File` | Reference annotation GTF file. This will be used for expression quantification. |
-| sample.createGvcf.dbsnpVCF | `File` | Reference dbSNP VCF file. |
-| sample.createGvcf.<br />dbsnpVCFindex | `File` | Index for the reference dbSNP VCF file. |
-| sample.library.preprocessing.<br />dbsnpVCF | `File` | Reference dbSNP file. |
-| sample.library.preprocessing.<br />dbsnpVCFindex | `File` | Index for the reference dbSNP VCF file. |
-| JointGenotyping.dbsnpVCF | `File` | Reference dbSNP file. |
-| JointGenotyping.<br />dbsnpVCFindex | `File` | Index for the reference dbSNP VCF file. |
+| dbsnpVCF | `File` | Reference dbSNP VCF file. |
+| dbsnpVCFindex | `File` | Index for the reference dbSNP VCF file. |
 | strandedness | `String` | Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse),RF (Reverse, Forward) or None: (Unstranded).
 | outputDir | `String` | The directory where the output will be placed. |
 | sample.library.starAlignment.<br />star.twopassMode | `String?` | The STAR twopassMode argument to be passed to the `--twopassMode` option. If this is not defined twopassMode will not be used. |
