@@ -1,6 +1,8 @@
 ---
 layout: default
-title: inputs
+title: Inputs
+version: develop
+latest: true
 ---
 
 Most inputs which are not discussed in the [usage](index.md#Usage) correspond

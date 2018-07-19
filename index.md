@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Home
+version: develop
+latest: true
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
