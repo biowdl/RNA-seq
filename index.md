@@ -70,6 +70,11 @@ omitted and R2 values may be omitted in the case of single-end data.
 Multiple readgroups can be added per library and multiple libraries may be
 given per sample.
 
+## Tool versions
+Included in the repository is an `environment.yml` file. This file includes
+all the tool version on which the workflow was tested. You can use conda and
+this file to create an environment with all the correct tools.
+
 ## Output
 This pipeline will produce a number of directories and files:
 - **expression_measures**: Contains a number of directories with expression
@@ -101,11 +106,6 @@ measures.
       in case preprocessing was necessary.
 - **multisample.vcf.gz**: A multisample VCF file with the variantcalling
 results.
-
-## Tool versions
-Included in the repository is an `environment.yml` file. This file includes
-all the tool version on which the workflow was tested. You can use conda and
-this file to create an environment with all the correct tools.
 
 ## About
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
