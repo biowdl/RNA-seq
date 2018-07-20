@@ -102,6 +102,11 @@ measures.
 - **multisample.vcf.gz**: A multisample VCF file with the variantcalling
 results.
 
+## Tool versions
+Included in the repository is an `environment.yml` file. This file includes
+all the tool version on which the workflow was tested. You can use conda and
+this file to create an environment with all the correct tools.
+
 ## About
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
 developed by [the SASC team](http://sasc.lumc.nl/).
