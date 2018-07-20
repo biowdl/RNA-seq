@@ -67,9 +67,9 @@
                 {% if innerPage.title and innerPage.latest %}
                   <li>
                     {% if page.title == innerPage.title and page.version == innerPage.version %}
-                      <b><a href="{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a></b>
+                      <b><a href="/{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a></b>
                     {% else %}
-                      <a href="{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a>
+                      <a href="/{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a>
                     {% endif %}
                   </li>
                 {% endif %}
@@ -97,9 +97,9 @@
                     {% if innerPage.title and innerPage.version == version %}
                       <li>
                         {% if page.title == innerPage.title and page.version == innerPage.version %}
-                          <b><a href="{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a></b>
+                          <b><a href="/{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a></b>
                         {% else %}
-                          <a href="{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a>
+                          <a href="/{{ site.github.project_title }}{{ innerPage.url }}">{{ innerPage.title }}</a>
                         {% endif %}
                       </li>
                     {% endif %}
