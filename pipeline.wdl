@@ -26,13 +26,18 @@ workflow pipeline {
         input:
             refRefflat = refRefflat,
             gtfFile = refGtf,
-            refFasta = refFasta
+            refFasta = refFasta,
+            refFastaIndex = refFastaIndex,
+            refDict = refDict
     }
 
     call biopet.ValidateVcf as validateVcf {
         input:
             vcfFile = dbsnpVCF,
-            refFasta = refFasta
+            vcfIndex = dbsnpVCFindex,
+            refFasta = refFasta,
+            refFastaIndex = refFastaIndex,
+            refDict = refDict
     }
 
     scatter (sm in read_lines(config.keysFile)){
