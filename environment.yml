@@ -21,4 +21,6 @@ dependencies:
   - biopet-seqstat==0.1
   - star==2.6.0c
   - biopet-validatefastq==0.1.1
+  - biopet-validateannotation==0.1
+  - biopet-validatevcf==0.1
 

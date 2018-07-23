@@ -22,8 +22,18 @@ workflow pipeline {
             keyFilePath = outputDir + "/config.keys"
     }
 
-    #TODO validate annotation
-    #TODO validate dbsnp
+    call biopet.ValidateAnnotation as validateAnnotation {
+        input:
+            refRefflat = refRefflat,
+            gtfFile = refGtf,
+            refFasta = refFasta
+    }
+
+    call biopet.ValidateVcf as validateVcf {
+        input:
+            vcfFile = dbsnpVCF,
+            refFasta = refFasta
+    }
 
     scatter (sm in read_lines(config.keysFile)){
         call sampleWorkflow.sample  as sample {
