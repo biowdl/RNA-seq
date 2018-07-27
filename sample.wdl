@@ -1,49 +1,44 @@
+version 1.0
+
 import "bam-to-gvcf/gvcf.wdl" as gvcf
 import "library.wdl" as libraryWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
+import "tasks/samplesheet.wdl" as samplesheet
 import "tasks/samtools.wdl" as samtools
 
 workflow sample {
-    Array[File] sampleConfigs
-    String sampleId
-    String sampleDir
-    File refFasta
-    File refDict
-    File refFastaIndex
-    File refRefflat
-    File dbsnpVCF
-    File dbsnpVCFindex
-    String strandedness
-
-    call biopet.SampleConfig as config {
-        input:
-            inputFiles = sampleConfigs,
-            sample = sampleId,
-            tsvOutputPath = sampleDir + "/" + sampleId + ".config.tsv",
-            keyFilePath = sampleDir + "/" + sampleId + ".config.keys"
+    input {
+        Sample sample
+        String sampleDir
+        File refFasta
+        File refDict
+        File refFastaIndex
+        File refRefflat
+        File dbsnpVCF
+        File dbsnpVCFindex
+        String strandedness
+        String starIndexDir
     }
 
-    scatter (lib in read_lines(config.keysFile)) {
-        if (lib != "") {
-            call libraryWorkflow.library as library {
-                input:
-                    outputDir = sampleDir + "/lib_" + lib + "/",
-                    sampleConfigs = sampleConfigs,
-                    sampleId = sampleId,
-                    libraryId = lib,
-                    refFasta = refFasta,
-                    refDict = refDict,
-                    refFastaIndex = refFastaIndex,
-                    refRefflat = refRefflat,
-                    dbsnpVCF = dbsnpVCF,
-                    dbsnpVCFindex = dbsnpVCFindex,
-                    strandedness = strandedness
-            }
-
-            # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
-            String libraryId = lib
+    scatter (library in sample.libraries) {
+        call libraryWorkflow.library as library {
+            input:
+                outputDir = sampleDir + "/lib_" + library.id + "/",
+                sampleId = sample.id,
+                library = library,
+                refFasta = refFasta,
+                refDict = refDict,
+                refFastaIndex = refFastaIndex,
+                refRefflat = refRefflat,
+                dbsnpVCF = dbsnpVCF,
+                dbsnpVCFindex = dbsnpVCFindex,
+                strandedness = strandedness,
+                starIndexDir = starIndexDir
         }
+
+        # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
+        String libraryId = library.id
     }
 
     Boolean multipleBams = length(library.bamFile) > 1
@@ -52,30 +47,30 @@ workflow sample {
     if (multipleBams) {
         call samtools.Merge as mergeLibraries {
             input:
-                bamFiles = select_all(library.bamFile),
-                outputBamPath = sampleDir + "/" + sampleId + ".bam"
+                bamFiles = library.bamFile,
+                outputBamPath = sampleDir + "/" + sample.id + ".bam"
         }
 
         call samtools.Index as mergedIndex {
             input:
                 bamFilePath = mergeLibraries.outputBam,
-                bamIndexPath = sampleDir + "/" + sampleId + ".bai"
+                bamIndexPath = sampleDir + "/" + sample.id + ".bai"
         }
     }
 
-    # Create links instead, if ther is only one bam, to retain output structure.
+    # Create links instead, if there is only one bam, to retain output structure.
     if (! multipleBams) {
-        String lib = select_first(libraryId)
+        String lib = libraryId[0]
         call common.CreateLink as linkBam {
             input:
-                inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bam",
-                outputPath = sampleDir + "/" + sampleId + ".bam"
+                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib + ".markdup.bam",
+                outputPath = sampleDir + "/" + sample.id + ".bam"
         }
 
         call common.CreateLink as linkIndex {
             input:
-                inputFile = sampleDir + "/lib_" + lib + "/" + sampleId + "-" + lib + ".markdup.bai",
-                outputPath = sampleDir + "/" + sampleId + ".bai"
+                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib + ".markdup.bai",
+                outputPath = sampleDir + "/" + sample.id + ".bai"
         }
     }
 
@@ -85,17 +80,21 @@ workflow sample {
             refFasta = refFasta,
             refDict = refDict,
             refFastaIndex = refFastaIndex,
-            bamFiles = select_all(library.preprocessBamFile),
-            bamIndexes = select_all(library.preprocessBamIndexFile),
-            gvcfPath = sampleDir + "/" + sampleId + ".g.vcf.gz",
+            bamFiles = library.preprocessBamFile,
+            bamIndexes = library.preprocessBamIndexFile,
+            gvcfPath = sampleDir + "/" + sample.id + ".g.vcf.gz",
             dbsnpVCF = dbsnpVCF,
             dbsnpVCFindex = dbsnpVCFindex
     }
 
     output {
-        String sampleName = sampleId
-        File bam = if multipleBams then select_first([mergeLibraries.outputBam]) else select_first(library.bamFile)
-        File bai = if multipleBams then select_first([mergedIndex.indexFile]) else select_first(library.bamIndexFile)
+        String sampleName = sample.id
+        File bam = if multipleBams
+            then select_first([mergeLibraries.outputBam])
+            else library.bamFile[0]
+        File bai = if multipleBams
+            then select_first([mergedIndex.indexFile])
+            else library.bamIndexFile[0]
         File gvcfFile = createGvcf.outputGVCF
         File gvcfFileIndex = createGvcf.outputGVCFindex
     }

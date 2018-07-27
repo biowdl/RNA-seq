@@ -1,52 +1,39 @@
+version 1.0
+
 import "QC/AdapterClipping.wdl" as adapterClippingWorkflow
 import "QC/QualityReport.wdl" as qualityReportWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
+import "tasks/samplesheet.wdl" as samplesheet
 import "tasks/star.wdl" as star
 
 
 workflow readgroup {
-    Array[File] sampleConfigs
-    String readgroupId
-    String libraryId
-    String sampleId
-    String? platform
-    String outputDir
+    input {
+        Readgroup readgroup
+        String libraryId
+        String sampleId
+        String outputDir
+    }
 
-    call biopet.SampleConfig as config {
+    call common.CheckFileMD5 as md5CheckR1 {
         input:
-             inputFiles = sampleConfigs,
-             sample = sampleId,
-             library = libraryId,
-             readgroup = readgroupId,
-             tsvOutputPath = outputDir + "/" + readgroupId + ".config.tsv",
-             keyFilePath = outputDir + "/" + readgroupId + ".config.keys"
+            file = readgroup.R1,
+            MD5sum = readgroup.R1_md5
     }
 
-    Map[String,String] configValues = if (defined(config.tsvOutput) && size(config.tsvOutput) > 0)
-        then read_map(config.tsvOutput)
-        else { "": "" }
-
-    if (defined(configValues["R1_md5"])) {
-        call common.CheckFileMD5 as md5CheckR1 {
-            input:
-                file=configValues["R1"],
-                MD5sum=configValues["R1_md5"]
-        }
-    }
-
-    if (defined(configValues["R2_md5"])) {
+    if (defined(readgroup.R2)) {
         call common.CheckFileMD5 as md5CheckR2 {
             input:
-                file=configValues["R2"],
-                MD5sum=configValues["R2_md5"]
+                file = select_first([readgroup.R2]),
+                MD5sum = select_first([readgroup.R2_md5])
         }
     }
 
     call biopet.ValidateFastq {
         input:
-            fastq1 = configValues["R1"],
-            fastq2 = configValues["R2"]
+            fastq1 = readgroup.R1,
+            fastq2 = readgroup.R2
     }
 
 
@@ -55,27 +42,29 @@ workflow readgroup {
     # Raw quality report
     call qualityReportWorkflow.QualityReport as rawQualityReportR1 {
         input:
-            read = configValues["R1"],
+            read = readgroup.R1,
             outputDir = outputDir + "/QC/read1/",
             extractAdapters = true
     }
 
-    if (defined(configValues["R2"])) {
+    if (defined(readgroup.R2)) {
         call qualityReportWorkflow.QualityReport as rawQualityReportR2 {
             input:
-                read = configValues["R2"],
+                read = select_first([readgroup.R2]),
                 outputDir = outputDir + "/QC/read2",
                 extractAdapters = true
         }
     }
 
     # Adapter clipping
-    Boolean runAdapterClipping = defined(rawQualityReportR1.adapters) || defined(rawQualityReportR2.adapters)
+    Boolean runAdapterClipping = defined(rawQualityReportR1.adapters) ||
+        defined(rawQualityReportR2.adapters)
+
     if (runAdapterClipping) {
         call adapterClippingWorkflow.AdapterClipping as adapterClipping {
             input:
-                read1 = configValues["R1"],
-                read2 = configValues["R2"],
+                read1 = readgroup.R1,
+                read2 = readgroup.R2,
                 outputDir = outputDir + "AdapterClipping/",
                 adapterListRead1 = rawQualityReportR1.adapters,
                 adapterListRead2 = rawQualityReportR2.adapters
@@ -102,9 +91,9 @@ workflow readgroup {
     output {
         File cleanR1 = if runAdapterClipping
             then select_first([adapterClipping.read1afterClipping])
-            else configValues["R1"]
+            else readgroup.R1
         File? cleanR2 = if runAdapterClipping
             then select_first([adapterClipping.read1afterClipping])
-            else configValues["R2"]
+            else readgroup.R2
     }
 }

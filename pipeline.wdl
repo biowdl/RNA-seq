@@ -1,27 +1,27 @@
+version 1.0
+
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
 import "tasks/biopet.wdl" as biopet
+import "tasks/samplesheet.wdl" as samplesheet
 
 workflow pipeline {
-    Array[File] sampleConfigFiles
-    String outputDir
-    File refFasta
-    File refDict
-    File refFastaIndex
-    File refRefflat
-    File refGtf
-    String strandedness
-    File dbsnpVCF
-    File dbsnpVCFindex
-
-    #parse sample configs
-    call biopet.SampleConfig as config {
-        input:
-            inputFiles = sampleConfigFiles,
-            keyFilePath = outputDir + "/config.keys"
+    input {
+        Array[File] sampleConfigFiles
+        String outputDir
+        File refFasta
+        File refDict
+        File refFastaIndex
+        File refRefflat
+        File refGtf
+        String strandedness
+        File dbsnpVCF
+        File dbsnpVCFindex
+        String starIndexDir
     }
 
+    # Validation of annotations and dbSNP
     call biopet.ValidateAnnotation as validateAnnotation {
         input:
             refRefflat = refRefflat,
@@ -40,19 +40,29 @@ workflow pipeline {
             refDict = refDict
     }
 
-    scatter (sm in read_lines(config.keysFile)){
-        call sampleWorkflow.sample  as sample {
+    # Parse sample configs
+    scatter (sampleConfigFile in sampleConfigFiles) {
+        call samplesheet.sampleConfigFileToStruct as config {
             input:
-                sampleDir = outputDir + "/samples/" + sm + "/",
-                sampleConfigs = sampleConfigFiles,
-                sampleId = sm,
+                sampleConfigFile = sampleConfigFile
+        }
+    }
+
+    Array[Sample] samples = flatten(config.samples)
+
+    scatter (sample in samples){
+        call sampleWorkflow.sample as sample {
+            input:
+                sampleDir = outputDir + "/samples/" + sample.id + "/",
+                sample = sample,
                 refFasta = refFasta,
                 refDict = refDict,
                 refFastaIndex = refFastaIndex,
                 refRefflat = refRefflat,
                 dbsnpVCF = dbsnpVCF,
                 dbsnpVCFindex = dbsnpVCFindex,
-                strandedness = strandedness
+                strandedness = strandedness,
+                starIndexDir = starIndexDir
         }
     }
 
@@ -79,6 +89,5 @@ workflow pipeline {
     }
 
     output {
-        Array[String] samples = read_lines(config.keysFile)
     }
 }
