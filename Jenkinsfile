@@ -10,6 +10,7 @@ pipeline {
     environment {
         CROMWELL_JAR    = credentials('cromwell-jar')
         CROMWELL_CONFIG = credentials('cromwell-config')
+        CROMWELL_BACKEND = credentials('cromwell-backend')
         FIXTURE_DIR     = credentials('fixture-dir')
         CONDA_PREFIX    = credentials('conda-prefix')
         THREADS         = credentials('threads')
@@ -25,9 +26,9 @@ pipeline {
                     def sbtHome = tool 'sbt 1.0.4'
                     env.outputDir= "${OUTPUT_DIR}/${JOB_NAME}/${BUILD_NUMBER}"
                     env.condaEnv= "${outputDir}/conda_env"
-                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
+                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
                     env.activateEnv= "source ${CONDA_PREFIX}/activate \$(readlink -f ${condaEnv})"
-                    env.createEnv= "${CONDA_PREFIX}/conda-env create environment.yml -p ${condaEnv}"
+                    env.createEnv= "${CONDA_PREFIX}/conda-env create -f environment.yml -p ${condaEnv}"
                 }
                 sh "rm -rf ${outputDir}"
                 sh "mkdir -p ${outputDir}"
@@ -37,8 +38,8 @@ pipeline {
         stage('Create conda environment') {
             steps {
                 sh "#!/bin/bash\n" +
-                        "set -e -v -o pipefail\n" +
-                        "${createEnv}\n"
+                    "set -e -v -o pipefail\n" +
+                    "${createEnv}\n"
             }
         }
 
