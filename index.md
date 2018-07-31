@@ -45,7 +45,7 @@ to see all available inputs.
 | sample.library.preprocessing.<br />baseRecalibrator.<br />knownIndelsSitesVCFs | `Array[File]?` | A VCF file containing known indels. |
 | JointGenotyping.<br />mergeGvcfFiles | `Boolean?` | Whether or not to produce a multisample gVCF file. |
 
->All inputs have to be preceded by with `pipeline.`.
+>All inputs have to be preceded by `pipeline.`.
 Type is indicated according to the WDL data types: `File` should be indicators
 of file location (a string in JSON). Types ending in `?` indicate the input is
 optional, types ending in `+` indicate they require at least one element.
