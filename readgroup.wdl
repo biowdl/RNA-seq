@@ -4,7 +4,7 @@ import "QC/AdapterClipping.wdl" as adapterClippingWorkflow
 import "QC/QualityReport.wdl" as qualityReportWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
-import "tasks/samplesheet.wdl" as samplesheet
+import "samplesheet.wdl" as samplesheet
 import "tasks/star.wdl" as star
 
 

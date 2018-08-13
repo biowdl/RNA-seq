@@ -4,7 +4,7 @@ import "bam-to-gvcf/gvcf.wdl" as gvcf
 import "library.wdl" as libraryWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
-import "tasks/samplesheet.wdl" as samplesheet
+import "samplesheet.wdl" as samplesheet
 import "tasks/samtools.wdl" as samtools
 
 workflow sample {

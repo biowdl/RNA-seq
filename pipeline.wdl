@@ -3,8 +3,8 @@ version 1.0
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
+import "samplesheet.wdl" as samplesheet
 import "tasks/biopet.wdl" as biopet
-import "tasks/samplesheet.wdl" as samplesheet
 
 workflow pipeline {
     input {
@@ -42,7 +42,7 @@ workflow pipeline {
 
     # Parse sample configs
     scatter (sampleConfigFile in sampleConfigFiles) {
-        call samplesheet.sampleConfigFileToStruct as config {
+        call samplesheet.SampleConfigFileToStruct as config {
             input:
                 sampleConfigFile = sampleConfigFile
         }

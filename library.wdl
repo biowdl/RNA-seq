@@ -6,7 +6,7 @@ import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "readgroup.wdl" as readgroupWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/picard.wdl" as picard
-import "tasks/samplesheet.wdl" as samplesheet
+import "samplesheet.wdl" as samplesheet
 
 workflow library {
     input {
