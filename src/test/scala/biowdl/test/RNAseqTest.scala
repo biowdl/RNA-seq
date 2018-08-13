@@ -28,8 +28,6 @@ import nl.biopet.utils.biowdl.annotations.TestAnnotation
 import nl.biopet.utils.biowdl.references.TestReference
 import nl.biopet.utils.biowdl.samples.{Rna3PairedEnd, Rna3SingleEnd}
 
-/* Single End doesn't work due to problem related to
- * https://github.com/broadinstitute/cromwell/issues/3093
 class RNAseqTestSingleEnd
     extends RNAseqSuccess
     with TestReference
@@ -38,7 +36,6 @@ class RNAseqTestSingleEnd
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 }
- */
 
 class RNAseqTestPairedEnd
     extends RNAseqSuccess

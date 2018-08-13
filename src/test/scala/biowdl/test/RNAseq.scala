@@ -44,7 +44,7 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
         "pipeline.strandedness" -> strandedness,
         "pipeline.refRefflat" -> referenceRefflat.map(_.getAbsolutePath),
         "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath),
-        "pipeline.sample.library.starAlignment.star.genomeDir" -> starGenomeDir
+        "pipeline.starIndexDir" -> starGenomeDir
           .map(_.getAbsolutePath),
         "pipeline.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
         "pipeline.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
