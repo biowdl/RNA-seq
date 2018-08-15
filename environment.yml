@@ -1,4 +1,4 @@
-name: multsample
+name: rnaseq
 channels:
   - bioconda
   - conda-forge
