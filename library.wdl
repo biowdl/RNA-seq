@@ -23,6 +23,8 @@ workflow library {
         String starIndexDir
     }
 
+    String libraryId = library.id
+
     scatter (rg in library.readgroups) {
         call readgroupWorkflow.readgroup as readgroup {
             input:
@@ -50,8 +52,8 @@ workflow library {
     call picard.MarkDuplicates as markDuplicates {
         input:
             input_bams = [starAlignment.bamFile],
-            output_bam_path = outputDir + "/" + sampleId + "-" + library.id + ".markdup.bam",
-            metrics_path = outputDir + "/" + sampleId + "-" + library.id + ".markdup.metrics"
+            output_bam_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
+            metrics_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
     }
 
     # Gather BAM Metrics
@@ -71,7 +73,7 @@ workflow library {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
-                outputBamPath = outputDir + "/" + sampleId + "-" + library.id + ".markdup.bqsr.bam",
+                outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr.bam",
                 refFasta = refFasta,
                 refDict = refDict,
                 refFastaIndex = refFastaIndex,

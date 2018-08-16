@@ -39,11 +39,17 @@ workflow readgroup {
 
     #TODO: Change everything below to the QC workflow once imports are fixed.
 
+    String qcRead1Dir = outputDir + "/QC/read1/"
+    String qcRead2Dir = outputDir + "/QC/read2/"
+    String adapterClippingDir = outputDir + "/AdapterClipping/"
+    String qcAfterRead1Dir = outputDir + "/QCafter/read1/"
+    String qcAfterRead2Dir = outputDir + "/QCafter/read2/"
+
     # Raw quality report
     call qualityReportWorkflow.QualityReport as rawQualityReportR1 {
         input:
             read = readgroup.R1,
-            outputDir = outputDir + "/QC/read1/",
+            outputDir = qcRead1Dir,
             extractAdapters = true
     }
 
@@ -51,7 +57,7 @@ workflow readgroup {
         call qualityReportWorkflow.QualityReport as rawQualityReportR2 {
             input:
                 read = select_first([readgroup.R2]),
-                outputDir = outputDir + "/QC/read2",
+                outputDir = qcRead2Dir,
                 extractAdapters = true
         }
     }
@@ -65,7 +71,7 @@ workflow readgroup {
             input:
                 read1 = readgroup.R1,
                 read2 = readgroup.R2,
-                outputDir = outputDir + "AdapterClipping/",
+                outputDir = adapterClippingDir,
                 adapterListRead1 = rawQualityReportR1.adapters,
                 adapterListRead2 = rawQualityReportR2.adapters
         }
@@ -74,7 +80,7 @@ workflow readgroup {
         call qualityReportWorkflow.QualityReport as cleanQualityReportR1 {
             input:
                 read = adapterClipping.read1afterClipping,
-                outputDir = outputDir + "/QCafter/read1",
+                outputDir = qcAfterRead1Dir,
                 extractAdapters = false
         }
 
@@ -82,7 +88,7 @@ workflow readgroup {
             call qualityReportWorkflow.QualityReport as cleanQualityReportR2 {
                 input:
                     read = select_first([adapterClipping.read2afterClipping]),
-                    outputDir = outputDir + "/QCafter/read2",
+                    outputDir = qcAfterRead2Dir,
                     extractAdapters = false
             }
         }
