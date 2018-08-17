@@ -24,7 +24,7 @@ workflow sample {
     scatter (library in sample.libraries) {
         call libraryWorkflow.library as library {
             input:
-                outputDir = sampleDir + "/lib_" + library.id + "/",
+                libraryDir = sampleDir + "/lib_" + library.id + "/",
                 sampleId = sample.id,
                 library = library,
                 refFasta = refFasta,
@@ -63,13 +63,15 @@ workflow sample {
         String lib = libraryId[0]
         call common.CreateLink as linkBam {
             input:
-                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib + ".markdup.bam",
+                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib +
+                    ".markdup.bam",
                 outputPath = sampleDir + "/" + sample.id + ".bam"
         }
 
         call common.CreateLink as linkIndex {
             input:
-                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib + ".markdup.bai",
+                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib +
+                    ".markdup.bai",
                 outputPath = sampleDir + "/" + sample.id + ".bai"
         }
     }

@@ -21,6 +21,9 @@ workflow pipeline {
         String starIndexDir
     }
 
+    String expressionDir = outputDir + "/expression_measures/"
+    String genotypingDir = outputDir
+
     # Validation of annotations and dbSNP
     call biopet.ValidateAnnotation as validateAnnotation {
         input:
@@ -69,7 +72,7 @@ workflow pipeline {
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
             bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
-            outputDir = outputDir + "/expression_measures/",
+            outputDir = expressionDir,
             strandedness = strandedness,
             refGtf = refGtf,
             refRefflat = refRefflat
@@ -80,7 +83,7 @@ workflow pipeline {
             refFasta = refFasta,
             refDict = refDict,
             refFastaIndex = refFastaIndex,
-            outputDir = outputDir,
+            outputDir = genotypingDir,
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,
             vcfBasename = "multisample",

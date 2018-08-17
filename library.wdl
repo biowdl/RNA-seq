@@ -12,7 +12,7 @@ workflow library {
     input {
         Library library
         String sampleId
-        String outputDir
+        String libraryDir
         File refFasta
         File refDict
         File refFastaIndex
@@ -28,7 +28,7 @@ workflow library {
     scatter (rg in library.readgroups) {
         call readgroupWorkflow.readgroup as readgroup {
             input:
-                outputDir = outputDir + "/rg_" + rg.id + "/",
+                readgroupDir = libraryDir + "/rg_" + rg.id + "/",
                 sampleId = sampleId,
                 libraryId = library.id,
                 readgroup = rg
@@ -41,7 +41,7 @@ workflow library {
         input:
             inputR1 = readgroup.cleanR1,
             inputR2 = select_all(readgroup.cleanR2),
-            outputDir = outputDir + "/star/",
+            outputDir = libraryDir + "/star/",
             sample = sampleId,
             library = library.id,
             readgroups = readgroups,
@@ -52,8 +52,8 @@ workflow library {
     call picard.MarkDuplicates as markDuplicates {
         input:
             input_bams = [starAlignment.bamFile],
-            output_bam_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
-            metrics_path = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+            output_bam_path = libraryDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
+            metrics_path = libraryDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
     }
 
     # Gather BAM Metrics
@@ -61,7 +61,7 @@ workflow library {
         input:
             bamFile = markDuplicates.output_bam,
             bamIndex = markDuplicates.output_bam_index,
-            outputDir = outputDir + "/metrics",
+            outputDir = libraryDir + "/metrics",
             refFasta = refFasta,
             refDict = refDict,
             refFastaIndex = refFastaIndex,
@@ -73,7 +73,7 @@ workflow library {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
-                outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr.bam",
+                outputBamPath = libraryDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr.bam",
                 refFasta = refFasta,
                 refDict = refDict,
                 refFastaIndex = refFastaIndex,
