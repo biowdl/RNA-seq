@@ -30,7 +30,7 @@ workflow readgroup {
         }
     }
 
-    call biopet.ValidateFastq {
+    call biopet.ValidateFastq as validateFastq {
         input:
             fastq1 = readgroup.R1,
             fastq2 = readgroup.R2

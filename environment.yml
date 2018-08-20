@@ -24,3 +24,4 @@ dependencies:
   - biopet-validateannotation==0.1
   - biopet-validatevcf==0.1
   - pyyaml==3.12
+  - biopet-vcfstats==1.2

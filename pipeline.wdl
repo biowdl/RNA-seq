@@ -22,7 +22,7 @@ workflow pipeline {
     }
 
     String expressionDir = outputDir + "/expression_measures/"
-    String genotypingDir = outputDir
+    String genotypingDir = outputDir + "/multisample_variants/"
 
     # Validation of annotations and dbSNP
     call biopet.ValidateAnnotation as validateAnnotation {
@@ -78,7 +78,7 @@ workflow pipeline {
             refRefflat = refRefflat
     }
 
-    call jointgenotyping.JointGenotyping {
+    call jointgenotyping.JointGenotyping as genotyping {
         input:
             refFasta = refFasta,
             refDict = refDict,
@@ -89,6 +89,16 @@ workflow pipeline {
             vcfBasename = "multisample",
             dbsnpVCF = dbsnpVCF,
             dbsnpVCFindex = dbsnpVCFindex
+    }
+
+    call biopet.VcfStats as vcfStats {
+        input:
+            vcfFile = genotyping.vcfFile,
+            vcfIndex = genotyping.vcfFileIndex,
+            refFasta = refFasta,
+            refFastaIndex = refFastaIndex,
+            refDict = refDict,
+            outputDir = genotypingDir + "/stats"
     }
 
     output {

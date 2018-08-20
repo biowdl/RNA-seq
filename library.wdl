@@ -57,7 +57,7 @@ workflow library {
     }
 
     # Gather BAM Metrics
-    call metrics.BamMetrics {
+    call metrics.BamMetrics as bamMetrics {
         input:
             bamFile = markDuplicates.output_bam,
             bamIndex = markDuplicates.output_bam_index,
