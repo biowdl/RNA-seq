@@ -1,7 +1,8 @@
 language: java
 script:
   - set -e
-  - wget https://github.com/broadinstitute/cromwell/releases/download/31/womtool-31.jar
-  - for F in *.wdl; do echo $F; java -jar womtool-31.jar validate $F; done
+  - export CROMWELL_VERSION=34
+  - wget https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/womtool-$CROMWELL_VERSION.jar
+  - for F in *.wdl; do echo $F; java -jar womtool-$CROMWELL_VERSION.jar validate $F; done
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then git submodule foreach --recursive git checkout $TRAVIS_BRANCH && git submodule foreach --recursive git pull; fi'
   - "git diff --exit-code || (echo ERROR: Git changes detected. Please update submodules && exit 1)"

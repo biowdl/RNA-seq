@@ -38,21 +38,21 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
     super.inputs ++
       Map(
         "pipeline.outputDir" -> outputDir.getAbsolutePath,
-        "pipeline.refFasta" -> referenceFasta.getAbsolutePath,
-        "pipeline.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "pipeline.refDict" -> referenceFastaDictFile.getAbsolutePath,
-        "pipeline.strandedness" -> strandedness,
-        "pipeline.refRefflat" -> referenceRefflat.map(_.getAbsolutePath),
-        "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath),
-        "pipeline.sample.createGvcf.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.sample.library.preprocessing.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.sample.library.preprocessing.dbsnpVCFindex" -> getVcfIndexFile(
-          dbsnpFile).getAbsolutePath,
-        "pipeline.sample.library.starAlignment.star.genomeDir" -> starGenomeDir
-          .map(_.getAbsolutePath),
-        "pipeline.JointGenotyping.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.sample.createGvcf.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath,
-        "pipeline.JointGenotyping.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
+        "pipeline.rnaSeqInput" -> Map(
+          "reference" -> Map(
+            "fasta" -> referenceFasta.getAbsolutePath,
+            "fai" -> referenceFastaIndexFile.getAbsolutePath,
+            "dict" -> referenceFastaDictFile.getAbsolutePath
+          ),
+          "strandedness" -> strandedness,
+          "starIndexDir" -> starGenomeDir.map(_.getAbsolutePath),
+          "refflatFile" -> referenceRefflat.map(_.getAbsolutePath),
+          "gtfFile" -> referenceGtf.map(_.getAbsolutePath),
+          "dbsnp" -> Map(
+            "file" -> dbsnpFile.getAbsolutePath,
+            "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
+          )
+        )
       )
 
   def startFile: File = new File("./pipeline.wdl")

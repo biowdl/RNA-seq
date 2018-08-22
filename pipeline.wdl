@@ -1,58 +1,90 @@
+version 1.0
+
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
 import "tasks/biopet.wdl" as biopet
+import "structs.wdl" as structs
+import "tasks/common.wdl" as common
 
 workflow pipeline {
-    Array[File] sampleConfigFiles
-    String outputDir
-    File refFasta
-    File refDict
-    File refFastaIndex
-    File refRefflat
-    File refGtf
-    String strandedness
-
-    #parse sample configs
-    call biopet.SampleConfig as config {
-        input:
-            inputFiles = sampleConfigFiles,
-            keyFilePath = outputDir + "/config.keys"
+    input {
+        Array[File] sampleConfigFiles
+        String outputDir
+        RnaSeqInput rnaSeqInput
     }
 
-    scatter (sm in read_lines(config.keysFile)){
-        call sampleWorkflow.sample  as sample {
+    String expressionDir = outputDir + "/expression_measures/"
+    String genotypingDir = outputDir + "/multisample_variants/"
+
+    # Validation of annotations and dbSNP
+    call biopet.ValidateAnnotation as validateAnnotation {
+        input:
+            refRefflat = rnaSeqInput.refflatFile,
+            gtfFile = rnaSeqInput.gtfFile,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict
+    }
+
+    call biopet.ValidateVcf as validateVcf {
+        input:
+            vcfFile = rnaSeqInput.dbsnp.file,
+            vcfIndex = rnaSeqInput.dbsnp.index,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict
+    }
+
+    call biopet.SampleConfigCromwellArrays as configFile {
+      input:
+        inputFiles = sampleConfigFiles,
+        outputPath = "samples.json"
+    }
+
+    Root config = read_json(configFile.outputFile)
+
+    scatter (sm in config.samples) {
+        call sampleWorkflow.Sample as sample {
             input:
-                sampleDir = outputDir + "/samples/" + sm + "/",
-                sampleConfigs = sampleConfigFiles,
-                sampleId = sm,
-                refFasta = refFasta,
-                refDict = refDict,
-                refFastaIndex = refFastaIndex
+                rnaSeqInput = rnaSeqInput,
+                sample = sm,
+                outputDir = outputDir + "/samples/" + sm.id
         }
     }
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
             bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
-            outputDir = outputDir + "/expression_measures/",
-            strandedness = strandedness,
-            refGtf = refGtf,
-            refRefflat = refRefflat
+            outputDir = expressionDir,
+            strandedness = rnaSeqInput.strandedness,
+            refflatFile = rnaSeqInput.refflatFile,
+            gtfFile = rnaSeqInput.gtfFile
     }
 
-    call jointgenotyping.JointGenotyping {
+    call jointgenotyping.JointGenotyping as genotyping {
         input:
-            refFasta = refFasta,
-            refDict = refDict,
-            refFastaIndex = refFastaIndex,
-            outputDir = outputDir,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict,
+            outputDir = genotypingDir,
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,
-            vcfBasename = "multisample"
+            vcfBasename = "multisample",
+            dbsnpVCF = rnaSeqInput.dbsnp.file,
+            dbsnpVCFindex = rnaSeqInput.dbsnp.index
+    }
+
+    call biopet.VcfStats as vcfStats {
+        input:
+            vcfFile = genotyping.vcfFile,
+            vcfIndex = genotyping.vcfFileIndex,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict,
+            outputDir = genotypingDir + "/stats"
     }
 
     output {
-        Array[String] samples = read_lines(config.keysFile)
     }
 }

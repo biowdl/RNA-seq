@@ -7,7 +7,7 @@ and expression quantification.
 
 ## Documentation
 
-TBD
+You can find the documentation [here](https://biowdl.github.io/RNA-seq/).
 
 ## About
 This pipeline is part of [Biowdl](https://github.com/biowdl),

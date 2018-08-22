@@ -1,4 +1,4 @@
-name: multsample
+name: rnaseq
 channels:
   - bioconda
   - conda-forge
@@ -6,7 +6,7 @@ channels:
   - r
 dependencies:
   - biopet-extractadaptersfastqc==0.2
-  - biopet-sampleconfig==0.1
+  - biopet-sampleconfig==0.2
   - gatk4==4.0.4.0
   - picard==2.18.7
   - cutadapt==1.16
@@ -20,4 +20,8 @@ dependencies:
   - biopet-basecounter==0.1
   - biopet-seqstat==0.1
   - star==2.6.0c
-
+  - biopet-validatefastq==0.1.1
+  - biopet-validateannotation==0.1
+  - biopet-validatevcf==0.1
+  - pyyaml==3.12
+  - biopet-vcfstats==1.2
