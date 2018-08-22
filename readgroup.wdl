@@ -6,14 +6,15 @@ import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
 import "samplesheet.wdl" as samplesheet
 import "tasks/star.wdl" as star
-
+import "structs.wdl" as structs
 
 workflow readgroup {
     input {
         Readgroup readgroup
-        String libraryId
-        String sampleId
-        String readgroupDir
+        Library library
+        Sample sample
+        String outputDir
+        RnaSeqInput rnaSeqInput
     }
 
     call common.CheckFileMD5 as md5CheckR1 {
@@ -39,11 +40,11 @@ workflow readgroup {
 
     #TODO: Change everything below to the QC workflow once imports are fixed.
 
-    String qcRead1Dir = readgroupDir + "/QC/read1/"
-    String qcRead2Dir = readgroupDir + "/QC/read2/"
-    String adapterClippingDir = readgroupDir + "/AdapterClipping/"
-    String qcAfterRead1Dir = readgroupDir + "/QCafter/read1/"
-    String qcAfterRead2Dir = readgroupDir + "/QCafter/read2/"
+    String qcRead1Dir = outputDir + "/QC/read1/"
+    String qcRead2Dir = outputDir + "/QC/read2/"
+    String adapterClippingDir = outputDir + "/AdapterClipping/"
+    String qcAfterRead1Dir = outputDir + "/QCafter/read1/"
+    String qcAfterRead2Dir = outputDir + "/QCafter/read2/"
 
     # Raw quality report
     call qualityReportWorkflow.QualityReport as rawQualityReportR1 {

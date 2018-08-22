@@ -6,40 +6,24 @@ import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
 import "samplesheet.wdl" as samplesheet
 import "tasks/samtools.wdl" as samtools
+import "structs.wdl" as structs
 
 workflow sample {
     input {
         Sample sample
-        String sampleDir
-        File refFasta
-        File refDict
-        File refFastaIndex
-        File refRefflat
-        File dbsnpVCF
-        File dbsnpVCFindex
-        String strandedness
-        String starIndexDir
+        String outputDir
+        RnaSeqInput rnaSeqInput
     }
 
     scatter (library in sample.libraries) {
-        call libraryWorkflow.library as library {
+        call libraryWorkflow.Library as library {
             input:
-                libraryDir = sampleDir + "/lib_" + library.id + "/",
-                sampleId = sample.id,
-                library = library,
-                refFasta = refFasta,
-                refDict = refDict,
-                refFastaIndex = refFastaIndex,
-                refRefflat = refRefflat,
-                dbsnpVCF = dbsnpVCF,
-                dbsnpVCFindex = dbsnpVCFindex,
-                strandedness = strandedness,
-                starIndexDir = starIndexDir
+                rnaSeqInput = rnaSeqInput,
+                outputDir = outputDir + "/lib_" + library.id,
+                sample = sample,
+                library = library
+            }
         }
-
-        # Necessary for predicting the path to the BAM/BAI in linkBam and linkIndex
-        String libraryId = library.id
-    }
 
     Boolean multipleBams = length(library.bamFile) > 1
 
@@ -48,45 +32,42 @@ workflow sample {
         call samtools.Merge as mergeLibraries {
             input:
                 bamFiles = library.bamFile,
-                outputBamPath = sampleDir + "/" + sample.id + ".bam"
+                outputBamPath = outputDir + "/" + sample.id + ".bam"
         }
 
         call samtools.Index as mergedIndex {
             input:
                 bamFilePath = mergeLibraries.outputBam,
-                bamIndexPath = sampleDir + "/" + sample.id + ".bai"
+                bamIndexPath = outputDir + "/" + sample.id + ".bai"
         }
     }
 
     # Create links instead, if there is only one bam, to retain output structure.
     if (! multipleBams) {
-        String lib = libraryId[0]
         call common.CreateLink as linkBam {
             input:
-                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib +
-                    ".markdup.bam",
-                outputPath = sampleDir + "/" + sample.id + ".bam"
+                inputFile = library[0].bamFile,
+                outputPath = outputDir + "/" + sample.id + ".bam"
         }
 
         call common.CreateLink as linkIndex {
             input:
-                inputFile = sampleDir + "/lib_" + lib + "/" + sample.id + "-" + lib +
-                    ".markdup.bai",
-                outputPath = sampleDir + "/" + sample.id + ".bai"
+                inputFile = library[0].bamIndexFile,
+                outputPath = outputDir + "/" + sample.id + ".bai"
         }
     }
 
     # variant calling, requires different bam file than counting
     call gvcf.Gvcf as createGvcf {
         input:
-            refFasta = refFasta,
-            refDict = refDict,
-            refFastaIndex = refFastaIndex,
             bamFiles = library.preprocessBamFile,
             bamIndexes = library.preprocessBamIndexFile,
-            gvcfPath = sampleDir + "/" + sample.id + ".g.vcf.gz",
-            dbsnpVCF = dbsnpVCF,
-            dbsnpVCFindex = dbsnpVCFindex
+            gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
+            vcfFile = rnaSeqInput.dbsnp.file,
+            vcfIndex = rnaSeqInput.dbsnp.index,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict
     }
 
     output {

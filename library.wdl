@@ -7,53 +7,44 @@ import "readgroup.wdl" as readgroupWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/picard.wdl" as picard
 import "samplesheet.wdl" as samplesheet
+import "structs.wdl" as structs
 
 workflow library {
     input {
         Library library
-        String sampleId
-        String libraryDir
-        File refFasta
-        File refDict
-        File refFastaIndex
-        File refRefflat
-        File dbsnpVCF
-        File dbsnpVCFindex
-        String strandedness
-        String starIndexDir
+        Sample sample
+        String outputDir
+        RnaSeqInput rnaSeqInput
     }
 
-    String libraryId = library.id
-
     scatter (rg in library.readgroups) {
-        call readgroupWorkflow.readgroup as readgroup {
+        call readgroupWorkflow.Readgroup as readgroup {
             input:
-                readgroupDir = libraryDir + "/rg_" + rg.id + "/",
-                sampleId = sampleId,
-                libraryId = library.id,
+                rnaSeqInput = rnaSeqInput,
+                outputDir = outputDir + "/rg_" + rg.id,
+                sample = sample,
+                library = library,
                 readgroup = rg
         }
-
-        String readgroups = rg.id
     }
 
     call star.AlignStar as starAlignment {
         input:
             inputR1 = readgroup.cleanR1,
             inputR2 = select_all(readgroup.cleanR2),
-            outputDir = libraryDir + "/star/",
-            sample = sampleId,
+            outputDir = outputDir + "/star/",
+            sample = sample.id,
             library = library.id,
-            readgroups = readgroups,
-            starIndexDir = starIndexDir
+            readgroups = readgroup.id,
+            starIndexDir = rnaSeqInput.starIndexDir
     }
 
     # Preprocess BAM for variant calling
     call picard.MarkDuplicates as markDuplicates {
         input:
             input_bams = [starAlignment.bamFile],
-            output_bam_path = libraryDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
-            metrics_path = libraryDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+            output_bam_path = outputDir + "/" + sample.id + "-" + library.id + ".markdup.bam",
+            metrics_path = outputDir + "/" + sample.id + "-" + library.id + ".markdup.metrics"
     }
 
     # Gather BAM Metrics
@@ -61,25 +52,25 @@ workflow library {
         input:
             bamFile = markDuplicates.output_bam,
             bamIndex = markDuplicates.output_bam_index,
-            outputDir = libraryDir + "/metrics",
-            refFasta = refFasta,
-            refDict = refDict,
-            refFastaIndex = refFastaIndex,
-            strandedness = strandedness,
-            refRefflat = refRefflat
+            outputDir = outputDir + "/metrics",
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict,
+            strandedness = rnaSeqInput.strandedness,
+            refRefflat = rnaSeqInput.annotation.refflatFile
     }
 
     call preprocess.GatkPreprocess as preprocessing {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
-                outputBamPath = libraryDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr.bam",
-                refFasta = refFasta,
-                refDict = refDict,
-                refFastaIndex = refFastaIndex,
+                outputBamPath = outputDir + "/" + sample.id + "-" + library.id + ".markdup.bqsr.bam",
                 splitSplicedReads = true,
-                dbsnpVCF = dbsnpVCF,
-                dbsnpVCFindex = dbsnpVCFindex
+                vcfFile = rnaSeqInput.dbsnp.file,
+                vcfIndex = rnaSeqInput.dbsnp.index,
+                refFasta = rnaSeqInput.reference.fasta,
+                refFastaIndex = rnaSeqInput.reference.fai,
+                refDict = rnaSeqInput.reference.dict
     }
 
     output {

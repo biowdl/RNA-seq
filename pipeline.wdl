@@ -5,20 +5,13 @@ import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
 import "samplesheet.wdl" as samplesheet
 import "tasks/biopet.wdl" as biopet
+import "structs.wdl" as structs
 
 workflow pipeline {
     input {
         Array[File] sampleConfigFiles
         String outputDir
-        File refFasta
-        File refDict
-        File refFastaIndex
-        File refRefflat
-        File refGtf
-        String strandedness
-        File dbsnpVCF
-        File dbsnpVCFindex
-        String starIndexDir
+        RnaSeqInput rnaSeqInput
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -27,45 +20,36 @@ workflow pipeline {
     # Validation of annotations and dbSNP
     call biopet.ValidateAnnotation as validateAnnotation {
         input:
-            refRefflat = refRefflat,
-            gtfFile = refGtf,
-            refFasta = refFasta,
-            refFastaIndex = refFastaIndex,
-            refDict = refDict
+            refRefflat = rnaSeqInput.annotation.refflatFile,
+            gtfFile = rnaSeqInput.annotation.gtfFile,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict
     }
 
     call biopet.ValidateVcf as validateVcf {
         input:
-            vcfFile = dbsnpVCF,
-            vcfIndex = dbsnpVCFindex,
-            refFasta = refFasta,
-            refFastaIndex = refFastaIndex,
-            refDict = refDict
+            vcfFile = rnaSeqInput.dbsnp.file,
+            vcfIndex = rnaSeqInput.dbsnp.index,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict
     }
 
-    # Parse sample configs
-    scatter (sampleConfigFile in sampleConfigFiles) {
-        call samplesheet.SampleConfigFileToStruct as config {
-            input:
-                sampleConfigFile = sampleConfigFile
-        }
+    call biopet.SampleConfigCromwellArrays as configFile {
+      input:
+        inputFiles = sampleConfigFiles,
+        outputPath = "samples.json"
     }
 
-    Array[Sample] samples = flatten(config.samples)
+    Root config = read_json(configFile.outputFile)
 
-    scatter (sample in samples){
-        call sampleWorkflow.sample as sample {
+    scatter (sample in config.samples) {
+        call sampleWorkflow.Sample as sample {
             input:
-                sampleDir = outputDir + "/samples/" + sample.id + "/",
+                rnaSeqInput = rnaSeqInput,
                 sample = sample,
-                refFasta = refFasta,
-                refDict = refDict,
-                refFastaIndex = refFastaIndex,
-                refRefflat = refRefflat,
-                dbsnpVCF = dbsnpVCF,
-                dbsnpVCFindex = dbsnpVCFindex,
-                strandedness = strandedness,
-                starIndexDir = starIndexDir
+                outputDir = outputDir + "/samples/" + sample.id
         }
     }
 
@@ -73,31 +57,31 @@ workflow pipeline {
         input:
             bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
             outputDir = expressionDir,
-            strandedness = strandedness,
-            refGtf = refGtf,
-            refRefflat = refRefflat
+            strandedness = rnaSeqInput.strandedness,
+            refRefflat = rnaSeqInput.annotation.refflatFile,
+            gtfFile = rnaSeqInput.annotation.gtfFile
     }
 
     call jointgenotyping.JointGenotyping as genotyping {
         input:
-            refFasta = refFasta,
-            refDict = refDict,
-            refFastaIndex = refFastaIndex,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict,
             outputDir = genotypingDir,
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,
             vcfBasename = "multisample",
-            dbsnpVCF = dbsnpVCF,
-            dbsnpVCFindex = dbsnpVCFindex
+            vcfFile = rnaSeqInput.dbsnp.file,
+            vcfIndex = rnaSeqInput.dbsnp.index
     }
 
     call biopet.VcfStats as vcfStats {
         input:
             vcfFile = genotyping.vcfFile,
             vcfIndex = genotyping.vcfFileIndex,
-            refFasta = refFasta,
-            refFastaIndex = refFastaIndex,
-            refDict = refDict,
+            refFasta = rnaSeqInput.reference.fasta,
+            refFastaIndex = rnaSeqInput.reference.fai,
+            refDict = rnaSeqInput.reference.dict,
             outputDir = genotypingDir + "/stats"
     }
 
