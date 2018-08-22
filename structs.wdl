@@ -13,7 +13,6 @@ struct Readgroup {
 
 struct Library {
     String id
-    String strandedness
     Array[Readgroup] readgroups
 }
 
@@ -26,20 +25,11 @@ struct Root {
     Array[Sample] samples
 }
 
-struct Annotation {
-    File refflatFile
-    File gtfFile
-}
-
-struct VcfFile {
-    File file
-    File? index
-}
-
 struct RnaSeqInput {
     Reference reference
-    Annotation annotation
-    VcfFile dbsnp
+    IndexedVcfFile dbsnp
     String starIndexDir
     String strandedness
+    File refflatFile
+    File gtfFile
 }

@@ -4,11 +4,10 @@ import "QC/AdapterClipping.wdl" as adapterClippingWorkflow
 import "QC/QualityReport.wdl" as qualityReportWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
-import "samplesheet.wdl" as samplesheet
 import "tasks/star.wdl" as star
 import "structs.wdl" as structs
 
-workflow readgroup {
+workflow Readgroup {
     input {
         Readgroup readgroup
         Library library
@@ -17,10 +16,12 @@ workflow readgroup {
         RnaSeqInput rnaSeqInput
     }
 
-    call common.CheckFileMD5 as md5CheckR1 {
-        input:
-            file = readgroup.R1,
-            MD5sum = readgroup.R1_md5
+    if (defined(readgroup.R1_md5)) {
+        call common.CheckFileMD5 as md5CheckR1 {
+            input:
+                file = readgroup.R1,
+                MD5sum = select_first([readgroup.R1_md5])
+        }
     }
 
     if (defined(readgroup.R2)) {

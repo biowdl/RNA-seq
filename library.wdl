@@ -6,10 +6,9 @@ import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "readgroup.wdl" as readgroupWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/picard.wdl" as picard
-import "samplesheet.wdl" as samplesheet
 import "structs.wdl" as structs
 
-workflow library {
+workflow Library {
     input {
         Library library
         Sample sample
@@ -18,7 +17,7 @@ workflow library {
     }
 
     scatter (rg in library.readgroups) {
-        call readgroupWorkflow.Readgroup as readgroup {
+        call readgroupWorkflow.Readgroup as readgroupWorkflow {
             input:
                 rnaSeqInput = rnaSeqInput,
                 outputDir = outputDir + "/rg_" + rg.id,
@@ -26,16 +25,17 @@ workflow library {
                 library = library,
                 readgroup = rg
         }
+        String readgroupId = rg.id
     }
 
     call star.AlignStar as starAlignment {
         input:
-            inputR1 = readgroup.cleanR1,
-            inputR2 = select_all(readgroup.cleanR2),
+            inputR1 = readgroupWorkflow.cleanR1,
+            inputR2 = select_all(readgroupWorkflow.cleanR2),
             outputDir = outputDir + "/star/",
             sample = sample.id,
             library = library.id,
-            readgroups = readgroup.id,
+            readgroups = readgroupId,
             starIndexDir = rnaSeqInput.starIndexDir
     }
 
@@ -57,7 +57,7 @@ workflow library {
             refFastaIndex = rnaSeqInput.reference.fai,
             refDict = rnaSeqInput.reference.dict,
             strandedness = rnaSeqInput.strandedness,
-            refRefflat = rnaSeqInput.annotation.refflatFile
+            refRefflat = rnaSeqInput.refflatFile
     }
 
     call preprocess.GatkPreprocess as preprocessing {
@@ -66,8 +66,8 @@ workflow library {
                 bamIndex = markDuplicates.output_bam_index,
                 outputBamPath = outputDir + "/" + sample.id + "-" + library.id + ".markdup.bqsr.bam",
                 splitSplicedReads = true,
-                vcfFile = rnaSeqInput.dbsnp.file,
-                vcfIndex = rnaSeqInput.dbsnp.index,
+                dbsnpVCF = rnaSeqInput.dbsnp.file,
+                dbsnpVCFindex = rnaSeqInput.dbsnp.index,
                 refFasta = rnaSeqInput.reference.fasta,
                 refFastaIndex = rnaSeqInput.reference.fai,
                 refDict = rnaSeqInput.reference.dict

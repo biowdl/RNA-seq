@@ -4,24 +4,23 @@ import "bam-to-gvcf/gvcf.wdl" as gvcf
 import "library.wdl" as libraryWorkflow
 import "tasks/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
-import "samplesheet.wdl" as samplesheet
 import "tasks/samtools.wdl" as samtools
 import "structs.wdl" as structs
 
-workflow sample {
+workflow Sample {
     input {
         Sample sample
         String outputDir
         RnaSeqInput rnaSeqInput
     }
 
-    scatter (library in sample.libraries) {
+    scatter (lib in sample.libraries) {
         call libraryWorkflow.Library as library {
             input:
                 rnaSeqInput = rnaSeqInput,
-                outputDir = outputDir + "/lib_" + library.id,
+                outputDir = outputDir + "/lib_" + lib.id,
                 sample = sample,
-                library = library
+                library = lib
             }
         }
 
@@ -46,13 +45,13 @@ workflow sample {
     if (! multipleBams) {
         call common.CreateLink as linkBam {
             input:
-                inputFile = library[0].bamFile,
+                inputFile = library.bamFile[0],
                 outputPath = outputDir + "/" + sample.id + ".bam"
         }
 
         call common.CreateLink as linkIndex {
             input:
-                inputFile = library[0].bamIndexFile,
+                inputFile = library.bamIndexFile[0],
                 outputPath = outputDir + "/" + sample.id + ".bai"
         }
     }
@@ -63,8 +62,8 @@ workflow sample {
             bamFiles = library.preprocessBamFile,
             bamIndexes = library.preprocessBamIndexFile,
             gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
-            vcfFile = rnaSeqInput.dbsnp.file,
-            vcfIndex = rnaSeqInput.dbsnp.index,
+            dbsnpVCF = rnaSeqInput.dbsnp.file,
+            dbsnpVCFindex = rnaSeqInput.dbsnp.index,
             refFasta = rnaSeqInput.reference.fasta,
             refFastaIndex = rnaSeqInput.reference.fai,
             refDict = rnaSeqInput.reference.dict

@@ -38,16 +38,21 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
     super.inputs ++
       Map(
         "pipeline.outputDir" -> outputDir.getAbsolutePath,
-        "pipeline.refFasta" -> referenceFasta.getAbsolutePath,
-        "pipeline.refFastaIndex" -> referenceFastaIndexFile.getAbsolutePath,
-        "pipeline.refDict" -> referenceFastaDictFile.getAbsolutePath,
-        "pipeline.strandedness" -> strandedness,
-        "pipeline.refRefflat" -> referenceRefflat.map(_.getAbsolutePath),
-        "pipeline.refGtf" -> referenceGtf.map(_.getAbsolutePath),
-        "pipeline.starIndexDir" -> starGenomeDir
-          .map(_.getAbsolutePath),
-        "pipeline.dbsnpVCF" -> dbsnpFile.getAbsolutePath,
-        "pipeline.dbsnpVCFindex" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
+        "pipeline.rnaSeqInput" -> Map(
+          "reference" -> Map(
+            "fasta" -> referenceFasta.getAbsolutePath,
+            "fai" -> referenceFastaIndexFile.getAbsolutePath,
+            "dict" -> referenceFastaDictFile.getAbsolutePath
+          ),
+          "strandedness" -> strandedness,
+          "starIndexDir" -> starGenomeDir.map(_.getAbsolutePath),
+          "refflatFile" -> referenceRefflat.map(_.getAbsolutePath),
+          "gtfFile" -> referenceGtf.map(_.getAbsolutePath),
+          "dbsnp" -> Map(
+            "file" -> dbsnpFile.getAbsolutePath,
+            "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
+          )
+        )
       )
 
   def startFile: File = new File("./pipeline.wdl")

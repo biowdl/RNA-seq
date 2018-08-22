@@ -3,9 +3,9 @@ version 1.0
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
-import "samplesheet.wdl" as samplesheet
 import "tasks/biopet.wdl" as biopet
 import "structs.wdl" as structs
+import "tasks/common.wdl" as common
 
 workflow pipeline {
     input {
@@ -20,8 +20,8 @@ workflow pipeline {
     # Validation of annotations and dbSNP
     call biopet.ValidateAnnotation as validateAnnotation {
         input:
-            refRefflat = rnaSeqInput.annotation.refflatFile,
-            gtfFile = rnaSeqInput.annotation.gtfFile,
+            refRefflat = rnaSeqInput.refflatFile,
+            gtfFile = rnaSeqInput.gtfFile,
             refFasta = rnaSeqInput.reference.fasta,
             refFastaIndex = rnaSeqInput.reference.fai,
             refDict = rnaSeqInput.reference.dict
@@ -44,12 +44,12 @@ workflow pipeline {
 
     Root config = read_json(configFile.outputFile)
 
-    scatter (sample in config.samples) {
+    scatter (sm in config.samples) {
         call sampleWorkflow.Sample as sample {
             input:
                 rnaSeqInput = rnaSeqInput,
-                sample = sample,
-                outputDir = outputDir + "/samples/" + sample.id
+                sample = sm,
+                outputDir = outputDir + "/samples/" + sm.id
         }
     }
 
@@ -58,8 +58,8 @@ workflow pipeline {
             bams = zip(sample.sampleName, zip(sample.bam, sample.bai)),
             outputDir = expressionDir,
             strandedness = rnaSeqInput.strandedness,
-            refRefflat = rnaSeqInput.annotation.refflatFile,
-            gtfFile = rnaSeqInput.annotation.gtfFile
+            refflatFile = rnaSeqInput.refflatFile,
+            gtfFile = rnaSeqInput.gtfFile
     }
 
     call jointgenotyping.JointGenotyping as genotyping {
@@ -71,8 +71,8 @@ workflow pipeline {
             gvcfFiles = sample.gvcfFile,
             gvcfIndexes = sample.gvcfFileIndex,
             vcfBasename = "multisample",
-            vcfFile = rnaSeqInput.dbsnp.file,
-            vcfIndex = rnaSeqInput.dbsnp.index
+            dbsnpVCF = rnaSeqInput.dbsnp.file,
+            dbsnpVCFindex = rnaSeqInput.dbsnp.index
     }
 
     call biopet.VcfStats as vcfStats {
