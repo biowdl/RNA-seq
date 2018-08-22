@@ -16,16 +16,20 @@ workflow Library {
         RnaSeqInput rnaSeqInput
     }
 
+    String sampleId = sample.id
+    String libraryId = library.id
+
     scatter (rg in library.readgroups) {
+        String readgroupId = rg.id
+
         call readgroupWorkflow.Readgroup as readgroupWorkflow {
             input:
                 rnaSeqInput = rnaSeqInput,
-                outputDir = outputDir + "/rg_" + rg.id,
+                outputDir = outputDir + "/rg_" + readgroupId,
                 sample = sample,
                 library = library,
                 readgroup = rg
         }
-        String readgroupId = rg.id
     }
 
     call star.AlignStar as starAlignment {
@@ -43,8 +47,8 @@ workflow Library {
     call picard.MarkDuplicates as markDuplicates {
         input:
             input_bams = [starAlignment.bamFile],
-            output_bam_path = outputDir + "/" + sample.id + "-" + library.id + ".markdup.bam",
-            metrics_path = outputDir + "/" + sample.id + "-" + library.id + ".markdup.metrics"
+            output_bam_path = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bam",
+            metrics_path = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.metrics"
     }
 
     # Gather BAM Metrics
@@ -64,7 +68,7 @@ workflow Library {
             input:
                 bamFile = markDuplicates.output_bam,
                 bamIndex = markDuplicates.output_bam_index,
-                outputBamPath = outputDir + "/" + sample.id + "-" + library.id + ".markdup.bqsr.bam",
+                outputBamPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bqsr.bam",
                 splitSplicedReads = true,
                 dbsnpVCF = rnaSeqInput.dbsnp.file,
                 dbsnpVCFindex = rnaSeqInput.dbsnp.index,
