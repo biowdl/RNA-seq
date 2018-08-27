@@ -1,28 +1,32 @@
 [submodule "QC"]
-    branch = master
+    branch = develop
 	path = QC
 	url = https://github.com/biowdl/QC.git
 [submodule "tasks"]
-    branch = master
+    branch = develop
 	path = tasks
 	url = https://github.com/biowdl/tasks.git
 [submodule "aligning"]
-    branch = master
+    branch = develop
 	path = aligning
 	url = https://github.com/biowdl/aligning.git
 [submodule "bam-to-gvcf"]
-    branch = master
+    branch = develop
 	path = bam-to-gvcf
 	url = https://github.com/biowdl/bam-to-gvcf.git
 [submodule "jointgenotyping"]
+    branch = develop
 	path = jointgenotyping
 	url = https://github.com/biowdl/jointgenotyping.git
 [submodule "expression-quantification"]
+    branch = develop
 	path = expression-quantification
 	url = https://github.com/biowdl/expression-quantification.git
 [submodule "gatk-preprocess"]
+    branch = develop
 	path = gatk-preprocess
 	url = https://github.com/biowdl/gatk-preprocess.git
 [submodule "BamMetrics"]
+    branch = develop
 	path = BamMetrics
 	url = https://github.com/biowdl/BamMetrics
