@@ -32,6 +32,22 @@ pipeline {
                 }
                 sh "rm -rf ${outputDir}"
                 sh "mkdir -p ${outputDir}"
+
+                sh "#!/bin/bash\n" +
+                        "set -e -v -o pipefail\n" +
+                        "${sbt} clean evicted scalafmt headerCreate | tee sbt.log"
+                sh 'n=`grep -ce "\\* com.github.biopet" sbt.log || true`; if [ "$n" -ne \"0\" ]; then echo "ERROR: Found conflicting dependencies inside biopet"; exit 1; fi'
+                sh "git diff --exit-code || (echo \"ERROR: Git changes detected, please regenerate the readme, create license headers and run scalafmt: sbt biopetGenerateReadme headerCreate scalafmt\" && exit 1)"
+            }
+        }
+
+        stage('Submodules develop') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                sh 'git submodule foreach --recursive git checkout develop'
+                sh 'git submodule foreach --recursive git pull'
             }
         }
 
@@ -46,11 +62,9 @@ pipeline {
         stage('Build & Test') {
             steps {
                 sh "#!/bin/bash\n" +
-                        "set -e -v -o pipefail\n" +
+                        "set -e -v\n" +
                         "${activateEnv}\n" +
-                        "${sbt} clean evicted scalafmt headerCreate test | tee sbt.log"
-                sh 'n=`grep -ce "\\* com.github.biopet" sbt.log || true`; if [ "$n" -ne \"0\" ]; then echo "ERROR: Found conflicting dependencies inside biopet"; exit 1; fi'
-                sh "git diff --exit-code || (echo \"ERROR: Git changes detected, please regenerate the readme, create license headers and run scalafmt: sbt biopetGenerateReadme headerCreate scalafmt\" && exit 1)"
+                        "${sbt} test"
             }
         }
     }
