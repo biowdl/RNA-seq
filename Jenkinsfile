@@ -21,7 +21,7 @@ pipeline {
             steps {
                 sh 'java -version'
                 checkout scm
-                sh 'git submodule update --init --recursive --remote'
+                sh 'git submodule update --init --recursive'
                 script {
                     def sbtHome = tool 'sbt 1.0.4'
                     env.outputDir= "${OUTPUT_DIR}/${JOB_NAME}/${BUILD_NUMBER}"
