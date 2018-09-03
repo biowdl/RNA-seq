@@ -8,13 +8,15 @@ pipeline {
         jdk 'JDK 8u162'
     }
     environment {
-        CROMWELL_JAR    = credentials('cromwell-jar')
-        CROMWELL_CONFIG = credentials('cromwell-config')
-        CROMWELL_BACKEND = credentials('cromwell-backend')
-        FIXTURE_DIR     = credentials('fixture-dir')
-        CONDA_PREFIX    = credentials('conda-prefix')
-        THREADS         = credentials('threads')
-        OUTPUT_DIR      = credentials('output-dir')
+        CROMWELL_JAR      = credentials('cromwell-jar')
+        CROMWELL_CONFIG   = credentials('cromwell-config')
+        CROMWELL_BACKEND  = credentials('cromwell-backend')
+        FIXTURE_DIR       = credentials('fixture-dir')
+        CONDA_PREFIX      = credentials('conda-prefix')
+        THREADS           = credentials('threads')
+        OUTPUT_DIR        = credentials('output-dir')
+        FUNCTIONAL_TESTS  = credentials('functional-tests')
+        INTEGRATION_TESTS = credentials('integration-tests')
     }
     stages {
         stage('Init') {
@@ -26,7 +28,7 @@ pipeline {
                     def sbtHome = tool 'sbt 1.0.4'
                     env.outputDir= "${OUTPUT_DIR}/${JOB_NAME}/${BUILD_NUMBER}"
                     env.condaEnv= "${outputDir}/conda_env"
-                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
+                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.functionalTests=${FUNCTIONAL_TESTS} -Dbiowdl.integrationTests=${INTEGRATION_TESTS} -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
                     env.activateEnv= "source ${CONDA_PREFIX}/activate \$(readlink -f ${condaEnv})"
                     env.createEnv= "${CONDA_PREFIX}/conda-env create -f environment.yml -p ${condaEnv}"
                 }
