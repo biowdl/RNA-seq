@@ -28,7 +28,7 @@ workflow Readgroup {
         }
     }
 
-    if (defined(readgroup.R2)) {
+    if (defined(readgroup.R2_md5) && defined(readgroup.R2)) {
         call common.CheckFileMD5 as md5CheckR2 {
             input:
                 file = select_first([readgroup.R2]),
