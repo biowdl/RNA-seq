@@ -52,8 +52,8 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
             "file" -> dbsnpFile.getAbsolutePath,
             "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
           ),
-          "pipeline.sample.Sample.createGvcf.Gvcf.gatherGvcfs.memory" -> 8, //FIXME should be fixed in tasks, this is just for testing
-          "pipeline.genotyping.JointGenotyping.genotypeGvcfs.memory" -> 6
+          "pipeline.genotyping.JointGenotyping.gatherGvcfs.memory" -> 8, //FIXME should be fixed in tasks, this is just for testing
+          "pipeline.genotyping.JointGenotyping.genotypeGvcfs.memory" -> 8
         )
       )
 
