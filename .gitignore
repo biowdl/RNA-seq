@@ -4,3 +4,4 @@ cromwell-executions/
 cromwell-workflow-logs/
 output/
 target/
+test-output/

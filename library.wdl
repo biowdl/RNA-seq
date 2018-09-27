@@ -4,7 +4,7 @@ import "aligning/align-star.wdl" as star
 import "BamMetrics/bammetrics.wdl" as metrics
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "readgroup.wdl" as readgroupWorkflow
-import "tasks/biopet.wdl" as biopet
+import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/picard.wdl" as picard
 import "structs.wdl" as structs
 
@@ -30,12 +30,15 @@ workflow Library {
                 library = library,
                 readgroup = rg
         }
+
+        File cleanR1 = readgroupWorkflow.cleanReads.R1
+        File? cleanR2 = readgroupWorkflow.cleanReads.R2
     }
 
     call star.AlignStar as starAlignment {
         input:
-            inputR1 = readgroupWorkflow.cleanR1,
-            inputR2 = select_all(readgroupWorkflow.cleanR2),
+            inputR1 = cleanR1,
+            inputR2 = select_all(cleanR2),
             outputDir = outputDir + "/star/",
             sample = sample.id,
             library = library.id,
@@ -46,41 +49,33 @@ workflow Library {
     # Preprocess BAM for variant calling
     call picard.MarkDuplicates as markDuplicates {
         input:
-            input_bams = [starAlignment.bamFile],
-            output_bam_path = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bam",
-            metrics_path = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.metrics"
+            inputBams = [starAlignment.bamFile.file],
+            inputBamIndexes = [starAlignment.bamFile.index],
+            outputBamPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bam",
+            metricsPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.metrics"
     }
 
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bamFile = markDuplicates.output_bam,
-            bamIndex = markDuplicates.output_bam_index,
+            bam = markDuplicates.outputBam,
             outputDir = outputDir + "/metrics",
-            refFasta = rnaSeqInput.reference.fasta,
-            refFastaIndex = rnaSeqInput.reference.fai,
-            refDict = rnaSeqInput.reference.dict,
+            reference = rnaSeqInput.reference,
             strandedness = rnaSeqInput.strandedness,
             refRefflat = rnaSeqInput.refflatFile
     }
 
     call preprocess.GatkPreprocess as preprocessing {
             input:
-                bamFile = markDuplicates.output_bam,
-                bamIndex = markDuplicates.output_bam_index,
+                bamFile = markDuplicates.outputBam,
                 outputBamPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bqsr.bam",
                 splitSplicedReads = true,
-                dbsnpVCF = rnaSeqInput.dbsnp.file,
-                dbsnpVCFindex = rnaSeqInput.dbsnp.index,
-                refFasta = rnaSeqInput.reference.fasta,
-                refFastaIndex = rnaSeqInput.reference.fai,
-                refDict = rnaSeqInput.reference.dict
+                dbsnpVCF = rnaSeqInput.dbsnp,
+                reference = rnaSeqInput.reference
     }
 
     output {
-        File bamFile = markDuplicates.output_bam
-        File bamIndexFile = markDuplicates.output_bam_index
-        File preprocessBamFile = preprocessing.outputBamFile
-        File preprocessBamIndexFile = preprocessing.outputBamIndex
+        IndexedBamFile bamFile = markDuplicates.outputBam
+        IndexedBamFile preprocessBamFile = preprocessing.outputBamFile
     }
 }

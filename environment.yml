@@ -1,9 +1,8 @@
 name: rnaseq
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
   - defaults
-  - r
 dependencies:
   - biopet-extractadaptersfastqc==0.2
   - biopet-sampleconfig==0.2

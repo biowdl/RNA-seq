@@ -2,7 +2,7 @@ version 1.0
 
 import "bam-to-gvcf/gvcf.wdl" as gvcf
 import "library.wdl" as libraryWorkflow
-import "tasks/biopet.wdl" as biopet
+import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
 import "structs.wdl" as structs
@@ -21,8 +21,10 @@ workflow Sample {
                 outputDir = outputDir + "/lib_" + lib.id,
                 sample = sample,
                 library = lib
-            }
         }
+        File lbBamFiles = library.bamFile.file
+        File indexFiles = library.bamFile.index
+    }
 
     Boolean multipleBams = length(library.bamFile) > 1
 
@@ -30,13 +32,13 @@ workflow Sample {
     if (multipleBams) {
         call samtools.Merge as mergeLibraries {
             input:
-                bamFiles = library.bamFile,
+                bamFiles = lbBamFiles,
                 outputBamPath = outputDir + "/" + sample.id + ".bam"
         }
 
         call samtools.Index as mergedIndex {
             input:
-                bamFilePath = mergeLibraries.outputBam,
+                bamFile = mergeLibraries.outputBam,
                 bamIndexPath = outputDir + "/" + sample.id + ".bai"
         }
     }
@@ -45,13 +47,13 @@ workflow Sample {
     if (! multipleBams) {
         call common.CreateLink as linkBam {
             input:
-                inputFile = library.bamFile[0],
+                inputFile = library.bamFile[0].file,
                 outputPath = outputDir + "/" + sample.id + ".bam"
         }
 
         call common.CreateLink as linkIndex {
             input:
-                inputFile = library.bamIndexFile[0],
+                inputFile = library.bamFile[0].index,
                 outputPath = outputDir + "/" + sample.id + ".bai"
         }
     }
@@ -60,24 +62,16 @@ workflow Sample {
     call gvcf.Gvcf as createGvcf {
         input:
             bamFiles = library.preprocessBamFile,
-            bamIndexes = library.preprocessBamIndexFile,
             gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
-            dbsnpVCF = rnaSeqInput.dbsnp.file,
-            dbsnpVCFindex = rnaSeqInput.dbsnp.index,
-            refFasta = rnaSeqInput.reference.fasta,
-            refFastaIndex = rnaSeqInput.reference.fai,
-            refDict = rnaSeqInput.reference.dict
+            dbsnpVCF = rnaSeqInput.dbsnp,
+            reference = rnaSeqInput.reference
     }
 
     output {
         String sampleName = sample.id
-        File bam = if multipleBams
+        IndexedBamFile bam = if multipleBams
             then select_first([mergeLibraries.outputBam])
             else library.bamFile[0]
-        File bai = if multipleBams
-            then select_first([mergedIndex.indexFile])
-            else library.bamIndexFile[0]
-        File gvcfFile = createGvcf.outputGVCF
-        File gvcfFileIndex = createGvcf.outputGVCFindex
+        IndexedVcfFile gvcfFile = createGvcf.outputGVcf
     }
 }
