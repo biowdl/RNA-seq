@@ -4,27 +4,16 @@ pipeline {
             label 'local'
         }
     }
-    environment {
-        DEFAULT_CROMWELL_JAR      = credentials('cromwell-jar')
-        DEFAULT_CROMWELL_CONFIG   = credentials('cromwell-config')
-        DEFAULT_CROMWELL_BACKEND  = credentials('cromwell-backend')
-        DEFAULT_FIXTURE_DIR       = credentials('fixture-dir')
-        DEFAULT_CONDA_PREFIX      = credentials('conda-prefix')
-        DEFAULT_THREADS           = credentials('threads')
-        DEFAULT_OUTPUT_DIR        = credentials('output-dir')
-        DEFAULT_FUNCTIONAL_TESTS  = credentials('functional-tests')
-        DEFAULT_INTEGRATION_TESTS = credentials('integration-tests')
-    }
     parameters {
-        string name: 'CROMWELL_JAR', defaultValue: '${DEFAULT_CROMWELL_JAR}'
-        string name: 'CROMWELL_CONFIG', defaultValue: '${DEFAULT_CROMWELL_CONFIG}'
-        string name: 'CROMWELL_BACKEND', defaultValue: '${DEFAULT_CROMWELL_BACKEND}'
-        string name: 'FIXTURE_DIR', defaultValue: '${DEFAULT_FIXTURE_DIR}'
-        string name: 'CONDA_PREFIX', defaultValue: '${DEFAULT_CONDA_PREFIX}'
-        string name: 'THREADS', defaultValue: '${DEFAULT_THREADS}'
-        string name: 'OUTPUT_DIR', defaultValue: '${DEFAULT_OUTPUT_DIR}'
-        string name: 'FUNCTIONAL_TESTS', defaultValue: '${DEFAULT_FUNCTIONAL_TESTS}'
-        string name: 'INTEGRATION_TESTS', defaultValue: '${DEFAULT_INTEGRATION_TESTS}'
+        string name: 'CROMWELL_JAR', defaultValue: '${DEFAULT}'
+        string name: 'CROMWELL_CONFIG', defaultValue: '${DEFAULT}'
+        string name: 'CROMWELL_BACKEND', defaultValue: '${DEFAULT}'
+        string name: 'FIXTURE_DIR', defaultValue: '${DEFAULT}'
+        string name: 'CONDA_PREFIX', defaultValue: '${DEFAULT}'
+        string name: 'THREADS', defaultValue: '${DEFAULT}'
+        string name: 'OUTPUT_DIR', defaultValue: '${DEFAULT}'
+        string name: 'FUNCTIONAL_TESTS', defaultValue: '${DEFAULT}'
+        string name: 'INTEGRATION_TESTS', defaultValue: '${DEFAULT}'
     }
     tools {
         jdk 'JDK 8u162'
@@ -32,16 +21,25 @@ pipeline {
     stages {
         stage('Init') {
             steps {
+                script {
+                    params.each { key, value ->
+                        if (value == '${DEFAULT}') {
+                            configFileProvider([configFile(fileId: key, variable: 'FILE')]) {
+                                script {
+                                    env.('' + key)=sh(returnStdout: true, script: 'cat $FILE')
+                                }
+                            }
+                        }
+                        sh('echo ' + key + '=$' + key)
+                    }
+                }
                 sh 'java -version'
                 checkout scm
                 sh 'git submodule update --init --recursive'
                 script {
                     def sbtHome = tool 'sbt 1.0.4'
-                    env.outputDir= "${OUTPUT_DIR}/${JOB_NAME}/${BUILD_NUMBER}"
-                    env.condaEnv= "${outputDir}/conda_env"
-                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.functionalTests=${FUNCTIONAL_TESTS} -Dbiowdl.integrationTests=${INTEGRATION_TESTS} -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${CROMWELL_JAR} -Dcromwell.config=${CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${FIXTURE_DIR} -Dbiowdl.threads=${THREADS} -no-colors -batch"
-                    env.activateEnv= "source ${CONDA_PREFIX}/activate \$(readlink -f ${condaEnv})"
-                    env.createEnv= "${CONDA_PREFIX}/conda-env create -f environment.yml -p ${condaEnv}"
+                    env.outputDir= "${env.OUTPUT_DIR}/${env.JOB_NAME}/${env.BUILD_NUMBER}"
+                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.functionalTests=${env.FUNCTIONAL_TESTS} -Dbiowdl.integrationTests=${env.INTEGRATION_TESTS} -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${env.CROMWELL_JAR} -Dcromwell.config=${env.CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${env.CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${env.FIXTURE_DIR} -Dbiowdl.threads=${env.THREADS} -no-colors -batch"
                 }
                 sh "rm -rf ${outputDir}"
                 sh "mkdir -p ${outputDir}"
@@ -66,16 +64,22 @@ pipeline {
 
         stage('Create conda environment') {
             steps {
+                script {
+                    env.envHash= sh(returnStdout: true, script: "sha256sum environment.yml | cut -f1 -d ' '")
+                    env.condaEnv= "${env.CONDA_PREFIX}/envs/${envHash}"
+                    env.activateEnv= "source ${env.CONDA_PREFIX}/bin/activate \$(readlink -f ${condaEnv})"
+                    env.createEnv= "${env.CONDA_PREFIX}/bin/conda-env create -f environment.yml -p ${condaEnv}"
+                }
                 sh "#!/bin/bash\n" +
                     "set -e -v -o pipefail\n" +
-                    "${createEnv}\n"
+                    "[[ -d ${env.condaEnv} ]] || ${createEnv}\n"
             }
         }
 
         stage('Build & Test') {
             steps {
                 sh "#!/bin/bash\n" +
-                        "set -e -v\n" +
+                        "set -e -v  -o pipefail\n" +
                         "${activateEnv}\n" +
                         "${sbt} test"
             }
