@@ -39,7 +39,7 @@ pipeline {
                 script {
                     def sbtHome = tool 'sbt 1.0.4'
                     env.outputDir= "${env.OUTPUT_DIR}/${env.JOB_NAME}/${env.BUILD_NUMBER}"
-                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.functionalTests=${env.FUNCTIONAL_TESTS} -Dbiowdl.integrationTests=${env.INTEGRATION_TESTS} -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${env.CROMWELL_JAR} -Dcromwell.config=${env.CROMWELL_CONFIG} -Dcromwell.extraOptions=-Dbackend.providers.${env.CROMWELL_BACKEND}.config.root=${outputDir}/cromwell-executions -Dbiowdl.fixtureDir=${env.FIXTURE_DIR} -Dbiowdl.threads=${env.THREADS} -no-colors -batch"
+                    env.sbt= "${sbtHome}/bin/sbt -Dbiowdl.functionalTests=${env.FUNCTIONAL_TESTS} -Dbiowdl.integrationTests=${env.INTEGRATION_TESTS} -Dbiowdl.outputDir=${outputDir} -Dcromwell.jar=${env.CROMWELL_JAR} -Dcromwell.config=${env.CROMWELL_CONFIG} -Dcromwell.backend=${env.CROMWELL_BACKEND} -Dbiowdl.fixtureDir=${env.FIXTURE_DIR} -Dbiowdl.threads=${env.THREADS} -no-colors -batch"
                 }
                 sh "rm -rf ${outputDir}"
                 sh "mkdir -p ${outputDir}"
