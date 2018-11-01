@@ -68,7 +68,8 @@ workflow Library {
     call preprocess.GatkPreprocess as preprocessing {
             input:
                 bamFile = markDuplicates.outputBam,
-                outputBamPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bqsr.bam",
+                basePath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bqsr",
+                outputRecalibratedBam = true,
                 splitSplicedReads = true,
                 dbsnpVCF = rnaSeqInput.dbsnp,
                 reference = rnaSeqInput.reference
@@ -76,6 +77,6 @@ workflow Library {
 
     output {
         IndexedBamFile bamFile = markDuplicates.outputBam
-        IndexedBamFile preprocessBamFile = preprocessing.outputBamFile
+        IndexedBamFile preprocessBamFile = select_first([preprocessing.outputBamFile])
     }
 }
