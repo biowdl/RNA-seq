@@ -54,7 +54,7 @@ workflow pipeline {
             bams = zip(sample.sampleName, sample.bam),
             outputDir = expressionDir,
             strandedness = rnaSeqInput.strandedness,
-            refflatFile = rnaSeqInput.refflatFile,
+            #refflatFile = rnaSeqInput.refflatFile,
             gtfFile = rnaSeqInput.gtfFile
     }
 
