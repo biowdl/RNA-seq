@@ -51,8 +51,8 @@ workflow Library {
         input:
             inputBams = [starAlignment.bamFile.file],
             inputBamIndexes = [starAlignment.bamFile.index],
-            outputBamPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bam",
-            metricsPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.metrics"
+            outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
+            metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
     }
 
     # Gather BAM Metrics
@@ -68,7 +68,8 @@ workflow Library {
     call preprocess.GatkPreprocess as preprocessing {
             input:
                 bamFile = markDuplicates.outputBam,
-                outputBamPath = outputDir + "/" + sampleId + "-" + sampleId + ".markdup.bqsr.bam",
+                basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
+                outputRecalibratedBam = true,
                 splitSplicedReads = true,
                 dbsnpVCF = rnaSeqInput.dbsnp,
                 reference = rnaSeqInput.reference
@@ -76,6 +77,6 @@ workflow Library {
 
     output {
         IndexedBamFile bamFile = markDuplicates.outputBam
-        IndexedBamFile preprocessBamFile = preprocessing.outputBamFile
+        IndexedBamFile preprocessBamFile = select_first([preprocessing.outputBamFile])
     }
 }

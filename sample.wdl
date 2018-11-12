@@ -70,7 +70,7 @@ workflow Sample {
     output {
         String sampleName = sample.id
         IndexedBamFile bam = if multipleBams
-            then select_first([mergeLibraries.outputBam])
+            then select_first([mergedIndex.outputBam])
             else library.bamFile[0]
         IndexedVcfFile gvcfFile = createGvcf.outputGVcf
     }

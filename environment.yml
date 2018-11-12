@@ -10,7 +10,7 @@ dependencies:
   - picard==2.18.7
   - cutadapt==1.16
   - fastqc==0.11.7
-  - biopet-scatterregions==0.1
+  - biopet-scatterregions==0.2
   - samtools==1.8
   - stringtie==1.3.4
   - htseq==0.9.1
@@ -24,3 +24,4 @@ dependencies:
   - biopet-validatevcf==0.1
   - pyyaml==3.12
   - biopet-vcfstats==1.2
+  - biopet-bamstats==1.0
