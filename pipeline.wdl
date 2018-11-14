@@ -48,9 +48,13 @@ workflow pipeline {
     scatter (sm in config.samples) {
         call sampleWorkflow.Sample as sample {
             input:
-                rnaSeqInput = rnaSeqInput,
                 sample = sm,
-                outputDir = outputDir + "/samples/" + sm.id
+                outputDir = outputDir + "/samples/" + sm.id,
+                reference = reference,
+                dbsnp = dbsnp,
+                starIndexDir = starIndexDir,
+                strandedness = strandedness,
+                refflatFile = refflatFile
         }
     }
 
