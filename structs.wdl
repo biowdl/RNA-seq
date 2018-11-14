@@ -22,11 +22,3 @@ struct Root {
     Array[Sample] samples
 }
 
-struct RnaSeqInput {
-    Reference reference
-    IndexedVcfFile dbsnp
-    String starIndexDir
-    String strandedness
-    File refflatFile
-    File gtfFile
-}

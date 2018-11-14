@@ -12,7 +12,12 @@ workflow pipeline {
     input {
         Array[File] sampleConfigFiles
         String outputDir
-        RnaSeqInput rnaSeqInput
+        Reference reference
+        IndexedVcfFile dbsnp
+        String starIndexDir
+        String strandedness
+        File refflatFile
+        File gtfFile
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -21,15 +26,15 @@ workflow pipeline {
     # Validation of annotations and dbSNP
     call biopet.ValidateAnnotation as validateAnnotation {
         input:
-            refRefflat = rnaSeqInput.refflatFile,
-            gtfFile = rnaSeqInput.gtfFile,
-            reference = rnaSeqInput.reference
+            refRefflat = refflatFile,
+            gtfFile = gtfFile,
+            reference = reference
     }
 
     call biopet.ValidateVcf as validateVcf {
         input:
-            vcf = rnaSeqInput.dbsnp,
-            reference = rnaSeqInput.reference
+            vcf = dbsnp,
+            reference = reference
     }
 
     call sampleconfig.SampleConfigCromwellArrays as configFile {
@@ -53,24 +58,24 @@ workflow pipeline {
         input:
             bams = zip(sample.sampleName, sample.bam),
             outputDir = expressionDir,
-            strandedness = rnaSeqInput.strandedness,
-            #refflatFile = rnaSeqInput.refflatFile,
-            gtfFile = rnaSeqInput.gtfFile
+            strandedness = strandedness,
+            #refflatFile = refflatFile,
+            gtfFile = gtfFile
     }
 
     call jointgenotyping.JointGenotyping as genotyping {
         input:
-            reference = rnaSeqInput.reference,
+            reference = reference,
             outputDir = genotypingDir,
             gvcfFiles = sample.gvcfFile,
             vcfBasename = "multisample",
-            dbsnpVCF = rnaSeqInput.dbsnp
+            dbsnpVCF = dbsnp
     }
 
     call biopet.VcfStats as vcfStats {
         input:
             vcf = genotyping.vcfFile,
-            reference = rnaSeqInput.reference,
+            reference = reference,
             outputDir = genotypingDir + "/stats"
     }
 

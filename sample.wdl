@@ -11,13 +11,21 @@ workflow Sample {
     input {
         Sample sample
         String outputDir
-        RnaSeqInput rnaSeqInput
+        Reference reference
+        IndexedVcfFile dbsnp
+        String starIndexDir
+        String strandedness
+        File refflatFile
     }
 
     scatter (lib in sample.libraries) {
         call libraryWorkflow.Library as library {
             input:
-                rnaSeqInput = rnaSeqInput,
+                reference = reference,
+                dbsnp = dbsnp,
+                starIndexDir = starIndexDir,
+                strandedness = strandedness,
+                refflatFile = refflatFile,
                 outputDir = outputDir + "/lib_" + lib.id,
                 sample = sample,
                 library = lib
@@ -63,8 +71,8 @@ workflow Sample {
         input:
             bamFiles = library.preprocessBamFile,
             gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
-            dbsnpVCF = rnaSeqInput.dbsnp,
-            reference = rnaSeqInput.reference
+            dbsnpVCF = dbsnp,
+            reference = reference
     }
 
     output {

@@ -12,7 +12,6 @@ workflow Readgroup {
         Library library
         Sample sample
         String outputDir
-        RnaSeqInput rnaSeqInput
     }
 
     # FIXME: workaround for namepace issue in cromwell
