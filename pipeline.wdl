@@ -2,6 +2,7 @@ version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
+import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
 import "sample.wdl" as sampleWorkflow
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
@@ -21,6 +22,8 @@ workflow pipeline {
         Array[File] lncRNAdatabases
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
+        File? cpatLogitModel
+        File? cpatHex
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -88,6 +91,18 @@ workflow pipeline {
                 vcf = genotyping.vcfFile,
                 reference = reference,
                 outputDir = genotypingDir + "/stats"
+        }
+    }
+
+    if (lncRNAdetection) {
+        call rnacodingpotential.rnaCodingPotential {
+            input:
+                outputDir = outputDir + "/coding-potential",
+                transcriptsGff = bla,
+                reference = reference,
+                cpatLogitModel = select_first([cpatLogitModel]),
+                cpatHex = select_first([cpatHex])
+
         }
     }
 
