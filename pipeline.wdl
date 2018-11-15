@@ -13,11 +13,14 @@ workflow pipeline {
         Array[File] sampleConfigFiles
         String outputDir
         Reference reference
-        IndexedVcfFile dbsnp
+        IndexedVcfFile? dbsnp
         String starIndexDir
         String strandedness
-        File refflatFile
-        File gtfFile
+        File? refflatFile
+        File? gtfFile
+        Array[File]? lncRNAdatabases
+        Boolean variantCalling = true
+        Boolean lncRNAdetection = false
     }
 
     String expressionDir = outputDir + "/expression_measures/"
