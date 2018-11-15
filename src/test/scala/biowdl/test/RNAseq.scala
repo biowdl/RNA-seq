@@ -50,8 +50,12 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
         "pipeline.dbsnp" -> Map(
           "file" -> dbsnpFile.getAbsolutePath,
           "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
-        )
+        ),
+        "pipeline.variantCalling" -> variantCalling,
+        "pipeline.lncRNAdetection" -> lncRNAdetection
       )
 
+  def variantCalling: Boolean = false
+  def lncRNAdetection: Boolean = false
   def startFile: File = new File("./pipeline.wdl")
 }

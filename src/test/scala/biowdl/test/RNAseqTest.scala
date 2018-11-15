@@ -28,20 +28,22 @@ import nl.biopet.utils.biowdl.annotations.TestAnnotation
 import nl.biopet.utils.biowdl.references.TestReference
 import nl.biopet.utils.biowdl.samples.{Rna3PairedEnd, Rna3SingleEnd}
 
-class RNAseqTestSingleEnd
+class RNAseqTestSingleEndVariantCalling
     extends RNAseqSuccess
     with TestReference
     with TestAnnotation
     with Rna3SingleEnd {
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+  override def variantCalling = true
 }
 
-class RNAseqTestPairedEnd
+class RNAseqTestPairedEndVariantCalling
     extends RNAseqSuccess
     with TestReference
     with TestAnnotation
     with Rna3PairedEnd {
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+  override def variantCalling = true
 }

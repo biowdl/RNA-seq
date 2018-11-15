@@ -24,8 +24,9 @@ package biowdl.test
 import nl.biopet.utils.biowdl.PipelineSuccess
 
 trait RNAseqSuccess extends RNAseq with PipelineSuccess {
-  addMustHaveFile("multisample_variants/multisample.vcf.gz")
-  addMustHaveFile("multisample_variants/multisample.vcf.gz.tbi")
+  addConditionalFile(variantCalling, "multisample_variants/multisample.vcf.gz")
+  addConditionalFile(variantCalling,
+                     "multisample_variants/multisample.vcf.gz.tbi")
   addMustHaveFile("expression_measures/stringtie/TPM/all_samples.TPM")
   addMustHaveFile("expression_measures/stringtie/FPKM/all_samples.FPKM")
   //addMustHaveFile(
