@@ -18,7 +18,7 @@ workflow pipeline {
         String strandedness
         File? refflatFile
         File? gtfFile
-        Array[File]? lncRNAdatabases
+        Array[File] lncRNAdatabases
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
     }
