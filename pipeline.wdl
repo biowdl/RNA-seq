@@ -27,17 +27,19 @@ workflow pipeline {
     String genotypingDir = outputDir + "/multisample_variants/"
 
     # Validation of annotations and dbSNP
-    call biopet.ValidateAnnotation as validateAnnotation {
-        input:
-            refRefflat = refflatFile,
-            gtfFile = gtfFile,
-            reference = reference
-    }
+    if (variantCalling) {
+        call biopet.ValidateAnnotation as validateAnnotation {
+            input:
+                refRefflat = refflatFile,
+                gtfFile = gtfFile,
+                reference = reference
+        }
 
-    call biopet.ValidateVcf as validateVcf {
-        input:
-            vcf = dbsnp,
-            reference = reference
+        call biopet.ValidateVcf as validateVcf {
+            input:
+                vcf = dbsnp,
+                reference = reference
+        }
     }
 
     call sampleconfig.SampleConfigCromwellArrays as configFile {
@@ -70,20 +72,22 @@ workflow pipeline {
             gtfFile = gtfFile
     }
 
-    call jointgenotyping.JointGenotyping as genotyping {
-        input:
-            reference = reference,
-            outputDir = genotypingDir,
-            gvcfFiles = sample.gvcfFile,
-            vcfBasename = "multisample",
-            dbsnpVCF = dbsnp
-    }
+    if (variantCalling) {
+        call jointgenotyping.JointGenotyping as genotyping {
+            input:
+                reference = reference,
+                outputDir = genotypingDir,
+                gvcfFiles = sample.gvcfFile,
+                vcfBasename = "multisample",
+                dbsnpVCF = dbsnp
+        }
 
-    call biopet.VcfStats as vcfStats {
-        input:
-            vcf = genotyping.vcfFile,
-            reference = reference,
-            outputDir = genotypingDir + "/stats"
+        call biopet.VcfStats as vcfStats {
+            input:
+                vcf = genotyping.vcfFile,
+                reference = reference,
+                outputDir = genotypingDir + "/stats"
+        }
     }
 
     output {
