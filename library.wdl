@@ -18,6 +18,7 @@ workflow Library {
         String starIndexDir
         String strandedness
         File refflatFile
+        Boolean variantCalling = true
     }
 
     String sampleId = sample.id
@@ -49,37 +50,41 @@ workflow Library {
             starIndexDir = starIndexDir
     }
 
+    if (variantCalling) {
     # Preprocess BAM for variant calling
-    call picard.MarkDuplicates as markDuplicates {
-        input:
-            inputBams = [starAlignment.bamFile.file],
-            inputBamIndexes = [starAlignment.bamFile.index],
-            outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
-            metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+        call picard.MarkDuplicates as markDuplicates {
+            input:
+                inputBams = [starAlignment.bamFile.file],
+                inputBamIndexes = [starAlignment.bamFile.index],
+                outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
+                metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+        }
+        call preprocess.GatkPreprocess as preprocessing {
+                input:
+                    bamFile = markDuplicates.outputBam,
+                    basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
+                    outputRecalibratedBam = true,
+                    splitSplicedReads = true,
+                    dbsnpVCF = dbsnp,
+                    reference = reference
+        }
     }
 
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = markDuplicates.outputBam,
+            bam = select_first([markDuplicates.outputBam, starAlignment.bamFile]),
             outputDir = outputDir + "/metrics",
             reference = reference,
             strandedness = strandedness,
             refRefflat = refflatFile
     }
 
-    call preprocess.GatkPreprocess as preprocessing {
-            input:
-                bamFile = markDuplicates.outputBam,
-                basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
-                outputRecalibratedBam = true,
-                splitSplicedReads = true,
-                dbsnpVCF = dbsnp,
-                reference = reference
-    }
+
+
 
     output {
-        IndexedBamFile bamFile = markDuplicates.outputBam
-        IndexedBamFile preprocessBamFile = select_first([preprocessing.outputBamFile])
+        IndexedBamFile bamFile = select_first([markDuplicates.outputBam, starAlignment.bamFile]),
+        IndexedBamFile? preprocessBamFile = preprocessing.outputBamFile
     }
 }

@@ -29,7 +29,8 @@ workflow Sample {
                 refflatFile = refflatFile,
                 outputDir = outputDir + "/lib_" + lib.id,
                 sample = sample,
-                library = lib
+                library = lib,
+                variantCalling = variantCalling
         }
         File lbBamFiles = library.bamFile.file
         File indexFiles = library.bamFile.index
