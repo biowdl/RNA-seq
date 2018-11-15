@@ -38,20 +38,18 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
     super.inputs ++
       Map(
         "pipeline.outputDir" -> outputDir.getAbsolutePath,
-        "pipeline.rnaSeqInput" -> Map(
-          "reference" -> Map(
-            "fasta" -> referenceFasta.getAbsolutePath,
-            "fai" -> referenceFastaIndexFile.getAbsolutePath,
-            "dict" -> referenceFastaDictFile.getAbsolutePath
-          ),
-          "strandedness" -> strandedness,
-          "starIndexDir" -> starGenomeDir.map(_.getAbsolutePath),
-          "refflatFile" -> referenceRefflat.map(_.getAbsolutePath),
-          "gtfFile" -> referenceGtf.map(_.getAbsolutePath),
-          "dbsnp" -> Map(
-            "file" -> dbsnpFile.getAbsolutePath,
-            "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
-          )
+        "pipeline.reference" -> Map(
+          "fasta" -> referenceFasta.getAbsolutePath,
+          "fai" -> referenceFastaIndexFile.getAbsolutePath,
+          "dict" -> referenceFastaDictFile.getAbsolutePath
+        ),
+        "pipeline.strandedness" -> strandedness,
+        "pipeline.starIndexDir" -> starGenomeDir.map(_.getAbsolutePath),
+        "pipeline.refflatFile" -> referenceRefflat.map(_.getAbsolutePath),
+        "pipeline.gtfFile" -> referenceGtf.map(_.getAbsolutePath),
+        "pipeline.dbsnp" -> Map(
+          "file" -> dbsnpFile.getAbsolutePath,
+          "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
         )
       )
 

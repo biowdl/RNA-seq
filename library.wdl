@@ -13,7 +13,11 @@ workflow Library {
         Library library
         Sample sample
         String outputDir
-        RnaSeqInput rnaSeqInput
+        Reference reference
+        IndexedVcfFile dbsnp
+        String starIndexDir
+        String strandedness
+        File refflatFile
     }
 
     String sampleId = sample.id
@@ -24,7 +28,6 @@ workflow Library {
 
         call readgroupWorkflow.Readgroup as readgroupWorkflow {
             input:
-                rnaSeqInput = rnaSeqInput,
                 outputDir = outputDir + "/rg_" + readgroupId,
                 sample = sample,
                 library = library,
@@ -43,7 +46,7 @@ workflow Library {
             sample = sample.id,
             library = library.id,
             readgroups = readgroupId,
-            starIndexDir = rnaSeqInput.starIndexDir
+            starIndexDir = starIndexDir
     }
 
     # Preprocess BAM for variant calling
@@ -60,9 +63,9 @@ workflow Library {
         input:
             bam = markDuplicates.outputBam,
             outputDir = outputDir + "/metrics",
-            reference = rnaSeqInput.reference,
-            strandedness = rnaSeqInput.strandedness,
-            refRefflat = rnaSeqInput.refflatFile
+            reference = reference,
+            strandedness = strandedness,
+            refRefflat = refflatFile
     }
 
     call preprocess.GatkPreprocess as preprocessing {
@@ -71,8 +74,8 @@ workflow Library {
                 basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
                 outputRecalibratedBam = true,
                 splitSplicedReads = true,
-                dbsnpVCF = rnaSeqInput.dbsnp,
-                reference = rnaSeqInput.reference
+                dbsnpVCF = dbsnp,
+                reference = reference
     }
 
     output {
