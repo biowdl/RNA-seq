@@ -59,7 +59,8 @@ workflow pipeline {
                 dbsnp = dbsnp,
                 starIndexDir = starIndexDir,
                 strandedness = strandedness,
-                refflatFile = refflatFile
+                refflatFile = refflatFile,
+                variantCalling = variantCalling
         }
     }
 

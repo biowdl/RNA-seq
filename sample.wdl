@@ -16,6 +16,7 @@ workflow Sample {
         String starIndexDir
         String strandedness
         File refflatFile
+        Boolean variantCalling = true
     }
 
     scatter (lib in sample.libraries) {
@@ -66,13 +67,15 @@ workflow Sample {
         }
     }
 
+    if (variantCalling) {
     # variant calling, requires different bam file than counting
-    call gvcf.Gvcf as createGvcf {
-        input:
-            bamFiles = library.preprocessBamFile,
-            gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
-            dbsnpVCF = dbsnp,
-            reference = reference
+        call gvcf.Gvcf as createGvcf {
+            input:
+                bamFiles = library.preprocessBamFile,
+                gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
+                dbsnpVCF = dbsnp,
+                reference = reference
+        }
     }
 
     output {
@@ -80,6 +83,6 @@ workflow Sample {
         IndexedBamFile bam = if multipleBams
             then select_first([mergedIndex.outputBam])
             else library.bamFile[0]
-        IndexedVcfFile gvcfFile = createGvcf.outputGVcf
+        IndexedVcfFile? gvcfFile = createGvcf.outputGVcf
     }
 }
