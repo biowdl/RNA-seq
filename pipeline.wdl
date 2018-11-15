@@ -19,7 +19,7 @@ workflow pipeline {
         File? refflatFile
         File? gtfFile
         Array[File]? lncRNAdatabases
-        Boolean variantCalling = true
+        Boolean variantCalling = false
         Boolean lncRNAdetection = false
     }
 

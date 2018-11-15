@@ -18,7 +18,7 @@ workflow Library {
         String starIndexDir
         String strandedness
         File refflatFile
-        Boolean variantCalling = true
+        Boolean variantCalling = false
     }
 
     String sampleId = sample.id

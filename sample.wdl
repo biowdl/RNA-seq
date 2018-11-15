@@ -16,7 +16,7 @@ workflow Sample {
         String starIndexDir
         String strandedness
         File refflatFile
-        Boolean variantCalling = true
+        Boolean variantCalling = false
     }
 
     scatter (lib in sample.libraries) {
