@@ -3,6 +3,7 @@ version 1.0
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
+import "compare-gff/comparegff.wdl" as comparegff
 import "sample.wdl" as sampleWorkflow
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
@@ -18,7 +19,7 @@ workflow pipeline {
         String starIndexDir
         String strandedness
         File? refflatFile
-        File? gtfFile
+        File? referenceGtfFile
         Array[File] lncRNAdatabases
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
@@ -34,7 +35,7 @@ workflow pipeline {
         call biopet.ValidateAnnotation as validateAnnotation {
             input:
                 refRefflat = refflatFile,
-                gtfFile = gtfFile,
+                gtfFile = referenceGtfFile,
                 reference = reference
         }
 
@@ -73,7 +74,7 @@ workflow pipeline {
             outputDir = expressionDir,
             strandedness = strandedness,
             #refflatFile = refflatFile,
-            gtfFile = gtfFile
+            referenceGtfFile = referenceGtfFile
     }
 
     if (variantCalling) {
@@ -95,14 +96,22 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-        call rnacodingpotential.rnaCodingPotential {
-            input:
-                outputDir = outputDir + "/coding-potential",
-                transcriptsGff = bla,
-                reference = reference,
-                cpatLogitModel = select_first([cpatLogitModel]),
-                cpatHex = select_first([cpatHex])
+        scatter (sampleGffFile in expression.gffFiles) {
+            call rnacodingpotential.rnaCodingPotential {
+                input:
+                    outputDir = outputDir + "/coding-potential",
+                    transcriptsGff = sampleGffFile,
+                    reference = reference,
+                    cpatLogitModel = select_first([cpatLogitModel]),
+                    cpatHex = select_first([cpatHex])
+            }
 
+            call comparegff.CompareGff {
+                input:
+                    outputDir = outputDir + "/compare-gff",
+                    sampleGtf = sampleGffFile,
+                    databases = lncRNAdatabases
+            }
         }
     }
 
