@@ -84,7 +84,7 @@ workflow Library {
 
 
     output {
-        IndexedBamFile bamFile = select_first([markDuplicates.outputBam, starAlignment.bamFile]),
+        IndexedBamFile bamFile = select_first([markDuplicates.outputBam, starAlignment.bamFile])
         IndexedBamFile? preprocessBamFile = preprocessing.outputBamFile
     }
 }

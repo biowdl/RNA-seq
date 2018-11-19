@@ -72,7 +72,8 @@ workflow Sample {
     # variant calling, requires different bam file than counting
         call gvcf.Gvcf as createGvcf {
             input:
-                bamFiles = library.preprocessBamFile,
+
+                bamFiles = select_all(library.preprocessBamFile),
                 gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
                 dbsnpVCF = dbsnp,
                 reference = reference

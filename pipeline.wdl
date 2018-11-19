@@ -31,17 +31,19 @@ workflow pipeline {
     String genotypingDir = outputDir + "/multisample_variants/"
 
     # Validation of annotations and dbSNP
-    if (variantCalling) {
+    # If these are given.
+    # TODO: Discuss: Do we need this?
+    if (variantCalling && defined(referenceGtfFile) && defined(dbsnp) && defined(refflatFile)) {
         call biopet.ValidateAnnotation as validateAnnotation {
             input:
-                refRefflat = refflatFile,
-                gtfFile = referenceGtfFile,
+                refRefflat = select_first([refflatFile]),
+                gtfFile = select_first([referenceGtfFile]),
                 reference = reference
         }
 
         call biopet.ValidateVcf as validateVcf {
             input:
-                vcf = dbsnp,
+                vcf = select_first([dbsnp]),
                 reference = reference
         }
     }
@@ -97,7 +99,7 @@ workflow pipeline {
 
     if (lncRNAdetection) {
         scatter (sampleGffFile in expression.gffFiles) {
-            call rnacodingpotential.rnaCodingPotential {
+            call rnacodingpotential.RnaCodingPotential {
                 input:
                     outputDir = outputDir + "/coding-potential",
                     transcriptsGff = sampleGffFile,
