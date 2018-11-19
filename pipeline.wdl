@@ -84,9 +84,9 @@ workflow pipeline {
             input:
                 reference = reference,
                 outputDir = genotypingDir,
-                gvcfFiles = sample.gvcfFile,
+                gvcfFiles = select_all(sample.gvcfFile),
                 vcfBasename = "multisample",
-                dbsnpVCF = dbsnp
+                dbsnpVCF = select_first([dbsnp])
         }
 
         call biopet.VcfStats as vcfStats {

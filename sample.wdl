@@ -12,10 +12,10 @@ workflow Sample {
         Sample sample
         String outputDir
         Reference reference
-        IndexedVcfFile dbsnp
+        IndexedVcfFile? dbsnp
         String starIndexDir
         String strandedness
-        File refflatFile
+        File? refflatFile
         Boolean variantCalling = false
     }
 
@@ -75,7 +75,7 @@ workflow Sample {
 
                 bamFiles = select_all(library.preprocessBamFile),
                 gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
-                dbsnpVCF = dbsnp,
+                dbsnpVCF = select_first([dbsnp]),
                 reference = reference
         }
     }

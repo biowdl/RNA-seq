@@ -14,10 +14,10 @@ workflow Library {
         Sample sample
         String outputDir
         Reference reference
-        IndexedVcfFile dbsnp
+        IndexedVcfFile? dbsnp
         String starIndexDir
         String strandedness
-        File refflatFile
+        File? refflatFile
         Boolean variantCalling = false
     }
 
@@ -65,7 +65,7 @@ workflow Library {
                     basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
                     outputRecalibratedBam = true,
                     splitSplicedReads = true,
-                    dbsnpVCF = dbsnp,
+                    dbsnpVCF = select_first([dbsnp]),
                     reference = reference
         }
     }
