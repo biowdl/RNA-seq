@@ -29,7 +29,7 @@ import nl.biopet.utils.biowdl.references.TestReference
 import nl.biopet.utils.biowdl.samples.{Rna3PairedEnd, Rna3SingleEnd}
 
 class RNAseqTestSingleEndLncRNA
-  extends RNAseqSuccess
+    extends RNAseqSuccess
     with TestReference
     with TestAnnotation
     with Rna3SingleEnd {
@@ -39,7 +39,7 @@ class RNAseqTestSingleEndLncRNA
 }
 
 class RNAseqTestPairedEndLncRNA
-  extends RNAseqSuccess
+    extends RNAseqSuccess
     with TestReference
     with TestAnnotation
     with Rna3PairedEnd {
