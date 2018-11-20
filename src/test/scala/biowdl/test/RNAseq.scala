@@ -52,7 +52,8 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
           "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
         ),
         "pipeline.variantCalling" -> variantCalling,
-        "pipeline.lncRNAdetection" -> lncRNAdetection
+        "pipeline.lncRNAdetection" -> lncRNAdetection,
+        "pipeline.lncRNAdatabases" -> List(referenceGtf.map(_.getAbsolutePath)) // This is just to make sure the pipeline works.
       )
 
   def variantCalling: Boolean = false
