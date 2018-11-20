@@ -74,7 +74,7 @@ workflow Library {
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = select_first([markDuplicates.outputBam, starAlignment.bamFile]),
+            bam = markDuplicates.outputBam,
             outputDir = outputDir + "/metrics",
             reference = reference,
             strandedness = strandedness,
