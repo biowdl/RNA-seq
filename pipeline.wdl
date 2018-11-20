@@ -1,13 +1,13 @@
 version 1.0
 
+import "compare-gff/comparegff.wdl" as comparegff
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
-import "compare-gff/comparegff.wdl" as comparegff
 import "sample.wdl" as sampleWorkflow
+import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
-import "structs.wdl" as structs
 import "tasks/common.wdl" as common
 
 workflow pipeline {
@@ -30,17 +30,19 @@ workflow pipeline {
     String expressionDir = outputDir + "/expression_measures/"
     String genotypingDir = outputDir + "/multisample_variants/"
 
-    # Validation of annotations and dbSNP
+    # Validation of annotations
     # If these are given.
-    # TODO: Discuss: Do we need this?
-    if (variantCalling && defined(referenceGtfFile) && defined(dbsnp) && defined(refflatFile)) {
+    if (defined(referenceGtfFile) && defined(refflatFile)) {
         call biopet.ValidateAnnotation as validateAnnotation {
             input:
                 refRefflat = select_first([refflatFile]),
                 gtfFile = select_first([referenceGtfFile]),
                 reference = reference
         }
+    }
 
+    # Validation of dbsnp
+    if (defined(dbsnp)) {
         call biopet.ValidateVcf as validateVcf {
             input:
                 vcf = select_first([dbsnp]),
