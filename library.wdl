@@ -50,15 +50,16 @@ workflow Library {
             starIndexDir = starIndexDir
     }
 
+    call picard.MarkDuplicates as markDuplicates {
+        input:
+            inputBams = [starAlignment.bamFile.file],
+            inputBamIndexes = [starAlignment.bamFile.index],
+            outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
+            metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+    }
+
     if (variantCalling) {
     # Preprocess BAM for variant calling
-        call picard.MarkDuplicates as markDuplicates {
-            input:
-                inputBams = [starAlignment.bamFile.file],
-                inputBamIndexes = [starAlignment.bamFile.index],
-                outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
-                metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
-        }
         call preprocess.GatkPreprocess as preprocessing {
                 input:
                     bamFile = markDuplicates.outputBam,
