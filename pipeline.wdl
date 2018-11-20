@@ -20,7 +20,7 @@ workflow pipeline {
         String strandedness
         File? refflatFile
         File? referenceGtfFile
-        Array[File] lncRNAdatabases
+        Array[File] lncRNAdatabases = []
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
         File? cpatLogitModel
