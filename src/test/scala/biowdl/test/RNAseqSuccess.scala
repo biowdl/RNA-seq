@@ -33,5 +33,5 @@ trait RNAseqSuccess extends RNAseq with PipelineSuccess {
   //  "expression_measures/BaseCounter/all_samples.base.gene.counts")
   addMustHaveFile(
     "expression_measures/fragments_per_gene/all_samples.fragments_per_gene")
-  addMustHaveFile("multisample_variants/stats")
+  addConditionalFile(variantCalling, "multisample_variants/stats")
 }

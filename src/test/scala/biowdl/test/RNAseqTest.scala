@@ -36,6 +36,10 @@ class RNAseqTestSingleEndLncRNA
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
   override def lncRNAdetection: Boolean = true
+  override def inputs = super.inputs ++ Map(
+    "pipeline.cpatLogitModel" -> fixtureFile("cpat", "Human_logitModel.RData"),
+    "pipeline.cpatHex" -> fixtureFile("cpat", "Human_Hexamer.tsv")
+  )
 }
 
 class RNAseqTestPairedEndLncRNA
@@ -47,6 +51,10 @@ class RNAseqTestPairedEndLncRNA
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
 
   override def lncRNAdetection: Boolean = true
+  override def inputs = super.inputs ++ Map(
+    "pipeline.cpatLogitModel" -> fixtureFile("cpat", "Human_logitModel.RData"),
+    "pipeline.cpatHex" -> fixtureFile("cpat", "Human_Hexamer.tsv")
+  )
 }
 
 class RNAseqTestSingleEndVariantCalling
