@@ -98,11 +98,13 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-        scatter (sampleGffFile in expression.gffFiles) {
+        scatter (sampleGtfFile in expression.sampleGtfFiles) {
+            File sampleGtf = sampleGtfFile.right
+            String sampleId = sampleGtfFile.left
             call rnacodingpotential.RnaCodingPotential {
                 input:
-                    outputDir = outputDir + "/coding-potential",
-                    transcriptsGff = sampleGffFile,
+                    outputDir = outputDir + "/samples/" + sampleId + "/coding-potential",
+                    transcriptsGff = sampleGtf,
                     reference = reference,
                     cpatLogitModel = select_first([cpatLogitModel]),
                     cpatHex = select_first([cpatHex])
@@ -110,8 +112,8 @@ workflow pipeline {
 
             call comparegff.CompareGff {
                 input:
-                    outputDir = outputDir + "/compare-gff",
-                    sampleGtf = sampleGffFile,
+                    outputDir = outputDir + "/samples/" +sampleId + "/compare-gff",
+                    sampleGtf = sampleGtf,
                     databases = lncRNAdatabases
             }
         }
