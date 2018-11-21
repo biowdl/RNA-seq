@@ -3,10 +3,11 @@ version 1.0
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
+import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
-import "structs.wdl" as structs
 import "tasks/common.wdl" as common
+import "tasks/multiqc.wdl" as multiqc
 
 workflow pipeline {
     input {
@@ -83,6 +84,13 @@ workflow pipeline {
             outputDir = genotypingDir + "/stats"
     }
 
+    call multiqc.MultiQC as multiqcTask {
+        input:
+            outDir = outputDir + "/multiqc",
+            analysisDirectory = outputDir
+    }
+
     output {
+        File report = multiqcTask.multiqcReport
     }
 }
