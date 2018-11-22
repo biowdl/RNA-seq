@@ -65,7 +65,7 @@ workflow pipeline {
             outputDir = expressionDir,
             strandedness = strandedness,
             #refflatFile = refflatFile,
-            gtfFile = gtfFile
+            referenceGtfFile = gtfFile
     }
 
     call jointgenotyping.JointGenotyping as genotyping {
@@ -86,7 +86,8 @@ workflow pipeline {
 
     call multiqc.MultiQC as multiqcTask {
         input:
-            dependencies = [expression.counts, vcfStats.general],
+            # Multiqc will only run if these files are created.
+            dependencies = [expression.TPMTable, genotyping.vcfFile.file],
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
