@@ -86,6 +86,7 @@ workflow pipeline {
 
     call multiqc.MultiQC as multiqcTask {
         input:
+            dependencies = [expression.counts, vcfStats.general],
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
