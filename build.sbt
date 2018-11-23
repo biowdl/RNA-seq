@@ -27,5 +27,5 @@ developers ++= List(
 
 scalaVersion := "2.11.12"
 
-libraryDependencies += "com.github.biopet" %% "biowdl-test-utils" % "0.1-SNAPSHOT" % Test changing ()
+libraryDependencies += "com.github.biopet" %% "biowdl-test-utils" % "0.2-SNAPSHOT" % Test changing ()
 libraryDependencies += "com.github.biopet" %% "ngs-utils" % "0.4"
