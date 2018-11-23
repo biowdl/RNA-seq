@@ -7,5 +7,6 @@ script:
 - >
   if [ "$TRAVIS_PULL_REQUEST" != "false" ];
   then git submodule foreach --recursive bash -c
-  'if [ "$(git tag --contains)" == "" ] ;  then git checkout develop && git pull ; else echo "on tag: $(git tag --contains)" ; fi'
+  'if [ "$(git tag --contains)" == "" ] ;  then git checkout develop && git pull ; else echo "on tag: $(git tag --contains)" ; fi' ;
+  fi
 - "git diff --exit-code || (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)"
