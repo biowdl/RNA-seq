@@ -4,3 +4,9 @@ script:
 - export CROMWELL_VERSION=36
 - wget https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/womtool-$CROMWELL_VERSION.jar
 - for F in *.wdl; do echo $F; java -jar womtool-*.jar validate $F; done
+- >
+  if [ "$TRAVIS_PULL_REQUEST" != "false" ];
+  then git submodule foreach --recursive bash -c
+  'if [ "$(git tag --contains)" == "" ] ;  then git checkout develop && git pull && git submodule update --init --recursive ; else echo "on tag: $(git tag --contains)" ; fi' ;
+  fi
+- "git diff --exit-code || (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)"
