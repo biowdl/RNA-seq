@@ -11,7 +11,8 @@ import "tasks/multiqc.wdl" as multiqc
 
 workflow pipeline {
     input {
-        Array[File] sampleConfigFiles
+        File sampleConfigFile
+        Array[Sample] samples = []
         String outputDir
         Reference reference
         IndexedVcfFile dbsnp
@@ -38,15 +39,16 @@ workflow pipeline {
             reference = reference
     }
 
-    call sampleconfig.SampleConfigCromwellArrays as configFile {
-      input:
-        inputFiles = sampleConfigFiles,
-        outputPath = "samples.json"
+    call common.YamlToJson {
+        input:
+            yaml = sampleConfigFile
     }
+    SampleConfig sampleConfig = read_json(YamlToJson.json)
 
-    Root config = read_json(configFile.outputFile)
+    # Adding with `+` does not seem to work. But it works with flatten.
+    Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
 
-    scatter (sm in config.samples) {
+    scatter (sm in allSamples) {
         call sampleWorkflow.Sample as sample {
             input:
                 sample = sm,
