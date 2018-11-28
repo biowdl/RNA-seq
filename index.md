@@ -18,48 +18,38 @@ run `pipeline.wdl` using
 java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
 
-The inputs JSON can be generated using WOMtools as described in the [WOMtools
-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/). Note that
-not some inputs should not be used! See [this page](inputs.md) for more
-information.
+The inputs.json possible inputs are listed below. 
+Additional inputs are available. 
+These can be generated using WOMtools as described in the 
+[WOMtools-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
+Beware that this will generate inputs for all the subworkflows and each task 
+that is executed. Unless you have a specific requirement that needs a changed parameter
+in a task somewhere, we recommend using this guide for defining your inputs.
 
-The primary inputs are described below, additional inputs (such as precommands
-and JAR paths) are available. Please use the above mentioned WOMtools command
-to see all available inputs.
 
 | field | type | |
 |-|-|-|
-| sampleConfigFiles | `Array[File]` | The sample configuration files. See below for more details. |
-| sample.library.starAlignment.<br />star.genomeDir | `String` | The STAR index. |
-| refFasta | `File` | Reference fasta file. |
-| refFastaIndex | `File` | Index for the reference fasta files. |
-| refDict | `File` | The dict file for the referene fasta. |
-| refRefflat | `File` | Reference annotation Refflat file. This will be used for expression quantification. |
-| refGtf | `File` | Reference annotation GTF file. This will be used for expression quantification. |
-| dbsnpVCF | `File` | Reference dbSNP VCF file. |
-| dbsnpVCFindex | `File` | Index for the reference dbSNP VCF file. |
-| strandedness | `String` | Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse),RF (Reverse, Forward) or None: (Unstranded).
-| outputDir | `String` | The directory where the output will be placed. |
-| sample.library.starAlignment.<br />star.twopassMode | `String?` | The STAR twopassMode argument to be passed to the `--twopassMode` option. If this is not defined twopassMode will not be used. |
-| sample.library.readgroup.<br />platform| `String?` | The value to be given to the `PL` BAM flag. |
-| sample.library.preprocessing.<br />baseRecalibrator.<br />knownIndelsSitesVCFs | `Array[File]?` | A VCF file containing known indels. |
-| JointGenotyping.<br />mergeGvcfFiles | `Boolean?` | Whether or not to produce a multisample gVCF file. |
+| sampleConfigFile | `File` | The sample configuration file. See below for more details. |
+| starIndexDir | `String` | The STAR index. |
+| reference | `Dict` | A dictionary containing the following fields <br>"fasta": a fasta file<br>"fai": The fasta index file<br>"dict": the picard index file |
+| refflatFile | `File` | Reference annotation Refflat file. This will be used for expression quantification. |
+| gtfFile | `File` | Reference annotation GTF file. This will be used for expression quantification. |
+| dbsnp| `Dict` | Reference dbSNP VCF file. A dictionary containing the following fields: <br>"file": the dbsnp vcf file  <br>"index": the vcf index file  <br>"md5": Optional(not needed for operation) a md5 file for the vcf file.|
+| dbstrandedness | `String` | Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse),RF (Reverse, Forward) or None: (Unstranded).
 
 >All inputs have to be preceded by `pipeline.`.
-Type is indicated according to the WDL data types: `File` should be indicators
-of file location (a string in JSON). Types ending in `?` indicate the input is
-optional, types ending in `+` indicate they require at least one element.
 
 ### Sample configuration
 The sample configuration should be a YML file which adheres to the following
 structure:
 ```YML
 samples:
-  <sample>:
+  - id: <sampleId>
     libraries:
-      <library>:
+      - id: <libId>
         readgroups:
-          <readgroup>:
+          - id: <rgId>
+            reads:
               R1: <Path to first-end FastQ file.>
               R1_md5: <MD5 checksum of first-end FastQ file.>
               R2: <Path to second-end FastQ file.>
@@ -105,6 +95,7 @@ measures.
       - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
       in case preprocessing was necessary.
 - **multisample.vcf.gz**: A multisample VCF file with the variantcalling
+- **multiqc**: Contains the multiqc report.
 results.
 
 ## About

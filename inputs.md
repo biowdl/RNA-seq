@@ -37,6 +37,10 @@ Please do not use the following inputs:
 
 > DISCLAIMER: Some inputs may have been missed in this list.
 
+Type is indicated according to the WDL data types: `File` should be indicators
+of file location (a string in JSON). Types ending in `?` indicate the input is
+optional, types ending in `+` indicate they require at least one element.
+
 ## Precommands
 Many tasks have a `preCommand` input available. This is an input which can be
 used to execute some bash code before a tool is run. This could be used to,
