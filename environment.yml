@@ -30,4 +30,4 @@ dependencies:
     - CPAT==1.2.4
   - gffread==0.9.9
   - gffcompare==0.10.1
-
+  - multiqc==1.6

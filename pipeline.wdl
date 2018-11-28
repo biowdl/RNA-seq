@@ -9,10 +9,12 @@ import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/common.wdl" as common
+import "tasks/multiqc.wdl" as multiqc
 
 workflow pipeline {
     input {
-        Array[File] sampleConfigFiles
+        File sampleConfigFile
+        Array[Sample] samples = []
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
@@ -50,15 +52,16 @@ workflow pipeline {
         }
     }
 
-    call sampleconfig.SampleConfigCromwellArrays as configFile {
-      input:
-        inputFiles = sampleConfigFiles,
-        outputPath = "samples.json"
+    call common.YamlToJson {
+        input:
+            yaml = sampleConfigFile
     }
+    SampleConfig sampleConfig = read_json(YamlToJson.json)
 
-    Root config = read_json(configFile.outputFile)
+    # Adding with `+` does not seem to work. But it works with flatten.
+    Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
 
-    scatter (sm in config.samples) {
+    scatter (sm in allSamples) {
         call sampleWorkflow.Sample as sample {
             input:
                 sample = sm,
@@ -121,6 +124,15 @@ workflow pipeline {
         }
     }
 
+    call multiqc.MultiQC as multiqcTask {
+        input:
+            # Multiqc will only run if these files are created.
+            dependencies = [expression.TPMTable, genotyping.vcfFile.file],
+            outDir = outputDir + "/multiqc",
+            analysisDirectory = outputDir
+    }
+
     output {
+        File report = multiqcTask.multiqcReport
     }
 }
