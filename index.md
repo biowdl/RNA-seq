@@ -18,26 +18,33 @@ run `pipeline.wdl` using
 java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
 
-The inputs.json possible inputs are listed below. 
+The inputs.json minimally required inputs are listed below. 
 Additional inputs are available. 
-These can be generated using WOMtools as described in the 
-[WOMtools-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
+These can be generated using the WOMtool as described in the 
+[WOMtool-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
 Beware that this will generate inputs for all the subworkflows and each task 
 that is executed. Unless you have a specific requirement that needs a changed parameter
 in a task somewhere, we recommend using this guide for defining your inputs.
 
-
-| field | type | |
-|-|-|-|
-| sampleConfigFile | `File` | The sample configuration file. See below for more details. |
-| starIndexDir | `String` | The STAR index. |
-| reference | `Dict` | A dictionary containing the following fields <br>"fasta": a fasta file<br>"fai": The fasta index file<br>"dict": the picard index file |
-| refflatFile | `File` | Reference annotation Refflat file. This will be used for expression quantification. |
-| gtfFile | `File` | Reference annotation GTF file. This will be used for expression quantification. |
-| dbsnp| `Dict` | Reference dbSNP VCF file. A dictionary containing the following fields: <br>"file": the dbsnp vcf file  <br>"index": the vcf index file  <br>"md5": Optional(not needed for operation) a md5 file for the vcf file.|
-| dbstrandedness | `String` | Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse),RF (Reverse, Forward) or None: (Unstranded).
-
->All inputs have to be preceded by `pipeline.`.
+```JSON
+{
+ "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
+  "pipeline.starIndexDir": "The STAR index.",
+  "pipeline.reference": {
+    "fasta": "A path to a reference fasta",
+    "fai": "The path to the index associated with the reference fasta",
+    "dict": "The path to the dict file associated with the reference fasta"
+  },
+  "pipeline.dbSNP": {
+    "file": "A path to a dbSNP VCF file",
+    "index": "The path to the index (.tbi) file associated with the dbSNP VCF"
+  },
+  "pipeline.outputDir": "The path to the output directory",
+  "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
+  "pipeline.gtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
+  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse),RF (Reverse, Forward) or None: (Unstranded)"
+}
+```
 
 ### Sample configuration
 The sample configuration should be a YML file which adheres to the following
@@ -59,6 +66,61 @@ Replace the text between `< >` with appropriate values. MD5 values may be
 omitted and R2 values may be omitted in the case of single-end data.
 Multiple readgroups can be added per library and multiple libraries may be
 given per sample.
+
+### Example
+
+The following is an example of what an inputs JSON might look like:
+```JSON
+{
+ "pipeline.sampleConfigFile":"/home/user/analysis/samples.yml",
+  "pipeline.starIndexDir": "/home/user/genomes/human/bwa/GRCh38/star",
+  "pipeline.reference": {
+    "fasta": "/home/user/genomes/human/GRCh38.fasta",
+    "fai": "/home/user/genomes/human/GRCh38.fasta.fai",
+    "dict": "/home/user/genomes/human/GRCh38.dict"
+  },
+  "pipeline.dbSNP": {
+    "file": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
+    "index": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi"
+  },
+  "pipeline.outputDir": "/home/user/analysis/results",
+  "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
+  "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
+  "pipeline.strandedness": "FR"
+}
+```
+
+And the associated sample configuration YML might look like this:
+
+```YAML
+samples:
+  - id: patient1:
+    libraries:
+      - id: lib1:
+        readgroups:
+          - id: lane1:
+            reads:
+              R1: /home/user/data/patient1/R1.fq.gz
+              R1_md5: /home/user/data/patient1/R1.fq.gz.md5
+              R2: /home/user/data/patient1/R2.fq.gz
+              R2_md5: /home/user/data/patient1/R2.fq.gz.md5
+  - id: patient2:
+    libraries:
+      - id: lib1:
+        readgroups:
+          - id: lane1:
+            reads:
+              R1: /home/user/data/patient2/lane1_R1.fq.gz
+              R1_md5: /home/user/data/patient2/lane1_R1.fq.gz.md5
+              R2: /home/user/data/patient2/lane1_R2.fq.gz
+              R2_md5: /home/user/data/patient2/lane1_R2.fq.gz.md5
+          - id: lane2:
+            reads:
+              R1: /home/user/data/patient2/lane2_R1.fq.gz
+              R1_md5: /home/user/data/patient2/lane2_R1.fq.gz.md5
+              R2: /home/user/data/patient2/lane2_R2.fq.gz
+              R2_md5: /home/user/data/patient2/lane2_R2.fq.gz.md5
+```
 
 ## Tool versions
 Included in the repository is an `environment.yml` file. This file includes
