@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Home
-version: develop
+version: 0.1
 latest: true
 ---
 
@@ -18,13 +18,13 @@ run `pipeline.wdl` using
 java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
 
-The inputs.json minimally required inputs are listed below. 
-Additional inputs are available. 
-These can be generated using the WOMtool as described in the 
-[WOMtool-documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-Beware that this will generate inputs for all the subworkflows and each task 
-that is executed. Unless you have a specific requirement that needs a changed parameter
-in a task somewhere, we recommend using this guide for defining your inputs.
+Inputs are provided through a JSON file. The minimally required inputs are
+described below, but additional inputs are available.
+A template containing all possible inputs can be generated using
+Womtool as described in the
+[WOMtool documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
+See [this page](/inputs.html) for some additional general notes and information
+about pipeline inputs.
 
 ```JSON
 {
