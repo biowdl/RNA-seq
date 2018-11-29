@@ -157,8 +157,8 @@ measures.
       - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
       in case preprocessing was necessary.
 - **multisample.vcf.gz**: A multisample VCF file with the variantcalling
+  results.
 - **multiqc**: Contains the multiqc report.
-results.
 
 ## Contact
 <p>
