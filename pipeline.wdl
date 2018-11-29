@@ -100,6 +100,7 @@ workflow pipeline {
                 reference = reference,
                 outputDir = genotypingDir + "/stats"
         }
+        File vcfFile = genotyping.vcfFile.file
     }
 
     if (lncRNAdetection) {
@@ -127,7 +128,20 @@ workflow pipeline {
     call multiqc.MultiQC as multiqcTask {
         input:
             # Multiqc will only run if these files are created.
-            dependencies = [expression.TPMTable, genotyping.vcfFile.file, RnaCodingPotential.cpatOutput, CompareGff.gffCompareAnnotated],
+            # Need to do some select_all and flatten magic here
+            # so only outputs from workflows that are run are taken
+            # as dependencies
+            dependencies =
+                flatten(
+                    [
+                        [expression.TPMTable],
+                        select_all([
+                            vcfFile,
+                            RnaCodingPotential.cpatOutput,
+                            CompareGff.annotatedGtfs
+                            ])
+                    ]
+                ),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
