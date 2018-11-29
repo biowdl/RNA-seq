@@ -1,23 +1,26 @@
 ---
 layout: default
 title: Home
-version: 0.1
+version: v0.1
 latest: true
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
 It will perform adapter clipping (using cutadapt), mapping (using STAR),
 variantcalling (based on the GATK Best Practises) and expression
-quantification (using HTSeq-Count, Stringtie and BaseCounter).
+quantification (using HTSeq-Count and Stringtie).
+
+This pipeline is part of [BioWDL](https://biowdl.github.io/)
+developed by [the SASC team](http://sasc.lumc.nl/).
 
 ## Usage
-In order to run the complete multisample pipeline, you can
-run `pipeline.wdl` using
+This pipeline can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
 ```bash
 java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
 
+### Inputs
 Inputs are provided through a JSON file. The minimally required inputs are
 described below, but additional inputs are available.
 A template containing all possible inputs can be generated using
@@ -46,7 +49,7 @@ about pipeline inputs.
 }
 ```
 
-### Sample configuration
+#### Sample configuration
 The sample configuration should be a YML file which adheres to the following
 structure:
 ```YML
@@ -67,7 +70,7 @@ omitted and R2 values may be omitted in the case of single-end data.
 Multiple readgroups can be added per library and multiple libraries may be
 given per sample.
 
-### Example
+#### Example
 
 The following is an example of what an inputs JSON might look like:
 ```JSON
@@ -91,7 +94,6 @@ The following is an example of what an inputs JSON might look like:
 ```
 
 And the associated sample configuration YML might look like this:
-
 ```YAML
 samples:
   - id: patient1:
@@ -122,12 +124,12 @@ samples:
               R2_md5: /home/user/data/patient2/lane2_R2.fq.gz.md5
 ```
 
-## Tool versions
+### Dependency requirements and tool versions
 Included in the repository is an `environment.yml` file. This file includes
 all the tool version on which the workflow was tested. You can use conda and
 this file to create an environment with all the correct tools.
 
-## Output
+### Output
 This pipeline will produce a number of directories and files:
 - **expression_measures**: Contains a number of directories with expression
 measures.
@@ -158,16 +160,13 @@ measures.
 - **multiqc**: Contains the multiqc report.
 results.
 
-## About
-This pipeline is part of [BioWDL](https://biowdl.github.io/)
-developed by [the SASC team](http://sasc.lumc.nl/).
-
 ## Contact
 <p>
   <!-- Obscure e-mail address for spammers -->
-For any question related to this pipeline, please use the
+For any question about running this pipeline and feature requests, please use
+the
 <a href='https://github.com/biowdl/rna-seq/issues'>github issue tracker</a>
 or contact
- <a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
+<a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
 &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
 </p>
