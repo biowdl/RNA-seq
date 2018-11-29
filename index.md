@@ -131,8 +131,6 @@ this file to create an environment with all the correct tools.
 This pipeline will produce a number of directories and files:
 - **expression_measures**: Contains a number of directories with expression
 measures.
-  - **BaseCounter**: Contains BaseCounter ouput. Includes a file called
-  `all_samples.base.gene.counts`, which contains the counts for all samples.
   - **stringtie**: Contains the stringtie output. Includes two additional
   folder:
     - **FPKM**: Contains per sample FPKM counts, extracted from the stringtie
