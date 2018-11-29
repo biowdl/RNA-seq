@@ -127,7 +127,7 @@ workflow pipeline {
     call multiqc.MultiQC as multiqcTask {
         input:
             # Multiqc will only run if these files are created.
-            dependencies = [expression.TPMTable, genotyping.vcfFile.file],
+            dependencies = [expression.TPMTable, genotyping.vcfFile.file, RnaCodingPotential.cpatOutput, CompareGff.gffCompareAnnotated],
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
