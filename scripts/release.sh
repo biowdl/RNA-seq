@@ -7,6 +7,7 @@ VERSION_FILE="VERSION"
 
 function check_tagged_submodules {
     echo "Check if all submodules are tagged"
+    git submodule update --init --recursive
     git submodule foreach --recursive \
     bash -c 'if [ "$(git tag -l --points-at HEAD)" == "" ] ; \
     then echo "Untagged submodule found. Please make sure all submodules are released. Aborting release procedure." && exit 1 ;\
