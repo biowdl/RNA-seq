@@ -14,18 +14,14 @@ workflow Readgroup {
         String outputDir
     }
 
-    # FIXME: workaround for namepace issue in cromwell
-    String sampleId = sample.id
-    String libraryId = library.id
-    String readgroupId = readgroup.id
 
     call qcWorkflow.QC as qc {
         input:
             outputDir = outputDir,
             reads = readgroup.reads,
-            sample = sampleId,
-            library = libraryId,
-            readgroup = readgroupId
+            sample = sample.id,
+            library = library.id,
+            readgroup = readgroup.id
     }
 
     output {

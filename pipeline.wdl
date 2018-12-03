@@ -1,7 +1,9 @@
 version 1.0
 
+import "compare-gff/comparegff.wdl" as comparegff
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
+import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
@@ -15,28 +17,39 @@ workflow pipeline {
         Array[Sample] samples = []
         String outputDir
         Reference reference
-        IndexedVcfFile dbsnp
+        IndexedVcfFile? dbsnp
         String starIndexDir
         String strandedness
-        File refflatFile
-        File gtfFile
+        File? refflatFile
+        File? referenceGtfFile
+        Array[File] lncRNAdatabases = []
+        Boolean variantCalling = false
+        Boolean lncRNAdetection = false
+        File? cpatLogitModel
+        File? cpatHex
     }
 
     String expressionDir = outputDir + "/expression_measures/"
     String genotypingDir = outputDir + "/multisample_variants/"
 
-    # Validation of annotations and dbSNP
-    call biopet.ValidateAnnotation as validateAnnotation {
-        input:
-            refRefflat = refflatFile,
-            gtfFile = gtfFile,
-            reference = reference
+    # Validation of annotations
+    # If these are given.
+    if (defined(referenceGtfFile) && defined(refflatFile)) {
+        call biopet.ValidateAnnotation as validateAnnotation {
+            input:
+                refRefflat = select_first([refflatFile]),
+                gtfFile = select_first([referenceGtfFile]),
+                reference = reference
+        }
     }
 
-    call biopet.ValidateVcf as validateVcf {
-        input:
-            vcf = dbsnp,
-            reference = reference
+    # Validation of dbsnp
+    if (defined(dbsnp)) {
+        call biopet.ValidateVcf as validateVcf {
+            input:
+                vcf = select_first([dbsnp]),
+                reference = reference
+        }
     }
 
     call common.YamlToJson {
@@ -57,7 +70,8 @@ workflow pipeline {
                 dbsnp = dbsnp,
                 starIndexDir = starIndexDir,
                 strandedness = strandedness,
-                refflatFile = refflatFile
+                refflatFile = refflatFile,
+                variantCalling = variantCalling
         }
     }
 
@@ -67,29 +81,63 @@ workflow pipeline {
             outputDir = expressionDir,
             strandedness = strandedness,
             #refflatFile = refflatFile,
-            referenceGtfFile = gtfFile
+            referenceGtfFile = referenceGtfFile
     }
 
-    call jointgenotyping.JointGenotyping as genotyping {
-        input:
-            reference = reference,
-            outputDir = genotypingDir,
-            gvcfFiles = sample.gvcfFile,
-            vcfBasename = "multisample",
-            dbsnpVCF = dbsnp
+    if (variantCalling) {
+        call jointgenotyping.JointGenotyping as genotyping {
+            input:
+                reference = reference,
+                outputDir = genotypingDir,
+                gvcfFiles = select_all(sample.gvcfFile),
+                vcfBasename = "multisample",
+                dbsnpVCF = select_first([dbsnp])
+        }
+
+        call biopet.VcfStats as vcfStats {
+            input:
+                vcf = genotyping.vcfFile,
+                reference = reference,
+                outputDir = genotypingDir + "/stats"
+        }
+        File vcfFile = genotyping.vcfFile.file
     }
 
-    call biopet.VcfStats as vcfStats {
-        input:
-            vcf = genotyping.vcfFile,
-            reference = reference,
-            outputDir = genotypingDir + "/stats"
+    if (lncRNAdetection) {
+        scatter (sampleGtfFile in expression.sampleGtfFiles) {
+            File sampleGtf = sampleGtfFile.right
+            String sampleId = sampleGtfFile.left
+            call rnacodingpotential.RnaCodingPotential {
+                input:
+                    outputDir = outputDir + "/samples/" + sampleId + "/coding-potential",
+                    transcriptsGff = sampleGtf,
+                    reference = reference,
+                    cpatLogitModel = select_first([cpatLogitModel]),
+                    cpatHex = select_first([cpatHex])
+            }
+
+            call comparegff.CompareGff {
+                input:
+                    outputDir = outputDir + "/samples/" +sampleId + "/compare-gff",
+                    sampleGtf = sampleGtf,
+                    databases = lncRNAdatabases
+            }
+        }
+        # These files are created so that multiqc has some dependencies to wait for.
+        # In theory this could be done by all sort of flattening array stuff, but
+        # this is the simplest way. I could not get the other ways to work.
+        File cpatOutputs = write_lines(RnaCodingPotential.cpatOutput)
+        File gffComparisons = write_lines(flatten(CompareGff.annotatedGtfs))
     }
 
     call multiqc.MultiQC as multiqcTask {
         input:
             # Multiqc will only run if these files are created.
-            dependencies = [expression.TPMTable, genotyping.vcfFile.file],
+            # Need to do some select_all and flatten magic here
+            # so only outputs from workflows that are run are taken
+            # as dependencies
+            # vcfFile
+            dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }

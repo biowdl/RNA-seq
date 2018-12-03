@@ -14,10 +14,11 @@ workflow Library {
         Sample sample
         String outputDir
         Reference reference
-        IndexedVcfFile dbsnp
+        IndexedVcfFile? dbsnp
         String starIndexDir
         String strandedness
-        File refflatFile
+        File? refflatFile
+        Boolean variantCalling = false
     }
 
     String sampleId = sample.id
@@ -49,13 +50,25 @@ workflow Library {
             starIndexDir = starIndexDir
     }
 
-    # Preprocess BAM for variant calling
     call picard.MarkDuplicates as markDuplicates {
         input:
             inputBams = [starAlignment.bamFile.file],
             inputBamIndexes = [starAlignment.bamFile.index],
             outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
             metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+    }
+
+    if (variantCalling) {
+    # Preprocess BAM for variant calling
+        call preprocess.GatkPreprocess as preprocessing {
+                input:
+                    bamFile = markDuplicates.outputBam,
+                    basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
+                    outputRecalibratedBam = true,
+                    splitSplicedReads = true,
+                    dbsnpVCF = select_first([dbsnp]),
+                    reference = reference
+        }
     }
 
     # Gather BAM Metrics
@@ -68,18 +81,11 @@ workflow Library {
             refRefflat = refflatFile
     }
 
-    call preprocess.GatkPreprocess as preprocessing {
-            input:
-                bamFile = markDuplicates.outputBam,
-                basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
-                outputRecalibratedBam = true,
-                splitSplicedReads = true,
-                dbsnpVCF = dbsnp,
-                reference = reference
-    }
+
+
 
     output {
         IndexedBamFile bamFile = markDuplicates.outputBam
-        IndexedBamFile preprocessBamFile = select_first([preprocessing.outputBamFile])
+        IndexedBamFile? preprocessBamFile = preprocessing.outputBamFile
     }
 }

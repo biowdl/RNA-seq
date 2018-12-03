@@ -30,3 +30,9 @@
     branch = develop
 	path = BamMetrics
 	url = https://github.com/biowdl/BamMetrics
+[submodule "compare-gff"]
+	path = compare-gff
+	url = https://github.com/biowdl/compare-gff.git
+[submodule "rna-coding-potential"]
+	path = rna-coding-potential
+	url = https://github.com/biowdl/rna-coding-potential.git

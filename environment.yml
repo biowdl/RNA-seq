@@ -24,5 +24,10 @@ dependencies:
   - biopet-validatevcf==0.1
   - pyyaml==3.12
   - biopet-vcfstats==1.2
-  - biopet-bamstats==1.0
+  - biopet-bamstats==1.0.1
+  - python <3
+  - pip:
+    - CPAT==1.2.4
+  - gffread==0.9.9
+  - gffcompare==0.10.1
   - multiqc==1.6

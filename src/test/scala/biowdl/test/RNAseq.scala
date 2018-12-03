@@ -46,12 +46,17 @@ trait RNAseq extends MultisamplePipeline with Reference with Annotation {
         "pipeline.strandedness" -> strandedness,
         "pipeline.starIndexDir" -> starGenomeDir.map(_.getAbsolutePath),
         "pipeline.refflatFile" -> referenceRefflat.map(_.getAbsolutePath),
-        "pipeline.gtfFile" -> referenceGtf.map(_.getAbsolutePath),
+        "pipeline.referenceGtfFile" -> referenceGtf.map(_.getAbsolutePath),
         "pipeline.dbsnp" -> Map(
           "file" -> dbsnpFile.getAbsolutePath,
           "index" -> getVcfIndexFile(dbsnpFile).getAbsolutePath
-        )
+        ),
+        "pipeline.variantCalling" -> variantCalling,
+        "pipeline.lncRNAdetection" -> lncRNAdetection,
+        "pipeline.lncRNAdatabases" -> List(referenceGtf.map(_.getAbsolutePath)) // This is just to make sure the pipeline works.
       )
 
+  def variantCalling: Boolean = false
+  def lncRNAdetection: Boolean = false
   def startFile: File = new File("./pipeline.wdl")
 }

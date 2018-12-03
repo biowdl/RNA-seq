@@ -28,20 +28,51 @@ import nl.biopet.utils.biowdl.annotations.TestAnnotation
 import nl.biopet.utils.biowdl.references.TestReference
 import nl.biopet.utils.biowdl.samples.{Rna3PairedEnd, Rna3SingleEnd}
 
-class RNAseqTestSingleEnd
+class RNAseqTestSingleEndLncRNA
     extends RNAseqSuccess
     with TestReference
     with TestAnnotation
     with Rna3SingleEnd {
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+  override def lncRNAdetection: Boolean = true
+  override def inputs = super.inputs ++ Map(
+    "pipeline.cpatLogitModel" -> fixtureFile("cpat", "Human_logitModel.RData"),
+    "pipeline.cpatHex" -> fixtureFile("cpat", "Human_Hexamer.tsv")
+  )
 }
 
-class RNAseqTestPairedEnd
+class RNAseqTestPairedEndLncRNA
     extends RNAseqSuccess
     with TestReference
     with TestAnnotation
     with Rna3PairedEnd {
   def strandedness: String = "None"
   def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+
+  override def lncRNAdetection: Boolean = true
+  override def inputs = super.inputs ++ Map(
+    "pipeline.cpatLogitModel" -> fixtureFile("cpat", "Human_logitModel.RData"),
+    "pipeline.cpatHex" -> fixtureFile("cpat", "Human_Hexamer.tsv")
+  )
+}
+
+class RNAseqTestSingleEndVariantCalling
+    extends RNAseqSuccess
+    with TestReference
+    with TestAnnotation
+    with Rna3SingleEnd {
+  def strandedness: String = "None"
+  def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+  override def variantCalling = true
+}
+
+class RNAseqTestPairedEndVariantCalling
+    extends RNAseqSuccess
+    with TestReference
+    with TestAnnotation
+    with Rna3PairedEnd {
+  def strandedness: String = "None"
+  def dbsnpFile: File = fixtureFile("samples", "wgs2", "wgs2.vcf.gz")
+  override def variantCalling = true
 }
