@@ -131,17 +131,7 @@ workflow pipeline {
             # Need to do some select_all and flatten magic here
             # so only outputs from workflows that are run are taken
             # as dependencies
-            dependencies =
-                flatten(
-                    [
-                        [expression.TPMTable],
-                        select_all([
-                            vcfFile,
-                            RnaCodingPotential.cpatOutput,
-                            CompareGff.annotatedGtfs
-                            ])
-                    ]
-                ),
+            dependencies = flatten([[expression.TPMTable], select_all([vcfFile, RnaCodingPotential.cpatOutput, CompareGff.annotatedGtfs])]),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
