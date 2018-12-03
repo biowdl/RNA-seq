@@ -123,6 +123,11 @@ workflow pipeline {
                     databases = lncRNAdatabases
             }
         }
+        # These files are created so that multiqc has some dependencies to wait for.
+        # In theory this could be done by all sort of flattening array stuff, but
+        # this is the simplest way. I could not get the other ways to work.
+        File cpatOutputs = write_lines(RnaCodingPotential.cpatOutput)
+        File gffComparisons = write_lines(flatten(CompareGff.annotatedGtfs))
     }
 
     call multiqc.MultiQC as multiqcTask {
@@ -131,7 +136,8 @@ workflow pipeline {
             # Need to do some select_all and flatten magic here
             # so only outputs from workflows that are run are taken
             # as dependencies
-            dependencies = flatten([[expression.TPMTable], select_all([vcfFile, RnaCodingPotential.cpatOutput, CompareGff.annotatedGtfs])]),
+            # vcfFile
+            dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
