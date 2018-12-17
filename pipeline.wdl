@@ -54,7 +54,9 @@ workflow pipeline {
 
     call common.YamlToJson {
         input:
-            yaml = sampleConfigFile
+            yaml = sampleConfigFile,
+            # Put the output json in a fixed directory for call-caching reasons
+            outputJson = outputDir + "/samples.json"
     }
     SampleConfig sampleConfig = read_json(YamlToJson.json)
 
