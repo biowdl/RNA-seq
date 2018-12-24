@@ -14,7 +14,7 @@ before_install:
   - conda config --set always_yes yes
   - conda env create -n my_env -f environment.yml
   - source activate my_env
-  - conda install cromwell
+  - conda install --channel bioconda cromwell
 
 script:
 - set -e
