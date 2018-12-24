@@ -1,0 +1,10 @@
+- name: Rna3SingleEndVariantCalling
+  command: cromwell run -i tests/inputs/SingleEndVariantCalling.json pipeline.wdl
+  files:
+    - path: "test-output/multisample_variants/multisample.vcf.gz"
+    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multisample_variants/stats"
+    - path: "multiqc/multiqc_report.html"
