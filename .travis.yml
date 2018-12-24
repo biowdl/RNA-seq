@@ -17,8 +17,8 @@ before_install:
   - conda install --channel bioconda cromwell
 
 script:
-- set -eux
-- for F in *.wdl; do echo $F; womtool validate $F; done
+#- set -e
+#- for F in *.wdl; do echo $F; womtool validate $F; done
 - python3 -m pytest
 - >
   if [ "$TRAVIS_PULL_REQUEST" != "false" ];
