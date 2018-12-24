@@ -1,5 +1,4 @@
 {
-  "pipeline.outputDir": "test-output",
   "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.yml",
   "pipeline.reference": {
     "fasta": "tests/data/reference/reference.fasta",
