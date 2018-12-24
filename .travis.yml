@@ -1,9 +1,26 @@
-language: java
+# We need to use conda here because we need to build python with
+# the correct sqlite version.
+
+language: python
+
+python:
+  - 3.6
+
+before_install:
+  - pip install pytest-workflow
+  - export MINICONDA=${HOME}/miniconda
+  - export PATH=${MINICONDA}/bin:${PATH}
+  - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -f -p ${MINICONDA}
+  - conda config --set always_yes yes
+  - conda env create -n my_env -f environment.yml
+  - source activate my_env
+  - conda install cromwell
+
 script:
 - set -e
-- export CROMWELL_VERSION=36
-- wget https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/womtool-$CROMWELL_VERSION.jar
-- for F in *.wdl; do echo $F; java -jar womtool-*.jar validate $F; done
+- for F in *.wdl; do echo $F; womtool validate $F; done
+- python3 -m pytest
 - >
   if [ "$TRAVIS_PULL_REQUEST" != "false" ];
   then git submodule foreach --recursive bash -c
