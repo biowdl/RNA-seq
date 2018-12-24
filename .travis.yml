@@ -1,5 +1,4 @@
-# We need to use conda here because we need to build python with
-# the correct sqlite version.
+# We use conda to load the rnaseq environment and install cromwell.
 
 language: python
 
