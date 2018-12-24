@@ -17,7 +17,7 @@ before_install:
   - conda install --channel bioconda cromwell
 
 script:
-- set -e
+- set -eux
 - for F in *.wdl; do echo $F; womtool validate $F; done
 - python3 -m pytest
 - >
