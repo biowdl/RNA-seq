@@ -14,6 +14,8 @@ before_install:
   - conda env create -n my_env -f environment.yml
   - source activate my_env
   - conda install --channel bioconda cromwell
+
+install:
   - pip3 install pytest-workflow
 
 script:
