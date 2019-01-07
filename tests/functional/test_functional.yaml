@@ -10,8 +10,7 @@
     bash -c '
     TEST_JSON=tests/inputs/SingleEndVariantCalling.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl
-    '
+    cromwell run -i $TEST_JSON pipeline.wdl'
   files:
     - path: "test-output/multisample_variants/multisample.vcf.gz"
     - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
