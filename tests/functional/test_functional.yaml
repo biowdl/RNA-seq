@@ -18,4 +18,4 @@
     - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multisample_variants/stats"
-    - path: "multiqc/multiqc_report.html"
+    - path: "test-output/multiqc/multiqc_report.html"
