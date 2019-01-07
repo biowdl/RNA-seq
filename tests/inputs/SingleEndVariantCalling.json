@@ -11,7 +11,7 @@
   "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
   "pipeline.dbsnp": {
     "file": "tests/data/wgs2.vcf.gz",
-    "index": "tests/data/wgs2.vcf.idx"
+    "index": "tests/data/wgs2.vcf.gz.tbi"
   },
   "pipeline.variantCalling": true,
   "pipeline.lncRNAdetection": false
