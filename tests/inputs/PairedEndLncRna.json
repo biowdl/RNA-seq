@@ -1,0 +1,17 @@
+{
+  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd.yml",
+  "pipeline.reference": {
+    "fasta": "tests/data/reference/reference.fasta",
+    "fai": "tests/data/reference/reference.fasta.fai",
+    "dict": "tests/data/reference/reference.dict"
+  },
+  "pipeline.strandedness": "None",
+  "pipeline.starIndexDir": "tests/data/reference/star",
+  "pipeline.variantCalling": false,
+  "pipeline.lncRNAdetection": true,
+  "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
+  "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
+  "pipeline.lncRNAdatabases": [
+    "tests/reference/reference.gtf"
+  ]
+}
