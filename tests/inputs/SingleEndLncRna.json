@@ -12,6 +12,6 @@
   "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
   "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
   "pipeline.lncRNAdatabases": [
-    "tests/reference/reference.gtf"
+    "tests/data/reference/reference.gtf"
   ]
 }
