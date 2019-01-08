@@ -1,0 +1,18 @@
+{
+  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.yml",
+  "pipeline.reference": {
+    "fasta": "tests/data/reference/reference.fasta",
+    "fai": "tests/data/reference/reference.fasta.fai",
+    "dict": "tests/data/reference/reference.dict"
+  },
+  "pipeline.strandedness": "None",
+  "pipeline.starIndexDir": "tests/data/reference/star",
+  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
+  "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
+  "pipeline.dbsnp": {
+    "file": "tests/data/wgs2.vcf.gz",
+    "index": "tests/data/wgs2.vcf.gz.tbi"
+  },
+  "pipeline.variantCalling": true,
+  "pipeline.lncRNAdetection": false
+}

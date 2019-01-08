@@ -1,12 +1,51 @@
-language: java
+# We use conda to load the rnaseq environment and install cromwell.
+
+language: python
+
+python:
+  - 3.6
+
+before_install:
+  # Install conda
+  - export MINICONDA=${HOME}/miniconda
+  - export PATH=${MINICONDA}/bin:${PATH}
+  - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -f -p ${MINICONDA}
+  - conda config --set always_yes yes
+  - conda config --add channels defaults
+  - conda config --add channels bioconda
+  - conda config --add channels conda-forge
+
+install:
+  - conda env create -n my_env -f environment.yml
+  - source activate my_env
+  - conda install cromwell
+  - python3 -m pip install pytest-workflow
+
 script:
-- set -e
-- export CROMWELL_VERSION=36
-- wget https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/womtool-$CROMWELL_VERSION.jar
-- for F in *.wdl; do echo $F; java -jar womtool-*.jar validate $F; done
-- >
-  if [ "$TRAVIS_PULL_REQUEST" != "false" ];
-  then git submodule foreach --recursive bash -c
-  'if [ "$(git tag --contains)" == "" ] ;  then git checkout develop && git pull && git submodule update --init --recursive ; else echo "on tag: $(git tag --contains)" ; fi' ;
-  fi
-- "git diff --exit-code || (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)"
+  - python3 -m pytest -v tests/functional/test$TEST.yml
+
+matrix:
+  include:
+    - env: TEST=Rna3PairedEndVariantCalling
+    - env: TEST=Rna3SingleEndVariantCalling
+    - env: TEST=Rna3PairedEndLncRna
+    - env: TEST=Rna3SingleEndLncRna
+    # Below is for testing if all files are valid and if all submodules are up to date.
+    - env: TEST=Womtool validate and submodule up to date
+      install:
+        - conda install cromwell
+      script:
+        - set -e
+        - for F in *.wdl; do echo $F; womtool validate $F; done
+        - >
+          if [ "$TRAVIS_PULL_REQUEST" != "false" ];
+          then git submodule foreach --recursive bash -c
+          'if [ "$(git tag --contains)" == "" ] ;
+          then git checkout develop && git pull &&
+          git submodule update --init --recursive ;
+          else echo "on tag: $(git tag --contains)" ; fi' ;
+          fi
+        - >
+          git diff --exit-code ||
+          (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)

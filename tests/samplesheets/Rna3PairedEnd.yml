@@ -1,0 +1,9 @@
+samples:
+  - id: rna3-single-end
+    libraries:
+      - id: lib1
+        readgroups:
+          - id: rg1
+            reads:
+              R1: tests/data/rna3/R1.fq.gz
+              R2: tests/data/rna3/R2.fq.gz

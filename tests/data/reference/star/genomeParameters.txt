@@ -1,0 +1,16 @@
+### /exports/sasc/testing/workspace/Biowdl/aligning/BIOWDL-36/9/conda_env/bin/STAR   --runMode genomeGenerate   --runThreadN 1   --genomeDir /exports/sasc/dcats/TestSTARIndex_2.6.0c   --genomeFastaFiles /exports/sasc/testing/fixtures/reference/star/reference.fasta      --genomeSAindexNbases 7
+### GstrandBit 
+versionGenome	20201
+genomeFastaFiles	/exports/sasc/testing/fixtures/reference/star/reference.fasta 
+genomeSAindexNbases	7
+genomeChrBinNbits	18
+genomeSAsparseD	1
+sjdbOverhang	0
+sjdbFileChrStartEnd	- 
+sjdbGTFfile	-
+sjdbGTFchrPrefix	-
+sjdbGTFfeatureExon	exon
+sjdbGTFtagExonParentTranscript	transcript_id
+sjdbGTFtagExonParentGene	gene_id
+sjdbInsertSave	Basic
+genomeFileSizes	524288 265587
