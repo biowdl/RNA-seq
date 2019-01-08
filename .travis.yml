@@ -6,6 +6,7 @@ python:
   - 3.6
 
 before_install:
+  # Install conda
   - export MINICONDA=${HOME}/miniconda
   - export PATH=${MINICONDA}/bin:${PATH}
   - export CROMWELL_VERSION=0.36  # Travis does not automatically get the latest version.
@@ -23,7 +24,7 @@ install:
   - python3 -m pip install pytest-workflow
 
 script:
-  - bash-c 'python3 -m pytest -v tests/functional/test$TEST.yml'
+  - python3 -m pytest -v tests/functional/test$TEST.yml
 
 matrix:
   include:
