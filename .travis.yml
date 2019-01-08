@@ -16,7 +16,7 @@ before_install:
 install:
   - conda env create -n my_env -f environment.yml
   - source activate my_env
-  - conda install --channel bioconda cromwell=$CROMWELL_VERSION
+  - conda install --channel conda-forge --channel bioconda cromwell=$CROMWELL_VERSION
   - python3 -m pip install pytest-workflow
 
 script:
@@ -28,7 +28,7 @@ matrix:
     - env: TEST=Rna3SingleEndVariantCalling
     # Below is for testing if all files are valid and if all submodules are up to date.
     - install:
-        - conda install --channel bioconda cromwell=$CROMWELL_VERSION
+        - conda install --channel conda-forge --channel bioconda cromwell=$CROMWELL_VERSION
       script:
         - set -e
         - for F in *.wdl; do echo $F; womtool validate $F; done
