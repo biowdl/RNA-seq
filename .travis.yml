@@ -31,7 +31,8 @@ matrix:
     - env: TEST=Rna3PairedEndVariantCalling
     - env: TEST=Rna3SingleEndVariantCalling
     # Below is for testing if all files are valid and if all submodules are up to date.
-    - install:
+    - env: TEST="Womtool validate and submodule up to date"
+      install:
         - conda install cromwell=$CROMWELL_VERSION
       script:
         - set -e
