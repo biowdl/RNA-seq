@@ -29,6 +29,7 @@ matrix:
     - install:
         - conda install --channel bioconda cromwell=$CROMWELL_VERSION
       script:
+        - set -e
         - for F in *.wdl; do echo $F; womtool validate $F; done
         - >
           if [ "$TRAVIS_PULL_REQUEST" != "false" ];
