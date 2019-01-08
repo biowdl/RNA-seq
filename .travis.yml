@@ -8,6 +8,7 @@ python:
 before_install:
   - export MINICONDA=${HOME}/miniconda
   - export PATH=${MINICONDA}/bin:${PATH}
+  - export CROMWELL_VERSION=0.36  # Travis does not automatically get the latest version.
   - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -f -p ${MINICONDA}
   - conda config --set always_yes yes
@@ -15,7 +16,7 @@ before_install:
 install:
   - conda env create -n my_env -f environment.yml
   - source activate my_env
-  - conda install --channel bioconda cromwell
+  - conda install --channel bioconda cromwell=$CROMWELL_VERSION
   - python3 -m pip install pytest-workflow
 
 script:
@@ -26,7 +27,7 @@ matrix:
     - env: TEST=Rna3PairedEndVariantCalling
     - env: TEST=Rna3SingleEndVariantCalling
     - install:
-        - conda install --channel bioconda cromwell
+        - conda install --channel bioconda cromwell=$CROMWELL_VERSION
       script:
         - for F in *.wdl; do echo $F; womtool validate $F; done
         - >
