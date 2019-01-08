@@ -19,12 +19,24 @@ install:
   - python3 -m pip install pytest-workflow
 
 script:
-#- set -e
-#- for F in *.wdl; do echo $F; womtool validate $F; done
-- python3 -m pytest
-- >
-  if [ "$TRAVIS_PULL_REQUEST" != "false" ];
-  then git submodule foreach --recursive bash -c
-  'if [ "$(git tag --contains)" == "" ] ;  then git checkout develop && git pull && git submodule update --init --recursive ; else echo "on tag: $(git tag --contains)" ; fi' ;
-  fi
-- "git diff --exit-code || (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)"
+  - bash-c 'python3 -m pytest -v tests/functional/test$TEST.yml'
+
+matrix:
+  include:
+    - env: TEST=Rna3PairedEndVariantCalling
+    - env: TEST=Rna3SingleEndVariantCalling
+    - install:
+        - conda install --channel bioconda cromwell
+      script:
+        - for F in *.wdl; do echo $F; womtool validate $F; done
+        - >
+          if [ "$TRAVIS_PULL_REQUEST" != "false" ];
+          then git submodule foreach --recursive bash -c
+          'if [ "$(git tag --contains)" == "" ] ;
+          then git checkout develop && git pull &&
+          git submodule update --init --recursive ;
+          else echo "on tag: $(git tag --contains)" ; fi' ;
+          fi
+        - >
+          git diff --exit-code ||
+          (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)
