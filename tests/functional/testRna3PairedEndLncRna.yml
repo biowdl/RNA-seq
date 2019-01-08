@@ -1,4 +1,4 @@
-- name: Rna3SingleEndVariantCalling
+- name: Rna3PairedEndLncRna
   # The gruesome bash command injection using sed is needed
   # as cromwell does not handle relative outputs well.
   # It will put them relative to each execution folder.
