@@ -6,9 +6,9 @@ latest: false
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
-It will perform adapter clipping (using cutadapt), mapping (using STAR),
-variantcalling (based on the GATK Best Practises) and expression
-quantification (using HTSeq-Count and Stringtie).
+It will perform adapter clipping (using cutadapt), mapping (using STAR) and expression
+quantification (using HTSeq-Count and Stringtie). Optionally variantcalling 
+(based on the GATK Best Practises) and lncRNA detection (using CPAT) can also be performed.
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
 developed by [the SASC team](http://sasc.lumc.nl/).
@@ -45,8 +45,8 @@ about pipeline inputs.
 }
 ```
 
-The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to perform an
-unguided assembly, which will then be used for expression quantification.
+The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to 
+perform an unguided assembly, which will then be used for expression quantification.
 
 #### Sample configuration
 The sample configuration should be a YML file which adheres to the following
@@ -168,8 +168,8 @@ measures.
   all samples.
 - **samples**: Contains a folder per sample.
   - **&lt;sample>**: Contains a variety of files, including the BAM and gVCF
-  files (if variantcalling is enabled) for this sample, as well as their indexes. It also contains
-  a directory per library.
+  (if variantcalling is enabled) files for this sample, as well as their indexes.
+  It also contains a directory per library.
     - **&lt;library>**: Contains the BAM files for this library
     (`*.markdup.bam`) and a BAM file with additional preprocessing performed
     used for variantcalling (`*.markdup.bsqr.bam`). This second BAM file should
@@ -178,9 +178,8 @@ measures.
     This directory also contains a directory per readgroup.
       - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
       in case preprocessing was necessary.
-- **multisample.vcf.gz**: If variantcalling is enabled, a multisample VCF file with the
-  variantcalling
-  results.
+- **multisample.vcf.gz**: If variantcalling is enabled, a multisample VCF file 
+  with the variantcalling results.
 - **multiqc**: Contains the multiqc report.
 
 ## Contact
