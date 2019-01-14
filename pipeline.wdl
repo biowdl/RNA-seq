@@ -25,6 +25,7 @@ workflow pipeline {
         Array[File] lncRNAdatabases = []
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
+        Boolean detectNovelTranscipts = false
         File? cpatLogitModel
         File? cpatHex
     }
@@ -82,8 +83,8 @@ workflow pipeline {
             bams = zip(sample.sampleName, sample.bam),
             outputDir = expressionDir,
             strandedness = strandedness,
-            #refflatFile = refflatFile,
-            referenceGtfFile = referenceGtfFile
+            referenceGtfFile = referenceGtfFile,
+            detectNovelTranscipts = lncRNAdetection || detectNovelTranscipts
     }
 
     if (variantCalling) {
