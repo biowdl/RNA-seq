@@ -1,8 +1,6 @@
 ---
 layout: default
 title: Home
-version: develop
-latest: false
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
@@ -19,6 +17,11 @@ This pipeline can be run using
 ```bash
 java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
+
+### Dependency requirements and tool versions
+Included in the repository is an `environment.yml` file. This file includes
+all the tool version on which the workflow was tested. You can use conda and
+this file to create an environment with all the correct tools.
 
 ### Inputs
 Inputs are provided through a JSON file. The minimally required inputs are
@@ -86,6 +89,7 @@ In order to perform lncRNA detection the following inputs are also required:
 ```JSON
 {
   "pipeline.lncRNAdetection": "Whether or not lncRNA detection should be performed, defaults to False",
+  "pipeline.lncRNAdatabases": "A list of gtf files containing known lncRNAs",
   "pipeline.cpatLogitModel": "The CPAT logitModel to be used",
   "pipeline.cpatHex": "The CPAT hexamer tab file to be used"
 }
@@ -99,6 +103,7 @@ The following is an example of what an inputs JSON might look like:
  "pipeline.sampleConfigFile":"/home/user/analysis/samples.yml",
   "pipeline.starIndexDir": "/home/user/genomes/human/bwa/GRCh38/star",
   "pipeline.variantCalling": true,
+  "pipeline.lncRNAdetection": true,
   "pipeline.reference": {
     "fasta": "/home/user/genomes/human/GRCh38.fasta",
     "fai": "/home/user/genomes/human/GRCh38.fasta.fai",
@@ -108,6 +113,9 @@ The following is an example of what an inputs JSON might look like:
     "file": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
     "index": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi"
   },
+  "pipeline.lncRNAdatabases": ["/home/user/genomes/human/NONCODE.gtf"],
+  "pipeline.cpatLogitModel": "/home/user/genomes/human/GRCH38_logit",
+  "pipeline.cpatHex": "/home/user/genomes/human/GRCH38_hex.tab",
   "pipeline.outputDir": "/home/user/analysis/results",
   "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
   "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
@@ -146,10 +154,7 @@ samples:
               R2_md5: /home/user/data/patient2/lane2_R2.fq.gz.md5
 ```
 
-### Dependency requirements and tool versions
-Included in the repository is an `environment.yml` file. This file includes
-all the tool version on which the workflow was tested. You can use conda and
-this file to create an environment with all the correct tools.
+
 
 ### Output
 This pipeline will produce a number of directories and files:
