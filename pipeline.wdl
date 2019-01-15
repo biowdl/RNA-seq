@@ -84,7 +84,7 @@ workflow pipeline {
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
-            detectNovelTranscipts = lncRNAdetection || detectNovelTranscipts
+            detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts
     }
 
     if (variantCalling) {
