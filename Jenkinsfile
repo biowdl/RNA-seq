@@ -5,10 +5,7 @@ pipeline {
         }
     }
     parameters {
-        string name: 'CROMWELL_JAR', defaultValue: '${DEFAULT}'
-        string name: 'CROMWELL_CONFIG', defaultValue: '${DEFAULT}'
-        string name: 'CROMWELL_BACKEND', defaultValue: '${DEFAULT}'
-        string name: 'FIXTURE_DIR', defaultValue: '${DEFAULT}'
+        string name: 'CROMWELL_BIN', defaultValue: '${DEFAULT}'
         string name: 'CONDA_PREFIX', defaultValue: '${DEFAULT}'
         string name: 'THREADS', defaultValue: '${DEFAULT}'
         string name: 'OUTPUT_DIR', defaultValue: '${DEFAULT}'
@@ -81,7 +78,8 @@ pipeline {
                 sh "#!/bin/bash\n" +
                         "set -e -v  -o pipefail\n" +
                         "${activateEnv}\n" +
-                        "${sbt} test"
+                        "export PATH=$PATH:$CROMWELL_BIN\n"
+                        "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir}"
             }
         }
     }
