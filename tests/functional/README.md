@@ -1,6 +1,5 @@
 # Functional tests
 
-This folder contains the tests that ensure that the pipeline is 
-working on a basic level. Small files are used so the pipeline finishes
-quickly. These tests allow for quick testing if the pipeline functions
-during development.
+This folder contains the tests that are run with big files on our research cluster.
+These tests ensure that the pipeline will run in a production environment with
+big data.
