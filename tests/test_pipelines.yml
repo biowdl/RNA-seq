@@ -1,0 +1,68 @@
+- name: Rna3SingleEndVariantCalling
+  tags:
+    - integration
+  # The gruesome bash command injection using sed is needed
+  # as cromwell does not handle relative outputs well.
+  # It will put them relative to each execution folder.
+  # Therefore the output needs be an absolute path. We can
+  # accomplish this by injecting $PWD (equal to whatever absolute
+  # dir our test is running) into the inputs.json
+  # It is a gruesome hack, but it works.
+  command: >
+    bash -c '
+    TEST_JSON=tests/integration/SingleEndVariantCalling.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/multisample_variants/multisample.vcf.gz"
+    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multisample_variants/stats"
+    - path: "test-output/multiqc/multiqc_report.html"
+
+- name: Rna3PairedEndVariantCalling
+  tags:
+    - integration
+  command: >
+    bash -c '
+    TEST_JSON=tests/integration/PairedEndVariantCalling.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/multisample_variants/multisample.vcf.gz"
+    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multisample_variants/stats"
+    - path: "test-output/multiqc/multiqc_report.h"
+
+- name: Rna3SingleEndLncRna
+  tags:
+    - integration
+  command: >
+    bash -c '
+    TEST_JSON=tests/integration/SingleEndLncRna.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc/multiqc_report.html"
+
+- name: Rna3PairedEndLncRna
+  tags:
+    - integration
+  command: >
+    bash -c '
+    TEST_JSON=tests/integration/PairedEndLncRna.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc/multiqc_report.html"
