@@ -9,8 +9,7 @@ pipeline {
         string name: 'CONDA_PREFIX', defaultValue: '${DEFAULT}'
         string name: 'THREADS', defaultValue: '${DEFAULT}'
         string name: 'OUTPUT_DIR', defaultValue: '${DEFAULT}'
-        string name: 'FUNCTIONAL_TESTS', defaultValue: '${DEFAULT}'
-        string name: 'INTEGRATION_TESTS', defaultValue: '${DEFAULT}'
+        string name: 'TAGS', defaultValue: '${DEFAULT}'
     }
     tools {
         jdk 'JDK 8u162'
@@ -79,7 +78,7 @@ pipeline {
                         "set -e -v  -o pipefail\n" +
                         "${activateEnv}\n" +
                         "export PATH=$PATH:$CROMWELL_BIN\n"
-                        "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir}"
+                        "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS}"
             }
         }
     }
