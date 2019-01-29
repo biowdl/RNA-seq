@@ -70,7 +70,7 @@ pipeline {
                 sh "#!/bin/bash\n" +
                         "set -e -v  -o pipefail\n" +
                         "${activateEnv}\n" +
-                        "export PATH=$PATH:$CROMWELL_BIN\n"
+                        "export PATH=$PATH:$CROMWELL_BIN\n" +
                         "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS}"
             }
         }
