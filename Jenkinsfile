@@ -11,9 +11,6 @@ pipeline {
         string name: 'OUTPUT_DIR', defaultValue: '${DEFAULT}'
         string name: 'TAGS', defaultValue: '${DEFAULT}'
     }
-    tools {
-        jdk 'JDK 8u162'
-    }
     stages {
         stage('Init') {
             steps {
@@ -29,11 +26,9 @@ pipeline {
                         sh('echo ' + key + '=$' + key)
                     }
                 }
-                sh 'java -version'
                 checkout scm
                 sh 'git submodule update --init --recursive'
                 script {
-                    def sbtHome = tool 'sbt 1.0.4'
                     env.outputDir= "${env.OUTPUT_DIR}/${env.JOB_NAME}/${env.BUILD_NUMBER}"
                 }
                 sh "rm -rf ${outputDir}"
