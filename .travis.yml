@@ -15,6 +15,8 @@ before_install:
   - conda config --add channels defaults
   - conda config --add channels bioconda
   - conda config --add channels conda-forge
+  # Updating conda to the latest version may lead to speed improvements in the resolver.
+  - conda update -n base -c defaults conda
 
 install:
   - conda env create -n my_env -f environment.yml
