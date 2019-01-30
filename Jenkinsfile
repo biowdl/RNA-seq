@@ -31,7 +31,6 @@ pipeline {
                 script {
                     env.outputDir= "${env.OUTPUT_DIR}/${env.JOB_NAME}/${env.BUILD_NUMBER}"
                 }
-                sh "export PATH=$PATH:$CROMWELL_BIN"
                 sh "rm -rf ${outputDir}"
                 sh "mkdir -p ${outputDir}"
             }
@@ -65,6 +64,7 @@ pipeline {
             steps {
                 sh "#!/bin/bash\n" +
                         "set -e -v  -o pipefail\n" +
+                        "export PATH=$PATH:$CROMWELL_BIN" +
                         "${activateEnv}\n" +
                         "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS}"
             }
