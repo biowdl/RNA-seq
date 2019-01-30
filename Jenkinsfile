@@ -64,7 +64,7 @@ pipeline {
             steps {
                 sh "#!/bin/bash\n" +
                         "set -e -v  -o pipefail\n" +
-                        "export PATH=$PATH:$CROMWELL_BIN" +
+                        "export PATH=$PATH:$CROMWELL_BIN\n" +
                         "${activateEnv}\n" +
                         "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS}"
             }
