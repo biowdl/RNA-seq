@@ -23,7 +23,7 @@ install:
   - python3 -m pip install pytest-workflow
 
 script:
-  - python3 -m pytest -v tests/functional/test$TEST.yml
+  - python3 -m pytest --tag $TEST
 
 matrix:
   include:
