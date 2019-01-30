@@ -49,7 +49,7 @@ pipeline {
         stage('Create conda environment') {
             steps {
                 script {
-                    env.envHash= sh(returnStdout: true, script: "sha256sum environment.yml | cut -f1 -d ' '")
+                    env.envHash= sh(returnStdout: true, script: "md5sum environment.yml | cut -f1 -d ' '")
                     env.condaEnv= "${env.CONDA_PREFIX}/envs/${envHash}"
                     env.activateEnv= "source ${env.CONDA_PREFIX}/bin/activate \$(readlink -f ${condaEnv})"
                     env.createEnv= "${env.CONDA_PREFIX}/bin/conda-env create -f environment.yml -p ${condaEnv}"
