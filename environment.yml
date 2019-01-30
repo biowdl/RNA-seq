@@ -29,5 +29,5 @@ dependencies:
   - pip:
     - CPAT==1.2.4
   - gffread==0.9.9
-  - gffcompare==0.10.1
+  - gffcompare==0.10.6
   - multiqc==1.6
