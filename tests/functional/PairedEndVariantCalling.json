@@ -1,0 +1,19 @@
+{
+  "pipeline.sampleConfigFile": "tests/samplesheets/FunctionalPairedEnd.yml",
+  "pipeline.reference": {
+    "fasta": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa",
+    "fai": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa.fai",
+    "dict": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.dict"
+  },
+  "pipeline.strandedness": "None",
+  "pipeline.starIndexDir": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c",
+  "pipeline.refflatFile": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/features/ensembl_87/ensembl.87.refflat",
+  "pipeline.referenceGtfFile": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/features/ensembl_87/ensembl.87.gtf",
+  "pipeline.dbsnp": {
+    "file": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/dbsnp/dbsnp-149.vcf.gz",
+    "index": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/dbsnp/dbsnp-149.vcf.gz.tbi"
+  },
+  "pipeline.variantCalling": true,
+  "pipeline.lncRNAdetection": false,
+  "pipeline.sample.Sample.library.Library.starAlignment.AlignStar.star.runThreadN": 8
+}

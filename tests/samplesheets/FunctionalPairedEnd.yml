@@ -1,0 +1,23 @@
+samples:
+  - id: rna1
+    libraries:
+      - id: "S17"
+        readgroups:
+          - id: "L1"
+            reads:
+              R1: "/exports/sasc-testing/fixtures/samples/rna1/S17_L1_1.fq.gz"
+              R2: "/exports/sasc-testing/fixtures/samples/rna1/S17_L1_2.fq.gz"
+      - id: "S27"
+        readgroups:
+          - id: "L1"
+            reads:
+              R1: "/exports/sasc-testing/fixtures/samples/rna1/S27_L1_1.fq.gz"
+              R2: "/exports/sasc-testing/fixtures/samples/rna1/S27_L1_2.fq.gz"
+  - id: rna2
+    libraries:
+      - id: "S18"
+        readgroups:
+          - id: "L1"
+            reads:
+              R1: "/exports/sasc-testing/fixtures/samples/rna2/S28_L1_1.fq.gz"
+              R2: "/exports/sasc-testing/fixtures/samples/rna2/S28_L1_2.fq.gz"
