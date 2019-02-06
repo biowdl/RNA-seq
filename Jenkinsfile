@@ -5,6 +5,7 @@ pipeline {
         }
     }
     parameters {
+        string name: 'PYTHON', defaultValue: '${DEFAULT}'
         string name: 'CROMWELL_BIN', defaultValue: '${DEFAULT}'
         string name: 'CONDA_PREFIX', defaultValue: '${DEFAULT}'
         string name: 'THREADS', defaultValue: '${DEFAULT}'
@@ -66,7 +67,7 @@ pipeline {
                         "set -e -v  -o pipefail\n" +
                         "export PATH=$PATH:$CROMWELL_BIN\n" +
                         "${activateEnv}\n" +
-                        "/usr/bin/python3 -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS}"
+                        "${PYTHON} -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS}"
             }
         }
     }
