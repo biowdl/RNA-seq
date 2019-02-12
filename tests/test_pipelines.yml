@@ -52,6 +52,8 @@
     - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/lncrna/coding-potential/cpat.tsv"
+    - path: "test-output/lncrna/compare-gff/reference.gtf.d"
 
 - name: Rna3PairedEndLncRna
   tags:
@@ -99,5 +101,3 @@
     - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multiqc/multiqc_report.html"
-    - path: "test-output/lncrna/coding-potential/cpat.tsv"
-    - path: "test-output/lncrna/compare-gff/reference.gtf.d"
