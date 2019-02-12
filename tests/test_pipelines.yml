@@ -8,7 +8,7 @@
   # accomplish this by injecting $PWD (equal to whatever absolute
   # dir our test is running) into the inputs.json
   # It is a gruesome hack, but it works.
-  command: >
+  command: >-
     bash -c '
     TEST_JSON=tests/integration/SingleEndVariantCalling.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
@@ -25,7 +25,7 @@
 - name: Rna3PairedEndVariantCalling
   tags:
     - integration
-  command: >
+  command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndVariantCalling.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
@@ -42,7 +42,7 @@
 - name: Rna3SingleEndLncRna
   tags:
     - integration
-  command: >
+  command: >-
     bash -c '
     TEST_JSON=tests/integration/SingleEndLncRna.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
@@ -56,7 +56,7 @@
 - name: Rna3PairedEndLncRna
   tags:
     - integration
-  command: >
+  command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndLncRna.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
@@ -72,7 +72,7 @@
 - name: FunctionalPairedEndVariantCalling
   tags:
     - functional
-  command: >
+  command: >-
     bash -c '
     TEST_JSON=tests/functional/PairedEndVariantCalling.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
@@ -89,7 +89,7 @@
 - name: FunctionalPairedEndLncRna
   tags:
     - functional
-  command: >
+  command: >-
     bash -c '
     TEST_JSON=tests/functional/PairedEndLncRna.json ;
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;

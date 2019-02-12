@@ -18,13 +18,11 @@ workflow Readgroup {
     call qcWorkflow.QC as qc {
         input:
             outputDir = outputDir,
-            reads = readgroup.reads,
-            sample = sample.id,
-            library = library.id,
-            readgroup = readgroup.id
+            read1 = readgroup.reads.R1,
+            read2 = readgroup.reads.R2
     }
 
     output {
-        FastqPair cleanReads = qc.readsAfterQC
+        FastqPair cleanReads = object { R1: qc.qcRead1, R2: qc.qcRead2 }
     }
 }
