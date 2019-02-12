@@ -107,13 +107,10 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-        scatter (sampleGtfFile in expression.sampleGtfFiles) {
-            File sampleGtf = sampleGtfFile.right
-            String sampleId = sampleGtfFile.left
             call rnacodingpotential.RnaCodingPotential {
                 input:
-                    outputDir = outputDir + "/samples/" + sampleId + "/coding-potential",
-                    transcriptsGff = sampleGtf,
+                    outputDir = outputDir + "/lncrna/coding-potential",
+                    transcriptsGff = select_first([expression.mergedGtfFile]),
                     reference = reference,
                     cpatLogitModel = select_first([cpatLogitModel]),
                     cpatHex = select_first([cpatHex])
@@ -121,16 +118,15 @@ workflow pipeline {
 
             call comparegff.CompareGff {
                 input:
-                    outputDir = outputDir + "/samples/" +sampleId + "/compare-gff",
-                    sampleGtf = sampleGtf,
+                    outputDir = outputDir + "/lncrna/compare-gff",
+                    sampleGtf = select_first([expression.mergedGtfFile]),
                     databases = lncRNAdatabases
-            }
         }
         # These files are created so that multiqc has some dependencies to wait for.
         # In theory this could be done by all sort of flattening array stuff, but
         # this is the simplest way. I could not get the other ways to work.
-        File cpatOutputs = write_lines(RnaCodingPotential.cpatOutput)
-        File gffComparisons = write_lines(flatten(CompareGff.annotatedGtfs))
+        File cpatOutputs = write_lines([RnaCodingPotential.cpatOutput])
+        File gffComparisons = write_lines(CompareGff.annotatedGtfs)
     }
 
     call multiqc.MultiQC as multiqcTask {
@@ -140,7 +136,7 @@ workflow pipeline {
             # so only outputs from workflows that are run are taken
             # as dependencies
             # vcfFile
-            dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
+            dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
