@@ -107,7 +107,7 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-        call rnacodingpotential.RnaCodingPotential {
+        call rnacodingpotential.RnaCodingPotential as RnaCodingPotential {
             input:
                 outputDir = outputDir + "/lncrna/coding-potential",
                 transcriptsGff = select_first([expression.mergedGtfFile]),
