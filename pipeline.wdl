@@ -121,7 +121,7 @@ workflow pipeline {
                         input:
                             inputGtfFiles = select_all([expression.mergedGtfFile]),
                             referenceAnnotation = database,
-                            outputDir = outputDir + "/" + basename(database) + ".d"
+                            outputDir = outputDir + "/lncrna/" + basename(database) + ".d"
                     }
                 }
         # These files are created so that multiqc has some dependencies to wait for.
