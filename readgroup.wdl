@@ -13,28 +13,30 @@ workflow Readgroup {
         Sample sample
         String outputDir
     }
+
+    FastqPair reads = readgroup.reads
     
-    if (defined(readgroup.R1_md5)) {
+    if (defined(reads.R1_md5)) {
         call common.CheckFileMD5 as md5CheckR1 {
             input:
-                file = readgroup.R1,
-                md5 = select_first([readgroup.R1_md5])
+                file = reads.R1,
+                md5 = select_first([reads.R1_md5])
         }
     }
     
-    if (defined(readgroup.R2_md5) && defined(readgroup.R2)) {
+    if (defined(reads.R2_md5) && defined(reads.R2)) {
         call common.CheckFileMD5 as md5CheckR2 {
             input:
-                file = select_first([readgroup.R2]),
-                md5 = select_first([readgroup.R2_md5])
+                file = select_first([reads.R2]),
+                md5 = select_first([reads.R2_md5])
         }
     }
 
     call qcWorkflow.QC as qc {
         input:
             outputDir = outputDir,
-            read1 = readgroup.readgroup.R1,
-            read2 = readgroup.readgroup.R2
+            read1 = reads.R1,
+            read2 = reads.R2
     }
 
     output {
