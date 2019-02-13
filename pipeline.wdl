@@ -1,6 +1,5 @@
 version 1.0
 
-import "compare-gff/comparegff.wdl" as comparegff
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
@@ -9,6 +8,7 @@ import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/common.wdl" as common
+import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/multiqc.wdl" as multiqc
 
 workflow pipeline {
@@ -116,17 +116,19 @@ workflow pipeline {
                     cpatHex = select_first([cpatHex])
             }
 
-            call comparegff.CompareGff {
-                input:
-                    outputDir = outputDir + "/lncrna/compare-gff",
-                    sampleGtf = select_first([expression.mergedGtfFile]),
-                    databases = lncRNAdatabases
-        }
+            scatter (database in lncRNAdatabases) {
+                    call gffcompare.GffCompare as GffCompare {
+                        input:
+                            inputGtfFiles = select_all([expression.mergedGtfFile]),
+                            referenceAnnotation = database,
+                            outputDir = outputDir + "/" + basename(database) + ".d"
+                    }
+                }
         # These files are created so that multiqc has some dependencies to wait for.
         # In theory this could be done by all sort of flattening array stuff, but
         # this is the simplest way. I could not get the other ways to work.
         File cpatOutputs = write_lines([RnaCodingPotential.cpatOutput])
-        File gffComparisons = write_lines(CompareGff.annotatedGtfs)
+        File gffComparisons = write_lines(GffCompare.annotated)
     }
 
     call multiqc.MultiQC as multiqcTask {
