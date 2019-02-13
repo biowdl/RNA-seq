@@ -107,23 +107,23 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-            call rnacodingpotential.RnaCodingPotential {
-                input:
-                    outputDir = outputDir + "/lncrna/coding-potential",
-                    transcriptsGff = select_first([expression.mergedGtfFile]),
-                    reference = reference,
-                    cpatLogitModel = select_first([cpatLogitModel]),
-                    cpatHex = select_first([cpatHex])
-            }
+        call rnacodingpotential.RnaCodingPotential {
+            input:
+                outputDir = outputDir + "/lncrna/coding-potential",
+                transcriptsGff = select_first([expression.mergedGtfFile]),
+                reference = reference,
+                cpatLogitModel = select_first([cpatLogitModel]),
+                cpatHex = select_first([cpatHex])
+        }
 
-            scatter (database in lncRNAdatabases) {
-                    call gffcompare.GffCompare as GffCompare {
-                        input:
-                            inputGtfFiles = select_all([expression.mergedGtfFile]),
-                            referenceAnnotation = database,
-                            outputDir = outputDir + "/lncrna/" + basename(database) + ".d"
-                    }
-                }
+        scatter (database in lncRNAdatabases) {
+            call gffcompare.GffCompare as GffCompare {
+                input:
+                    inputGtfFiles = select_all([expression.mergedGtfFile]),
+                    referenceAnnotation = database,
+                    outputDir = outputDir + "/lncrna/" + basename(database) + ".d"
+            }
+        }
         # These files are created so that multiqc has some dependencies to wait for.
         # In theory this could be done by all sort of flattening array stuff, but
         # this is the simplest way. I could not get the other ways to work.
