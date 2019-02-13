@@ -43,7 +43,7 @@ matrix:
         - for F in *.wdl; do echo $F; womtool validate $F; done
         - >
           if [ "$TRAVIS_PULL_REQUEST" != "false" ];
-          then git submodule foreach --recursive bash -c
+          then git submodule foreach bash -c
           'if [ "$(git tag --contains)" == "" ] ;
           then git checkout develop && git pull &&
           git submodule update --init --recursive ;
