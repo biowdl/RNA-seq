@@ -1,6 +1,5 @@
 version 1.0
 
-import "compare-gff/comparegff.wdl" as comparegff
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
@@ -9,6 +8,7 @@ import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/common.wdl" as common
+import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/multiqc.wdl" as multiqc
 
 workflow pipeline {
@@ -107,30 +107,28 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-        scatter (sampleGtfFile in expression.sampleGtfFiles) {
-            File sampleGtf = sampleGtfFile.right
-            String sampleId = sampleGtfFile.left
-            call rnacodingpotential.RnaCodingPotential {
-                input:
-                    outputDir = outputDir + "/samples/" + sampleId + "/coding-potential",
-                    transcriptsGff = sampleGtf,
-                    reference = reference,
-                    cpatLogitModel = select_first([cpatLogitModel]),
-                    cpatHex = select_first([cpatHex])
-            }
+        call rnacodingpotential.RnaCodingPotential as RnaCodingPotential {
+            input:
+                outputDir = outputDir + "/lncrna/coding-potential",
+                transcriptsGff = select_first([expression.mergedGtfFile]),
+                reference = reference,
+                cpatLogitModel = select_first([cpatLogitModel]),
+                cpatHex = select_first([cpatHex])
+        }
 
-            call comparegff.CompareGff {
+        scatter (database in lncRNAdatabases) {
+            call gffcompare.GffCompare as GffCompare {
                 input:
-                    outputDir = outputDir + "/samples/" +sampleId + "/compare-gff",
-                    sampleGtf = sampleGtf,
-                    databases = lncRNAdatabases
+                    inputGtfFiles = select_all([expression.mergedGtfFile]),
+                    referenceAnnotation = database,
+                    outputDir = outputDir + "/lncrna/" + basename(database) + ".d"
             }
         }
         # These files are created so that multiqc has some dependencies to wait for.
         # In theory this could be done by all sort of flattening array stuff, but
         # this is the simplest way. I could not get the other ways to work.
-        File cpatOutputs = write_lines(RnaCodingPotential.cpatOutput)
-        File gffComparisons = write_lines(flatten(CompareGff.annotatedGtfs))
+        File cpatOutputs = write_lines([RnaCodingPotential.cpatOutput])
+        File gffComparisons = write_lines(GffCompare.annotated)
     }
 
     call multiqc.MultiQC as multiqcTask {
@@ -140,7 +138,7 @@ workflow pipeline {
             # so only outputs from workflows that are run are taken
             # as dependencies
             # vcfFile
-            dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
+            dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir
     }
