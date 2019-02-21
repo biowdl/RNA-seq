@@ -23,7 +23,7 @@ install:
   - conda env create -n my_env -f environment.yml
   - source activate my_env
   - conda install cromwell
-  - python3 -m pip install pytest-workflow
+  - python3 -m pip install pytest-workflow pysam
 
 script:
   - python3 -m pytest --tag $TEST tests/
