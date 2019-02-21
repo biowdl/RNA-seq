@@ -1,5 +1,5 @@
 samples:
-  - id: rna3-single-end
+  - id: rna3-paired-end
     libraries:
       - id: lib1
         readgroups:

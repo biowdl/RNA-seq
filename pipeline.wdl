@@ -18,7 +18,8 @@ workflow pipeline {
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
-        String starIndexDir
+        String? starIndexDir
+        Hisat2Index? hisat2Index
         String strandedness
         File? refflatFile
         File? referenceGtfFile
@@ -72,6 +73,7 @@ workflow pipeline {
                 reference = reference,
                 dbsnp = dbsnp,
                 starIndexDir = starIndexDir,
+                hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 variantCalling = variantCalling

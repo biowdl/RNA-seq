@@ -13,7 +13,8 @@ workflow Sample {
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
-        String starIndexDir
+        String? starIndexDir
+        Hisat2Index? hisat2Index
         String strandedness
         File? refflatFile
         Boolean variantCalling = false
@@ -25,6 +26,7 @@ workflow Sample {
                 reference = reference,
                 dbsnp = dbsnp,
                 starIndexDir = starIndexDir,
+                hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 outputDir = outputDir + "/lib_" + lib.id,
