@@ -113,7 +113,8 @@ workflow pipeline {
             input:
                 outputDir = outputDir + "/lncrna/coding-potential",
                 transcriptsGff = select_first([expression.mergedGtfFile]),
-                reference = reference,
+                referenceFasta = reference.fasta,
+                referenceFastaIndex = reference.fai,
                 cpatLogitModel = select_first([cpatLogitModel]),
                 cpatHex = select_first([cpatHex])
         }
