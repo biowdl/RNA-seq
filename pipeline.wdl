@@ -29,21 +29,19 @@ workflow pipeline {
         Boolean detectNovelTranscipts = false
         File? cpatLogitModel
         File? cpatHex
-        File? dockerTagsFile
-        Map[String, String]? dockerTags
+        File dockerTagsFile
     }
 
     String expressionDir = outputDir + "/expression_measures/"
     String genotypingDir = outputDir + "/multisample_variants/"
 
-    if (defined(dockerTagsFile) && !defined(dockerTags)) {
-        call common.YamlToJson as ConvertDockerTagsFile {
-            input:
-                yaml = dockerTagsFile,
-                outputJson = outputDir + "/dockerTags.json"
-        }
-        Map[String, String]? dockerTags = read_json(ConvertDockerTagsFile.json)
+    call common.YamlToJson as ConvertDockerTagsFile {
+        input:
+            yaml = dockerTagsFile,
+            outputJson = outputDir + "/dockerTags.json"
     }
+    Map[String, String] dockerTags = read_json(ConvertDockerTagsFile.json)
+
 
     # Validation of annotations
     # If these are given.
@@ -52,7 +50,8 @@ workflow pipeline {
             input:
                 refRefflat = select_first([refflatFile]),
                 gtfFile = select_first([referenceGtfFile]),
-                reference = reference
+                reference = reference,
+                dockerTag = dockerTags["biopet-validateannotation"]
         }
     }
 
@@ -61,7 +60,8 @@ workflow pipeline {
         call biopet.ValidateVcf as validateVcf {
             input:
                 vcf = select_first([dbsnp]),
-                reference = reference
+                reference = reference,
+                dockerTag = dockerTags["biopet-validatevcf"]
         }
     }
 

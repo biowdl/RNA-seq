@@ -13,6 +13,8 @@
 
 biopet-extractadaptersfastqc: "0.2--1"
 biopet-scatterregions: "0.2--0"
+biopet-validateannotation: "0.1--0"
+biopet-validatefastq: "0.1--0"
 # CPAT uses a biocontainer from docker hub: "biocontainers/cpat:<tag>"
 cpat: "v1.2.4_cv1"
 cutadapt: "1.16--py36_2"
