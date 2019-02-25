@@ -1,9 +1,12 @@
-# We use conda to load the rnaseq environment and install cromwell.
+# We use conda to install cromwell.
 
 language: python
 
 python:
   - 3.6
+
+services:
+  - docker
 
 before_install:
   # Install conda
@@ -16,12 +19,8 @@ before_install:
   - conda config --add channels defaults
   - conda config --add channels bioconda
   - conda config --add channels conda-forge
-  # Updating conda to the latest version may lead to speed improvements in the resolver.
-  - conda update -n base -c defaults conda
 
 install:
-  - conda env create -n my_env -f environment.yml
-  - source activate my_env
   - conda install cromwell
   - python3 -m pip install pytest-workflow pysam
 
