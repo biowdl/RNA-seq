@@ -53,7 +53,7 @@ workflow Library {
                 library = library.id,
                 readgroups = readgroupId,
                 starIndexDir = select_first([starIndexDir]),
-                dockerTag = dockerTags["star"]
+                dockerTags = dockerTags
         }
     }
 
@@ -68,7 +68,7 @@ workflow Library {
                 readgroups = readgroupId,
                 indexDirectory = innerHisat2Index.directory,
                 indexBasename = innerHisat2Index.basename,
-                dockerTag = dockerTags["hisat2"]
+                dockerTags = dockerTags
         }
     }
 
