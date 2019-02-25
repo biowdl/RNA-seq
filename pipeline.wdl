@@ -29,10 +29,21 @@ workflow pipeline {
         Boolean detectNovelTranscipts = false
         File? cpatLogitModel
         File? cpatHex
+        File? dockerTagsFile
+        Map[String, String]? dockerTags
     }
 
     String expressionDir = outputDir + "/expression_measures/"
     String genotypingDir = outputDir + "/multisample_variants/"
+
+    if (defined(dockerTagsFile) && !defined(dockerTags)) {
+        call common.YamlToJson as ConvertDockerTagsFile {
+            input:
+                yaml = dockerTagsFile,
+                outputJson = outputDir + "/dockerTags.json"
+        }
+        Map[String, String]? dockerTags = read_json(ConvertDockerTagsFile.json)
+    }
 
     # Validation of annotations
     # If these are given.
@@ -54,13 +65,13 @@ workflow pipeline {
         }
     }
 
-    call common.YamlToJson {
+    call common.YamlToJson as ConvertSampleConfig {
         input:
             yaml = sampleConfigFile,
             # Put the output json in a fixed directory for call-caching reasons
             outputJson = outputDir + "/samples.json"
     }
-    SampleConfig sampleConfig = read_json(YamlToJson.json)
+    SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
 
     # Adding with `+` does not seem to work. But it works with flatten.
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
