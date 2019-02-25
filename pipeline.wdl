@@ -87,7 +87,8 @@ workflow pipeline {
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
-                variantCalling = variantCalling
+                variantCalling = variantCalling,
+                dockerTags = dockerTags
         }
     }
 
@@ -97,7 +98,8 @@ workflow pipeline {
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
-            detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts
+            detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
+            dockerTags = dockerTags
     }
 
     if (variantCalling) {
@@ -107,9 +109,11 @@ workflow pipeline {
                 outputDir = genotypingDir,
                 gvcfFiles = select_all(sample.gvcfFile),
                 vcfBasename = "multisample",
-                dbsnpVCF = select_first([dbsnp])
+                dbsnpVCF = select_first([dbsnp]),
+                dockerTags = dockerTags
         }
 
+        # TODO: Look for a MultiQC replacement with good performance.
         call biopet.VcfStats as vcfStats {
             input:
                 vcf = genotyping.vcfFile,
@@ -127,7 +131,8 @@ workflow pipeline {
                 referenceFasta = reference.fasta,
                 referenceFastaIndex = reference.fai,
                 cpatLogitModel = select_first([cpatLogitModel]),
-                cpatHex = select_first([cpatHex])
+                cpatHex = select_first([cpatHex]),
+                dockerTags = dockerTags
         }
 
         scatter (database in lncRNAdatabases) {
