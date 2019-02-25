@@ -21,6 +21,7 @@ workflow Library {
         String strandedness
         File? refflatFile
         Boolean variantCalling = false
+        Map[String, String] dockerTags
     }
 
     String sampleId = sample.id
@@ -34,7 +35,8 @@ workflow Library {
                 outputDir = outputDir + "/rg_" + readgroupId,
                 sample = sample,
                 library = library,
-                readgroup = rg
+                readgroup = rg,
+                dockerTags = dockerTags
         }
 
         File cleanR1 = readgroupWorkflow.cleanReads.R1
@@ -50,7 +52,8 @@ workflow Library {
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
-                starIndexDir = select_first([starIndexDir])
+                starIndexDir = select_first([starIndexDir]),
+                dockerTag = dockerTags["star"]
         }
     }
 
@@ -64,7 +67,8 @@ workflow Library {
                 library = library.id,
                 readgroups = readgroupId,
                 indexDirectory = innerHisat2Index.directory,
-                indexBasename = innerHisat2Index.basename
+                indexBasename = innerHisat2Index.basename,
+                dockerTag = dockerTags["hisat2"]
         }
     }
 
@@ -78,7 +82,8 @@ workflow Library {
             inputBams = [continuationBamFile.file],
             inputBamIndexes = [continuationBamFile.index],
             outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
-            metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics"
+            metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics",
+            dockerTag = dockerTags["picard"]
     }
 
     if (variantCalling) {
@@ -90,7 +95,8 @@ workflow Library {
                 outputRecalibratedBam = true,
                 splitSplicedReads = true,
                 dbsnpVCF = select_first([dbsnp]),
-                reference = reference
+                reference = reference,
+                dockerTags = dockerTags
         }
     }
 
@@ -101,7 +107,8 @@ workflow Library {
             outputDir = outputDir + "/metrics",
             reference = reference,
             strandedness = strandedness,
-            refRefflat = refflatFile
+            refRefflat = refflatFile,
+            dockerTags = dockerTags
     }
 
     output {
