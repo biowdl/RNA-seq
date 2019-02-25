@@ -16,7 +16,7 @@ workflow Library {
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
-        String? starIndexDir
+        File? starIndexDir
         Hisat2Index? hisat2Index
         String strandedness
         File? refflatFile
