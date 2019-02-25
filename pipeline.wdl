@@ -118,7 +118,8 @@ workflow pipeline {
             input:
                 vcf = genotyping.vcfFile,
                 reference = reference,
-                outputDir = genotypingDir + "/stats"
+                outputDir = genotypingDir + "/stats",
+                dockerTag = dockerTags["biopet-vcfstats"]
         }
         File vcfFile = genotyping.vcfFile.file
     }
@@ -140,7 +141,8 @@ workflow pipeline {
                 input:
                     inputGtfFiles = select_all([expression.mergedGtfFile]),
                     referenceAnnotation = database,
-                    outputDir = outputDir + "/lncrna/" + basename(database) + ".d"
+                    outputDir = outputDir + "/lncrna/" + basename(database) + ".d",
+                    dockerTag = dockerTags["gffcompare"]
             }
         }
         # These files are created so that multiqc has some dependencies to wait for.
@@ -159,7 +161,8 @@ workflow pipeline {
             # vcfFile
             dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
-            analysisDirectory = outputDir
+            analysisDirectory = outputDir,
+            dockerTag = dockerTags["multiqc"]
     }
 
     output {
