@@ -18,7 +18,8 @@ workflow pipeline {
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
-        String starIndexDir
+        File? starIndexDir
+        Hisat2Index? hisat2Index
         String strandedness
         File? refflatFile
         File? referenceGtfFile
@@ -72,6 +73,7 @@ workflow pipeline {
                 reference = reference,
                 dbsnp = dbsnp,
                 starIndexDir = starIndexDir,
+                hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 variantCalling = variantCalling
@@ -111,7 +113,8 @@ workflow pipeline {
             input:
                 outputDir = outputDir + "/lncrna/coding-potential",
                 transcriptsGff = select_first([expression.mergedGtfFile]),
-                reference = reference,
+                referenceFasta = reference.fasta,
+                referenceFastaIndex = reference.fai,
                 cpatLogitModel = select_first([cpatLogitModel]),
                 cpatHex = select_first([cpatHex])
         }

@@ -54,6 +54,9 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
+    - path: "test-output/samples/rna3-single-end/lib_lib1/hisat2/rna3-single-end-lib1.bam"
+      should_exist: false
 
 - name: Rna3PairedEndLncRna
   tags:
@@ -70,6 +73,71 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/samples/rna3-paired-end/lib_lib1/star/rna3-paired-end-lib1.Aligned.sortedByCoord.out.bam"
+    - path: "test-output/samples/rna3-paired-end/lib_lib1/hisat2/rna3-paired-end-lib1.bam"
+      should_exist: false
+
+- name: Rna3SingleEndHisat2
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/SingleEndHisat2.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/multisample_variants/multisample.vcf.gz"
+    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/lncrna/coding-potential/cpat.tsv"
+    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
+      should_exist: false
+    - path: "test-output/samples/rna3-single-end/lib_lib1/hisat2/rna3-single-end-lib1.bam"
+
+- name: Rna3PairedEndHisat2
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/PairedEndHisat2.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/multisample_variants/multisample.vcf.gz"
+    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/lncrna/coding-potential/cpat.tsv"
+    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/samples/rna3-paired-end/lib_lib1/star/rna3-paired-end-lib1.Aligned.sortedByCoord.out.bam"
+      should_exist: false
+    - path: "test-output/samples/rna3-paired-end/lib_lib1/hisat2/rna3-paired-end-lib1.bam"
+
+- name: Rna3PairedEndHisat2AndStar
+  tags:
+    - integration
+  command: >-
+    bash -c '
+    TEST_JSON=tests/integration/PairedEndHisat2AndStar.json ;
+    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
+    cromwell run -i $TEST_JSON pipeline.wdl'
+  files:
+    - path: "test-output/multisample_variants/multisample.vcf.gz"
+    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/TPM/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/FPKM/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/lncrna/coding-potential/cpat.tsv"
+    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/samples/rna3-paired-end/lib_lib1/star/rna3-paired-end-lib1.Aligned.sortedByCoord.out.bam"
+    - path: "test-output/samples/rna3-paired-end/lib_lib1/hisat2/rna3-paired-end-lib1.bam"
 
 - name: FunctionalPairedEndVariantCalling
   tags:

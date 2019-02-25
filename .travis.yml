@@ -23,10 +23,10 @@ install:
   - conda env create -n my_env -f environment.yml
   - source activate my_env
   - conda install cromwell
-  - python3 -m pip install pytest-workflow
+  - python3 -m pip install pytest-workflow pysam
 
 script:
-  - python3 -m pytest --tag $TEST tests/
+  - travis_wait python3 -m pytest --tag $TEST tests/
 
 matrix:
   include:
@@ -34,6 +34,9 @@ matrix:
     - env: TEST=Rna3SingleEndVariantCalling
     - env: TEST=Rna3PairedEndLncRna
     - env: TEST=Rna3SingleEndLncRna
+    - env: TEST=Rna3SingleEndHisat2
+    - env: TEST=Rna3PairedEndHisat2
+    - env: TEST=Rna3PairedEndHisat2AndStar
     # Below is for testing if all files are valid and if all submodules are up to date.
     - env: TEST=Womtool validate and submodule up to date
       install:
