@@ -30,10 +30,8 @@ script:
 matrix:
   include:
     - env: TEST=Rna3PairedEndVariantCalling
-    - env: TEST=Rna3SingleEndVariantCalling
     - env: TEST=Rna3PairedEndLncRna
     - env: TEST=Rna3SingleEndLncRna
-    - env: TEST=Rna3SingleEndHisat2
     - env: TEST=Rna3PairedEndHisat2
     - env: TEST=Rna3PairedEndHisat2AndStar
     # Below is for testing if all files are valid and if all submodules are up to date.
