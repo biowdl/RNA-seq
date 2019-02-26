@@ -29,10 +29,19 @@ workflow pipeline {
         Boolean detectNovelTranscipts = false
         File? cpatLogitModel
         File? cpatHex
+        File dockerTagsFile
     }
 
     String expressionDir = outputDir + "/expression_measures/"
     String genotypingDir = outputDir + "/multisample_variants/"
+
+    call common.YamlToJson as ConvertDockerTagsFile {
+        input:
+            yaml = dockerTagsFile,
+            outputJson = outputDir + "/dockerTags.json"
+    }
+    Map[String, String] dockerTags = read_json(ConvertDockerTagsFile.json)
+
 
     # Validation of annotations
     # If these are given.
@@ -41,7 +50,8 @@ workflow pipeline {
             input:
                 refRefflat = select_first([refflatFile]),
                 gtfFile = select_first([referenceGtfFile]),
-                reference = reference
+                reference = reference,
+                dockerTag = dockerTags["biopet-validateannotation"]
         }
     }
 
@@ -50,17 +60,18 @@ workflow pipeline {
         call biopet.ValidateVcf as validateVcf {
             input:
                 vcf = select_first([dbsnp]),
-                reference = reference
+                reference = reference,
+                dockerTag = dockerTags["biopet-validatevcf"]
         }
     }
 
-    call common.YamlToJson {
+    call common.YamlToJson as ConvertSampleConfig {
         input:
             yaml = sampleConfigFile,
             # Put the output json in a fixed directory for call-caching reasons
             outputJson = outputDir + "/samples.json"
     }
-    SampleConfig sampleConfig = read_json(YamlToJson.json)
+    SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
 
     # Adding with `+` does not seem to work. But it works with flatten.
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
@@ -76,7 +87,8 @@ workflow pipeline {
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
-                variantCalling = variantCalling
+                variantCalling = variantCalling,
+                dockerTags = dockerTags
         }
     }
 
@@ -86,7 +98,8 @@ workflow pipeline {
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
-            detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts
+            detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
+            dockerTags = dockerTags
     }
 
     if (variantCalling) {
@@ -96,14 +109,17 @@ workflow pipeline {
                 outputDir = genotypingDir,
                 gvcfFiles = select_all(sample.gvcfFile),
                 vcfBasename = "multisample",
-                dbsnpVCF = select_first([dbsnp])
+                dbsnpVCF = select_first([dbsnp]),
+                dockerTags = dockerTags
         }
 
+        # TODO: Look for a MultiQC replacement with good performance.
         call biopet.VcfStats as vcfStats {
             input:
                 vcf = genotyping.vcfFile,
                 reference = reference,
-                outputDir = genotypingDir + "/stats"
+                outputDir = genotypingDir + "/stats",
+                dockerTag = dockerTags["biopet-vcfstats"]
         }
         File vcfFile = genotyping.vcfFile.file
     }
@@ -116,7 +132,8 @@ workflow pipeline {
                 referenceFasta = reference.fasta,
                 referenceFastaIndex = reference.fai,
                 cpatLogitModel = select_first([cpatLogitModel]),
-                cpatHex = select_first([cpatHex])
+                cpatHex = select_first([cpatHex]),
+                dockerTags = dockerTags
         }
 
         scatter (database in lncRNAdatabases) {
@@ -124,7 +141,8 @@ workflow pipeline {
                 input:
                     inputGtfFiles = select_all([expression.mergedGtfFile]),
                     referenceAnnotation = database,
-                    outputDir = outputDir + "/lncrna/" + basename(database) + ".d"
+                    outputDir = outputDir + "/lncrna/" + basename(database) + ".d",
+                    dockerTag = dockerTags["gffcompare"]
             }
         }
         # These files are created so that multiqc has some dependencies to wait for.
@@ -143,7 +161,8 @@ workflow pipeline {
             # vcfFile
             dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
-            analysisDirectory = outputDir
+            analysisDirectory = outputDir,
+            dockerTag = dockerTags["multiqc"]
     }
 
     output {

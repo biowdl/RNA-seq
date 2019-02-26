@@ -7,7 +7,6 @@ pipeline {
     parameters {
         string name: 'PYTHON', defaultValue: '${DEFAULT}'
         string name: 'CROMWELL_BIN', defaultValue: '${DEFAULT}'
-        string name: 'CONDA_PREFIX', defaultValue: '${DEFAULT}'
         string name: 'THREADS', defaultValue: '${DEFAULT}'
         string name: 'OUTPUT_DIR', defaultValue: '${DEFAULT}'
         string name: 'TAGS', defaultValue: '${DEFAULT}'
@@ -47,26 +46,11 @@ pipeline {
             }
         }
 
-        stage('Create conda environment') {
-            steps {
-                script {
-                    env.envHash= sh(returnStdout: true, script: "md5sum environment.yml | cut -f1 -d ' '")
-                    env.condaEnv= "${env.CONDA_PREFIX}/envs/${envHash}"
-                    env.activateEnv= "source ${env.CONDA_PREFIX}/bin/activate \$(readlink -f ${condaEnv})"
-                    env.createEnv= "${env.CONDA_PREFIX}/bin/conda-env create -f environment.yml -p ${condaEnv}"
-                }
-                sh "#!/bin/bash\n" +
-                    "set -e -v -o pipefail\n" +
-                    "[[ -d ${env.condaEnv} ]] || ${createEnv}\n"
-            }
-        }
-
         stage('Build & Test') {
             steps {
                 sh "#!/bin/bash\n" +
                         "set -e -v  -o pipefail\n" +
                         "export PATH=$PATH:$CROMWELL_BIN\n" +
-                        "${activateEnv}\n" +
                         "${PYTHON} -m pytest -v --keep-workflow-wd --workflow-threads ${THREADS} --basetemp ${outputDir} ${TAGS} tests/"
             }
         }

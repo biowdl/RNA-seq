@@ -1,5 +1,6 @@
 {
   "pipeline.sampleConfigFile": "tests/samplesheets/FunctionalPairedEnd.yml",
+  "pipeline.dockerTagsFile": "dockerTags.yml",
   "pipeline.reference": {
     "fasta": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa",
     "fai": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa.fai",

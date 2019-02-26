@@ -1,9 +1,12 @@
-# We use conda to load the rnaseq environment and install cromwell.
+# We use conda to install cromwell.
 
 language: python
 
 python:
   - 3.6
+
+services:
+  - docker
 
 before_install:
   # Install conda
@@ -16,25 +19,19 @@ before_install:
   - conda config --add channels defaults
   - conda config --add channels bioconda
   - conda config --add channels conda-forge
-  # Updating conda to the latest version may lead to speed improvements in the resolver.
-  - conda update -n base -c defaults conda
 
 install:
-  - conda env create -n my_env -f environment.yml
-  - source activate my_env
   - conda install cromwell
   - python3 -m pip install pytest-workflow pysam
 
 script:
-  - travis_wait python3 -m pytest --tag $TEST tests/
+  - travis_wait 30 python3 -m pytest --tag $TEST tests/
 
 matrix:
   include:
     - env: TEST=Rna3PairedEndVariantCalling
-    - env: TEST=Rna3SingleEndVariantCalling
     - env: TEST=Rna3PairedEndLncRna
     - env: TEST=Rna3SingleEndLncRna
-    - env: TEST=Rna3SingleEndHisat2
     - env: TEST=Rna3PairedEndHisat2
     - env: TEST=Rna3PairedEndHisat2AndStar
     # Below is for testing if all files are valid and if all submodules are up to date.
