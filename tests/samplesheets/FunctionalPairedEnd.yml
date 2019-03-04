@@ -19,5 +19,5 @@ samples:
         readgroups:
           - id: "L1"
             reads:
-              R1: "/exports/sasc-testing/fixtures/samples/rna2/S28_L1_1.fq.gz"
-              R2: "/exports/sasc-testing/fixtures/samples/rna2/S28_L1_2.fq.gz"
+              R1: "/exports/sasc-testing/fixtures/samples/rna2/S18_L1_1.fq.gz"
+              R2: "/exports/sasc-testing/fixtures/samples/rna2/S18_L1_2.fq.gz"
