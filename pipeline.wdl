@@ -83,13 +83,13 @@ workflow pipeline {
         call common.Copy as copyDBsnp {
             input:
                 inputFile = definedDBsnp.file,
-                outputPath = outputDir + "/reference/dnsnp/" + basename(definedDBsnp.file)
+                outputPath = outputDir + "/reference/dbsnp/" + basename(definedDBsnp.file)
         }
 
         call common.Copy as copyDBsnpIndex {
             input:
                 inputFile = definedDBsnp.index,
-                outputPath = outputDir + "/reference/dnsnp/" + basename(definedDBsnp.index)
+                outputPath = outputDir + "/reference/dbsnp/" + basename(definedDBsnp.index)
         }
 
         IndexedVcfFile effectiveDBsnp = object {
