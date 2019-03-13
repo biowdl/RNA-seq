@@ -16,11 +16,28 @@ workflow Readgroup {
     }
 
     FastqPair reads = readgroup.reads
-    
+
+    # Copy raw data to output direcotry
+    #FIXME remove this if cromwell cleans up its execution dir
+    call common.Copy as copyR1 {
+        input:
+            inputFile = reads.R1,
+            outputPath = outputDir + "/" + basename(reads.R1)
+    }
+
+    if (defined(reads.R2)) {
+         call common.Copy as copyR2 {
+             input:
+                 inputFile = select_first([reads.R2]),
+                 outputPath = outputDir + "/" + basename(select_first([reads.R2]))
+         }
+    }
+
+    # Check md5sums
     if (defined(reads.R1_md5)) {
         call common.CheckFileMD5 as md5CheckR1 {
             input:
-                file = reads.R1,
+                file = copyR1.outputFile,
                 md5 = select_first([reads.R1_md5])
         }
     }
@@ -28,16 +45,17 @@ workflow Readgroup {
     if (defined(reads.R2_md5) && defined(reads.R2)) {
         call common.CheckFileMD5 as md5CheckR2 {
             input:
-                file = select_first([reads.R2]),
+                file = select_first([copyR2.outputFile]),
                 md5 = select_first([reads.R2_md5])
         }
     }
 
+    # QC
     call qcWorkflow.QC as qc {
         input:
             outputDir = outputDir,
-            read1 = reads.R1,
-            read2 = reads.R2,
+            read1 = copyR1.outputFile,
+            read2 = copyR2.outputFile,
             dockerTags = dockerTags
     }
 
