@@ -18,7 +18,7 @@ workflow Readgroup {
     FastqPair reads = readgroup.reads
 
     # Copy raw data to output direcotry
-    #FIXME remove this if cromwell cleans up its execution dir
+    #FIXME See comment on Copy calls in pipeline.wdl
     call common.Copy as copyR1 {
         input:
             inputFile = reads.R1,
