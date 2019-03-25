@@ -51,6 +51,13 @@ workflow pipeline {
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
 
+    #FIXME The following Copy calls are a workaround to ensure all data is on the same device.
+    #      This is necssary to avoid cromwell from copying the data an excessive amount of times.
+    #      Since containers are being used, soft-linking cannot be used for localization.
+    #      Hard-links cannot be made between different devices/shares. Therefore, cromwell will
+    #      resort to copying input files. It will do so seperatly for every call, which creates a
+    #      huge amount of overhead in disk usage. By copying the data to (presumably) the same
+    #      device as the cromwell-execution folder, hard-linking can be used instead.
 
     #Copy reference into output directory
     call common.Copy as copyFasta {
@@ -207,6 +214,7 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
+        #FIXME See comment on Copy calls above.
         call common.Copy as copyCPATlogitModel {
             input:
                 inputFile = select_first([cpatLogitModel]),
@@ -233,6 +241,7 @@ workflow pipeline {
         }
 
         scatter (database in lncRNAdatabases) {
+            #FIXME See comment on Copy calls above.
             call common.Copy as copyDatabase {
                 input:
                     inputFile = database,
