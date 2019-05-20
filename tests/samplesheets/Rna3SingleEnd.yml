@@ -6,3 +6,4 @@ samples:
           - id: rg1
             reads:
               R1: tests/data/rna3/R1.fq.gz
+              R1_md5: 2e53e727dad4cbbfedadeb29404ca0d3
