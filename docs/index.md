@@ -12,10 +12,26 @@ This pipeline is part of [BioWDL](https://biowdl.github.io/)
 developed by [the SASC team](http://sasc.lumc.nl/).
 
 ## Usage
+To run the pipeline, one should first clone the git repository into their excecution folder. Use something like:
+```bash
+git clone --recursive  https://github.com/biowdl/RNA-seq.git
+```
+This will create a copy of all `.wdl` scripts and other files necessary for the pipeline run (eg. `dockerTags.yml`)
+
 This pipeline can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
 ```bash
 java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
+```
+
+If you want to run the pipeline on Shark, you should first load the cromwell module with something like:
+```bash
+module load cromwell/<version>
+```
+
+After you load the cromwell module, use something like:
+```bash
+cromwell run -i inputs.json pipeline.wdl
 ```
 
 ### Dependency requirements and tool versions
@@ -44,12 +60,16 @@ about pipeline inputs.
   "pipeline.outputDir": "The path to the output directory",
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
-  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
+  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR
+  (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)",
+  "pipeline.dockerTagsFile": "dockerTags.yml"
 }
 ```
 
 The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to 
 perform an unguided assembly, which will then be used for expression quantification.
+
+File `dockerTags.yml` comes with the rest of
 
 #### Sample configuration
 The sample configuration should be a YML file which adheres to the following
@@ -119,7 +139,9 @@ The following is an example of what an inputs JSON might look like:
   "pipeline.outputDir": "/home/user/analysis/results",
   "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
   "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
-  "pipeline.strandedness": "RF"
+  "pipeline.strandedness": "RF",
+  "pipeline.dockerTagsFile": "dockerTags.yml"
+
 }
 ```
 
