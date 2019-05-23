@@ -69,8 +69,6 @@ about pipeline inputs.
 The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to 
 perform an unguided assembly, which will then be used for expression quantification.
 
-File `dockerTags.yml` comes with the rest of
-
 #### Sample configuration
 The sample configuration should be a YML file which adheres to the following
 structure:
