@@ -90,7 +90,10 @@ workflow Library {
         # Preprocess BAM for variant calling
         call preprocess.GatkPreprocess as preprocessing {
             input:
-                bamFile = markDuplicates.outputBam,
+                bamFile = {
+                    "file": markDuplicates.outputBam,
+                    "index": markDuplicates.outputBamIndex
+                },
                 basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
                 outputRecalibratedBam = true,
                 splitSplicedReads = true,
@@ -103,7 +106,10 @@ workflow Library {
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = markDuplicates.outputBam,
+            bam = {
+                "file": markDuplicates.outputBam,
+                "index": markDuplicates.outputBamIndex
+            },
             outputDir = outputDir + "/metrics",
             reference = reference,
             strandedness = strandedness,
@@ -112,7 +118,10 @@ workflow Library {
     }
 
     output {
-        IndexedBamFile bamFile = markDuplicates.outputBam
+        IndexedBamFile bamFile = {
+            "file": markDuplicates.outputBam,
+            "index": markDuplicates.outputBamIndex
+        }
         IndexedBamFile? preprocessBamFile = preprocessing.outputBamFile
     }
 }

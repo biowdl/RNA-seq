@@ -49,13 +49,6 @@ workflow Sample {
             dockerTag = dockerTags["samtools"]
     }
 
-    call samtools.Index as mergedIndex {
-        input:
-            bamFile = mergeLibraries.outputBam,
-            bamIndexPath = outputDir + "/" + sample.id + ".bai",
-            dockerTag = dockerTags["samtools"]
-    }
-
     if (variantCalling) {
     # variant calling, requires different bam file than counting
         call gvcf.Gvcf as createGvcf {
@@ -71,7 +64,10 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        IndexedBamFile bam = mergedIndex.outputBam
+        IndexedBamFile bam = {
+            "file": mergeLibraries.outputBam,
+            "index": mergeLibraries.outputBamIndex
+        }
         IndexedVcfFile? gvcfFile = createGvcf.outputGVcf
     }
 }
