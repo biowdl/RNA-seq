@@ -18,8 +18,8 @@ workflow pipeline {
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
-        File? starIndexDir
-        Hisat2Index? hisat2Index
+        Array[File]+? starIndex
+        Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
         File? referenceGtfFile
@@ -51,115 +51,24 @@ workflow pipeline {
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
 
-    #FIXME The following Copy calls are a workaround to ensure all data is on the same device.
-    #      This is necssary to avoid cromwell from copying the data an excessive amount of times.
-    #      Since containers are being used, soft-linking cannot be used for localization.
-    #      Hard-links cannot be made between different devices/shares. Therefore, cromwell will
-    #      resort to copying input files. It will do so seperatly for every call, which creates a
-    #      huge amount of overhead in disk usage. By copying the data to (presumably) the same
-    #      device as the cromwell-execution folder, hard-linking can be used instead.
-
-    #Copy reference into output directory
-    call common.Copy as copyFasta {
-        input:
-            inputFile = reference.fasta,
-            outputPath = outputDir + "/reference/fasta/" + basename(reference.fasta)
-    }
-
-    call common.Copy as copyFai {
-        input:
-            inputFile = reference.fai,
-            outputPath = outputDir + "/reference/fasta/" + basename(reference.fai)
-    }
-
-    call common.Copy as copyDict {
-        input:
-            inputFile = reference.dict,
-            outputPath = outputDir + "/reference/fasta/" + basename(reference.dict)
-    }
-
-    Reference effectiveReference = object {
-        fasta: copyFasta.outputFile,
-        fai: copyFai.outputFile,
-        dict: copyDict.outputFile
-    }
-
-    # Copy and validate dnsnp
+    # validate dnsnp
     if (defined(dbsnp)) {
         IndexedVcfFile definedDBsnp = select_first([dbsnp])
-        call common.Copy as copyDBsnp {
-            input:
-                inputFile = definedDBsnp.file,
-                outputPath = outputDir + "/reference/dbsnp/" + basename(definedDBsnp.file)
-        }
-
-        call common.Copy as copyDBsnpIndex {
-            input:
-                inputFile = definedDBsnp.index,
-                outputPath = outputDir + "/reference/dbsnp/" + basename(definedDBsnp.index)
-        }
-
-        IndexedVcfFile effectiveDBsnp = object {
-            file: copyDBsnp.outputFile,
-            index: copyDBsnpIndex.outputFile
-        }
-
         call biopet.ValidateVcf as validateVcf {
             input:
-                vcf = effectiveDBsnp,
-                reference = effectiveReference,
+                vcf = definedDBsnp,
+                reference = reference,
                 dockerTag = dockerTags["biopet-validatevcf"]
         }
     }
 
-    # Copy indexes into output directory
-    if (defined(starIndexDir)) {
-        call common.Copy as copyStarIndex {
-            input:
-                inputFile = select_first([starIndexDir]),
-                outputPath = outputDir + "/reference/star_index/" +
-                    basename(select_first([starIndexDir])),
-                recursive = true
-        }
-    }
-
-    if (defined(hisat2Index)) {
-        Hisat2Index definedHisat2Index = select_first([hisat2Index])
-        call common.Copy as copyHisat2Index {
-            input:
-                inputFile = definedHisat2Index.directory,
-                outputPath = outputDir + "/reference/hisat2_index/" +
-                    definedHisat2Index.directory,
-                recursive = true
-        }
-
-        Hisat2Index effectiveHisat2Index = object {
-            directory: copyHisat2Index.outputFile,
-            basename: definedHisat2Index.basename
-        }
-    }
-
-    # Copy and validate annotations
+    # validate annotations
     if (defined(referenceGtfFile) && defined(refflatFile)) {
-        call common.Copy as copyRefflat {
-            input:
-                inputFile = select_first([refflatFile]),
-                outputPath = outputDir + "/reference/annotations/" +
-                    basename(select_first([refflatFile]))
-        }
-
-        call common.Copy as copyReferenceGtf {
-            input:
-                inputFile = select_first([referenceGtfFile]),
-                outputPath = outputDir + "/reference/annotations/" +
-                    basename(select_first([referenceGtfFile]))
-        }
-
         call biopet.ValidateAnnotation as validateAnnotation {
             input:
-                refRefflat = copyRefflat.outputFile,
-                gtfFile = copyReferenceGtf.outputFile,
-                reference = effectiveReference,
+                refRefflat = refflatFile,
+                gtfFile = referenceGtfFile,
+                reference = reference,
                 dockerTag = dockerTags["biopet-validateannotation"]
         }
     }
@@ -170,12 +79,12 @@ workflow pipeline {
             input:
                 sample = sm,
                 outputDir = outputDir + "/samples/" + sm.id,
-                reference = effectiveReference,
-                dbsnp = effectiveDBsnp,
-                starIndexDir = copyStarIndex.outputFile,
-                hisat2Index = effectiveHisat2Index,
+                reference = reference,
+                dbsnp = dbsnp,
+                starIndex = starIndex,
+                hisat2Index = hisat2Index,
                 strandedness = strandedness,
-                refflatFile = copyRefflat.outputFile,
+                refflatFile = refflatFile,
                 variantCalling = variantCalling,
                 dockerTags = dockerTags
         }
@@ -186,7 +95,7 @@ workflow pipeline {
             bams = zip(sample.sampleName, sample.bam),
             outputDir = expressionDir,
             strandedness = strandedness,
-            referenceGtfFile = copyReferenceGtf.outputFile,
+            referenceGtfFile = referenceGtfFile,
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
             dockerTags = dockerTags
     }
@@ -194,11 +103,11 @@ workflow pipeline {
     if (variantCalling) {
         call jointgenotyping.JointGenotyping as genotyping {
             input:
-                reference = effectiveReference,
+                reference = reference,
                 outputDir = genotypingDir,
                 gvcfFiles = select_all(sample.gvcfFile),
                 vcfBasename = "multisample",
-                dbsnpVCF = select_first([effectiveDBsnp]),
+                dbsnpVCF = select_first([dbsnp]),
                 dockerTags = dockerTags
         }
 
@@ -206,7 +115,7 @@ workflow pipeline {
         call biopet.VcfStats as vcfStats {
             input:
                 vcf = genotyping.vcfFile,
-                reference = effectiveReference,
+                reference = reference,
                 outputDir = genotypingDir + "/stats",
                 dockerTag = dockerTags["biopet-vcfstats"]
         }
@@ -214,44 +123,22 @@ workflow pipeline {
     }
 
     if (lncRNAdetection) {
-        #FIXME See comment on Copy calls above.
-        call common.Copy as copyCPATlogitModel {
-            input:
-                inputFile = select_first([cpatLogitModel]),
-                outputPath = outputDir + "/lncrna/coding-potential/" +
-                    basename(select_first([cpatLogitModel]))
-        }
-
-        call common.Copy as copyCPAThex {
-            input:
-                inputFile = select_first([cpatHex]),
-                outputPath = outputDir + "/lncrna/coding-potential/" +
-                    basename(select_first([cpatHex]))
-        }
-
         call rnacodingpotential.RnaCodingPotential as RnaCodingPotential {
             input:
                 outputDir = outputDir + "/lncrna/coding-potential",
                 transcriptsGff = select_first([expression.mergedGtfFile]),
-                referenceFasta = effectiveReference.fasta,
-                referenceFastaIndex = effectiveReference.fai,
-                cpatLogitModel = copyCPATlogitModel.outputFile,
-                cpatHex = copyCPAThex.outputFile,
+                referenceFasta = reference.fasta,
+                referenceFastaIndex = reference.fai,
+                cpatLogitModel = select_first([cpatLogitModel]),
+                cpatHex = select_first([cpatHex]),
                 dockerTags = dockerTags
         }
 
         scatter (database in lncRNAdatabases) {
-            #FIXME See comment on Copy calls above.
-            call common.Copy as copyDatabase {
-                input:
-                    inputFile = database,
-                    outputPath = outputDir + "/lncrna/" + basename(database)
-            }
-
             call gffcompare.GffCompare as GffCompare {
                 input:
                     inputGtfFiles = select_all([expression.mergedGtfFile]),
-                    referenceAnnotation = copyDatabase.outputFile,
+                    referenceAnnotation = database,
                     outputDir = outputDir + "/lncrna/" + basename(database) + ".d",
                     dockerTag = dockerTags["gffcompare"]
             }
