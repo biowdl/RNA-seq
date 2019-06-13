@@ -7,10 +7,16 @@
     "dict": "tests/data/reference/reference.dict"
   },
   "pipeline.strandedness": "None",
-  "pipeline.hisat2Index": {
-    "directory": "tests/data/reference/hisat2",
-    "basename": "reference"
-  },
+  "pipeline.hisat2Index": [
+    "tests/data/reference/hisat2.1.ht2",
+    "tests/data/reference/hisat2.2.ht2",
+    "tests/data/reference/hisat2.3.ht2",
+    "tests/data/reference/hisat2.4.ht2",
+    "tests/data/reference/hisat2.5.ht2",
+    "tests/data/reference/hisat2.6.ht2",
+    "tests/data/reference/hisat2.7.ht2",
+    "tests/data/reference/hisat2.8.ht2"
+  ],
   "pipeline.variantCalling": true,
   "pipeline.lncRNAdetection": true,
   "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",

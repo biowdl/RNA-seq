@@ -7,7 +7,16 @@
     "dict": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.dict"
   },
   "pipeline.strandedness": "None",
-  "pipeline.starIndexDir": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c",
+  "pipeline.starIndex": [
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrLength.txt",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrName.txt",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrNameLength.txt",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrStart.txt",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/Genome",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/genomeParameters.txt",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SA",
+    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SAindex"
+  ],
   "pipeline.variantCalling": false,
   "pipeline.lncRNAdetection": true,
   "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",

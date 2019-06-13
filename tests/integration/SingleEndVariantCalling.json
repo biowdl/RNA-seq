@@ -7,7 +7,16 @@
     "dict": "tests/data/reference/reference.dict"
   },
   "pipeline.strandedness": "None",
-  "pipeline.starIndexDir": "tests/data/reference/star",
+  "pipeline.starIndex": [
+    "tests/data/reference/star/chrLength.txt",
+    "tests/data/reference/star/chrName.txt",
+    "tests/data/reference/star/chrNameLength.txt",
+    "tests/data/reference/star/chrStart.txt",
+    "tests/data/reference/star/Genome",
+    "tests/data/reference/star/genomeParameters.txt",
+    "tests/data/reference/star/SA",
+    "tests/data/reference/star/SAindex"
+  ],
   "pipeline.refflatFile": "tests/data/reference/reference.refflat",
   "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
   "pipeline.dbsnp": {
