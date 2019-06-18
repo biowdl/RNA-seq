@@ -22,9 +22,3 @@ struct SampleConfig {
     Array[Sample] samples
 }
 
-struct Hisat2Index {
-    File directory
-    String basename
-}
-
-

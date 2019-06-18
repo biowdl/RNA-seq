@@ -16,8 +16,8 @@ workflow Library {
         String outputDir
         Reference reference
         IndexedVcfFile? dbsnp
-        File? starIndexDir
-        Hisat2Index? hisat2Index
+        Array[File]+? starIndex
+        Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
         Boolean variantCalling = false
@@ -43,7 +43,7 @@ workflow Library {
         File? cleanR2 = readgroupWorkflow.cleanReads.R2
     }
 
-    if (defined(starIndexDir)) {
+    if (defined(starIndex)) {
         call star.AlignStar as starAlignment {
             input:
                 inputR1 = cleanR1,
@@ -52,13 +52,12 @@ workflow Library {
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
-                starIndexDir = select_first([starIndexDir]),
+                indexFiles = select_first([starIndex]),
                 dockerTags = dockerTags
         }
     }
 
     if (defined(hisat2Index)) {
-        Hisat2Index innerHisat2Index = select_first([hisat2Index])
         call hisat2.AlignHisat2 as hisat2Alignment {
             input:
                 inputReads = readgroupWorkflow.cleanReads,
@@ -66,8 +65,7 @@ workflow Library {
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
-                indexDirectory = innerHisat2Index.directory,
-                indexBasename = innerHisat2Index.basename,
+                indexFiles = select_first([hisat2Index]),
                 dockerTags = dockerTags
         }
     }
@@ -90,7 +88,10 @@ workflow Library {
         # Preprocess BAM for variant calling
         call preprocess.GatkPreprocess as preprocessing {
             input:
-                bamFile = markDuplicates.outputBam,
+                bamFile = {
+                    "file": markDuplicates.outputBam,
+                    "index": markDuplicates.outputBamIndex
+                },
                 basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
                 outputRecalibratedBam = true,
                 splitSplicedReads = true,
@@ -103,7 +104,10 @@ workflow Library {
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = markDuplicates.outputBam,
+            bam = {
+                "file": markDuplicates.outputBam,
+                "index": markDuplicates.outputBamIndex
+            },
             outputDir = outputDir + "/metrics",
             reference = reference,
             strandedness = strandedness,
@@ -112,7 +116,10 @@ workflow Library {
     }
 
     output {
-        IndexedBamFile bamFile = markDuplicates.outputBam
+        IndexedBamFile bamFile = {
+            "file": markDuplicates.outputBam,
+            "index": markDuplicates.outputBamIndex
+        }
         IndexedBamFile? preprocessBamFile = preprocessing.outputBamFile
     }
 }
