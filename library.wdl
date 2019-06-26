@@ -38,6 +38,7 @@ workflow Library {
                 readgroup = rg,
                 dockerImages = dockerImages
         }
+        FastqPair cleanReads = object {R1: readgroupWorkflow.cleanR1, R2: readgroupWorkflow.cleanR2}
 
     }
 
@@ -58,13 +59,13 @@ workflow Library {
     if (defined(hisat2Index)) {
         call hisat2.AlignHisat2 as hisat2Alignment {
             input:
-                inputReads = readgroupWorkflow.cleanReads,
+                inputReads = cleanReads,
                 outputDir = outputDir + "/hisat2/",
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
                 indexFiles = select_first([hisat2Index]),
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -79,7 +80,7 @@ workflow Library {
             inputBamIndexes = [continuationBamFile.index],
             outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
             metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics",
-            dockerTag = dockerTags["picard"]
+            dockerImage = dockerImages["picard"]
     }
 
     if (variantCalling) {
@@ -90,12 +91,13 @@ workflow Library {
                     "file": markDuplicates.outputBam,
                     "index": markDuplicates.outputBamIndex
                 },
-                basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
+                outputDir = outputDir + "/",
+                bamName = sampleId + "-" + libraryId + ".markdup.bqsr",
                 outputRecalibratedBam = true,
                 splitSplicedReads = true,
                 dbsnpVCF = select_first([dbsnp]),
                 reference = reference,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -110,7 +112,7 @@ workflow Library {
             reference = reference,
             strandedness = strandedness,
             refRefflat = refflatFile,
-            dockerTags = dockerTags
+            dockerImages = dockerImages
     }
 
     output {
