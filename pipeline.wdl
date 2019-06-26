@@ -29,7 +29,7 @@ workflow pipeline {
         Boolean detectNovelTranscipts = false
         File? cpatLogitModel
         File? cpatHex
-        File dockerTagsFile
+        File dockerImagesFile
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -38,10 +38,10 @@ workflow pipeline {
     # Parse docker Tags configuration and sample sheet
     call common.YamlToJson as ConvertDockerTagsFile {
         input:
-            yaml = dockerTagsFile,
-            outputJson = outputDir + "/dockerTags.json"
+            yaml = dockerImagesFile,
+            outputJson = outputDir + "/dockerImages.json"
     }
-    Map[String, String] dockerTags = read_json(ConvertDockerTagsFile.json)
+    Map[String, String] dockerImages = read_json(ConvertDockerTagsFile.json)
 
     call common.YamlToJson as ConvertSampleConfig {
         input:
@@ -64,7 +64,7 @@ workflow pipeline {
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 variantCalling = variantCalling,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -75,7 +75,7 @@ workflow pipeline {
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
-            dockerTags = dockerTags
+            dockerImages = dockerImages
     }
 
     if (variantCalling) {
@@ -86,19 +86,12 @@ workflow pipeline {
                 gvcfFiles = select_all(sample.gvcfFile),
                 vcfBasename = "multisample",
                 dbsnpVCF = select_first([dbsnp]),
-                dockerTags = dockerTags
-        }
-
-        # TODO: Look for a MultiQC replacement with good performance.
-        call biopet.VcfStats as vcfStats {
-            input:
-                vcf = genotyping.vcfFile,
-                reference = reference,
-                outputDir = genotypingDir + "/stats",
-                dockerTag = dockerTags["biopet-vcfstats"]
+                dockerImages = dockerImages
         }
         File vcfFile = genotyping.vcfFile.file
+        # TODO: Look for a MultiQC VCF-stats tool with good performance.
     }
+
 
     if (lncRNAdetection) {
         call rnacodingpotential.RnaCodingPotential as RnaCodingPotential {
@@ -109,7 +102,7 @@ workflow pipeline {
                 referenceFastaIndex = reference.fai,
                 cpatLogitModel = select_first([cpatLogitModel]),
                 cpatHex = select_first([cpatHex]),
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
 
         scatter (database in lncRNAdatabases) {
@@ -118,7 +111,7 @@ workflow pipeline {
                     inputGtfFiles = select_all([expression.mergedGtfFile]),
                     referenceAnnotation = database,
                     outputDir = outputDir + "/lncrna/" + basename(database) + ".d",
-                    dockerTag = dockerTags["gffcompare"]
+                    dockerImage = dockerImages["gffcompare"]
             }
         }
         # These files are created so that multiqc has some dependencies to wait for.
@@ -138,7 +131,7 @@ workflow pipeline {
             dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
             outDir = outputDir + "/multiqc",
             analysisDirectory = outputDir,
-            dockerTag = dockerTags["multiqc"]
+            dockerImage = dockerImages["multiqc"]
     }
 
     output {
