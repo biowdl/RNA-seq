@@ -45,6 +45,7 @@ workflow Readgroup {
     }
 
     output {
-        FastqPair cleanReads = object { R1: qc.qcRead1, R2: qc.qcRead2 }
+        File cleanR1 = qc.qcRead1
+        File? cleanR2 = qc.qcRead2
     }
 }

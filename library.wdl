@@ -21,7 +21,7 @@ workflow Library {
         String strandedness
         File? refflatFile
         Boolean variantCalling = false
-        Map[String, String] dockerTags
+        Map[String, String] dockerImages
     }
 
     String sampleId = sample.id
@@ -36,24 +36,22 @@ workflow Library {
                 sample = sample,
                 library = library,
                 readgroup = rg,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
 
-        File cleanR1 = readgroupWorkflow.cleanReads.R1
-        File? cleanR2 = readgroupWorkflow.cleanReads.R2
     }
 
     if (defined(starIndex)) {
         call star.AlignStar as starAlignment {
             input:
-                inputR1 = cleanR1,
-                inputR2 = select_all(cleanR2),
+                inputR1 = readgroupWorkflow.cleanR1,
+                inputR2 = select_all(readgroupWorkflow.cleanR2),
                 outputDir = outputDir + "/star/",
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
                 indexFiles = select_first([starIndex]),
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
