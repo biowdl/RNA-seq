@@ -51,28 +51,6 @@ workflow pipeline {
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
 
-    # validate dnsnp
-    if (defined(dbsnp)) {
-        IndexedVcfFile definedDBsnp = select_first([dbsnp])
-        call biopet.ValidateVcf as validateVcf {
-            input:
-                vcf = definedDBsnp,
-                reference = reference,
-                dockerTag = dockerTags["biopet-validatevcf"]
-        }
-    }
-
-    # validate annotations
-    if (defined(referenceGtfFile) && defined(refflatFile)) {
-        call biopet.ValidateAnnotation as validateAnnotation {
-            input:
-                refRefflat = refflatFile,
-                gtfFile = referenceGtfFile,
-                reference = reference,
-                dockerTag = dockerTags["biopet-validateannotation"]
-        }
-    }
-
     # Start processing of data
     scatter (sm in allSamples) {
         call sampleWorkflow.Sample as sample {
