@@ -15,7 +15,7 @@ biopet-scatterregions: "quay.io/biocontainers/biopet-scatterregions:0.2--0"
 # This container contains: picard (2.18.7), bwa (0.7.17-r1188)
 cutadapt: "quay.io/biocontainers/cutadapt:2.3--py36h14c3975_0"
 cpat: "v1.2.4_cv1"
-collect-columns: "0.2.0--py_1"
+collect-columns: "quay.io/biocontainers/collect-columns:0.2.0--py_1"
 fastqc: "quay.io/biocontainers/fastqc:0.11.7--4"
 gatk4: "quay.io/biocontainers/gatk4:4.1.0.0--0"
 gffcompare: "0.10.6--h2d50403_0"
@@ -23,8 +23,8 @@ gffread: "0.9.12--0"
 # "hisat2" uses a combined container that has both hisat2 and samtools
 # quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1
 # this particular tag has versions hisat2=2.1.0,samtools=1.8
-hisat2: "2388ff67fc407dad75774291ca5038f40cac4be0-0"
-htseq: "0.9.1--py36h7eb728f_2"
+hisat2: "quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1:2388ff67fc407dad75774291ca5038f40cac4be0-0"
+htseq: "quay.io/biocontainers/htseq:0.9.1--py36h7eb728f_2",
 multiqc: "quay.io/biocontainers/multiqc:1.7--py_1"
 picard: "quay.io/biocontainers/picard:2.18.26--0"
 # "picard+r" combines picard with R for tasks for which picard relies on R.
@@ -32,6 +32,6 @@ picard: "quay.io/biocontainers/picard:2.18.26--0"
 # This particular image has versions r-base=3.4.1,picard=2.18.2
 picard+r: "quay.io/biocontainers/mulled-v2-23d9f7c700e78129a769e78521eb86d6b8341923:8dde04faba6c9ac93fae7e846af3bafd2c331b3b-0"
 samtools: "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
-star: "2.6.0c--0"
-stringtie: "1.3.4--py35_0"
+star:  "quay.io/biocontainers/star:2.6.0c--0"
+stringtie: "quay.io/biocontainers/stringtie:1.3.4--py35_0",
 tabix: "quay.io/biocontainers/tabix:0.2.6--ha92aebf_0"
