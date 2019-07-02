@@ -1,18 +1,10 @@
 - name: Rna3SingleEndVariantCalling
   tags:
     - integration
-  # The gruesome bash command injection using sed is needed
-  # as cromwell does not handle relative outputs well.
-  # It will put them relative to each execution folder.
-  # Therefore the output needs be an absolute path. We can
-  # accomplish this by injecting $PWD (equal to whatever absolute
-  # dir our test is running) into the inputs.json
-  # It is a gruesome hack, but it works.
+    - no_docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SingleEndVariantCalling.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndVariantCalling.json pipeline.wdl
   files:
     - path: "test-output/multisample_variants/multisample.vcf.gz"
     - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
@@ -25,6 +17,7 @@
 - name: Rna3PairedEndVariantCalling
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndVariantCalling.json ;
@@ -42,11 +35,10 @@
 - name: Rna3SingleEndLncRna
   tags:
     - integration
+    - no_docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SingleEndLncRna.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndLncRna.json pipeline.wdl
   files:
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
@@ -80,11 +72,10 @@
 - name: Rna3SingleEndHisat2
   tags:
     - integration
+    - no_docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SingleEndHisat2.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndHisat2.json pipeline.wdl
   files:
     - path: "test-output/multisample_variants/multisample.vcf.gz"
     - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"

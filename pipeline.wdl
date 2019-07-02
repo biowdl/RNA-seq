@@ -15,7 +15,7 @@ workflow pipeline {
     input {
         File sampleConfigFile
         Array[Sample] samples = []
-        String outputDir
+        String outputDir = "."
         Reference reference
         IndexedVcfFile? dbsnp
         Array[File]+? starIndex
@@ -30,6 +30,8 @@ workflow pipeline {
         File? cpatLogitModel
         File? cpatHex
         File dockerImagesFile
+        # Only run multiQC if the user specified an outputDir
+        Boolean runMultiQC = if (outputDir == ".") then false else true
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -121,17 +123,19 @@ workflow pipeline {
         File gffComparisons = write_lines(GffCompare.annotated)
     }
 
-    call multiqc.MultiQC as multiqcTask {
-        input:
-            # Multiqc will only run if these files are created.
-            # Need to do some select_all and flatten magic here
-            # so only outputs from workflows that are run are taken
-            # as dependencies
-            # vcfFile
-            dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
-            outDir = outputDir + "/multiqc",
-            analysisDirectory = outputDir,
-            dockerImage = dockerImages["multiqc"]
+    if (runMultiQC) {
+        call multiqc.MultiQC as multiqcTask {
+            input:
+                # Multiqc will only run if these files are created.
+                # Need to do some select_all and flatten magic here
+                # so only outputs from workflows that are run are taken
+                # as dependencies
+                # vcfFile
+                dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
+                outDir = outputDir + "/multiqc",
+                analysisDirectory = outputDir,
+                dockerImage = dockerImages["multiqc"]
+        }
     }
 
     output {
