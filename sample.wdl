@@ -58,7 +58,7 @@ workflow Sample {
                 outputDir = outputDir,
                 gvcfName = sample.id + ".g.vcf.gz",
                 dbsnpVCF = select_first([dbsnp]).file,
-                dbsnpVCF = select_first([dbsnp]).index,
+                dbsnpVCFIndex = select_first([dbsnp]).index,
                 referenceFasta = reference.fasta,
                 referenceFastaFai = reference.fai,
                 referenceFastaDict = reference.dict,
