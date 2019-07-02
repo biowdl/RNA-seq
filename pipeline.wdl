@@ -139,6 +139,12 @@ workflow pipeline {
     }
 
     output {
-        File report = multiqcTask.multiqcReport
+        File? report = multiqcTask.multiqcReport
+        File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
+        File FPKMTable = expression.FPKMTable
+        File TMPTable = expression.TPMTable
+        File? mergedGtfFile = expression.mergedGtfFile
+        IndexedVcfFile? variants = genotyping.vcfFile
+        File? cpatOutput = RnaCodingPotential.cpatOutput
     }
 }

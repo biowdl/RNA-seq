@@ -12,7 +12,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multisample_variants/stats"
-    - path: "test-output/multiqc/multiqc_report.html"
 
 - name: Rna3PairedEndVariantCalling
   tags:
@@ -43,7 +42,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
     - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
@@ -82,7 +80,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
     - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
