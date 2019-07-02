@@ -14,12 +14,12 @@ biopet-scatterregions: "quay.io/biocontainers/biopet-scatterregions:0.2--0"
 # quay.io/biocontainers/mulled-v2-002f51ea92721407ef440b921fb5940f424be842
 # This container contains: picard (2.18.7), bwa (0.7.17-r1188)
 cutadapt: "quay.io/biocontainers/cutadapt:2.3--py36h14c3975_0"
-cpat: "v1.2.4_cv1"
+cpat: "biocontainers/cpat:v1.2.4_cv1"
 collect-columns: "quay.io/biocontainers/collect-columns:0.2.0--py_1"
 fastqc: "quay.io/biocontainers/fastqc:0.11.7--4"
 gatk4: "quay.io/biocontainers/gatk4:4.1.0.0--0"
-gffcompare: "0.10.6--h2d50403_0"
-gffread: "0.9.12--0"
+gffcompare: "quay.io/biocontainers/gffcompare:0.10.6--h2d50403_0"
+gffread: "quay.io/biocontainers/gffread:0.9.12--0"
 # "hisat2" uses a combined container that has both hisat2 and samtools
 # quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1
 # this particular tag has versions hisat2=2.1.0,samtools=1.8
