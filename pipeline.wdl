@@ -146,5 +146,7 @@ workflow pipeline {
         File? mergedGtfFile = expression.mergedGtfFile
         IndexedVcfFile? variants = genotyping.vcfFile
         File? cpatOutput = RnaCodingPotential.cpatOutput
+        Array[File]? annotatedGtf = GffCompare.annotated
+        Array[IndexedBamFile] bamFiles = sample.bam
     }
 }

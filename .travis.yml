@@ -27,11 +27,19 @@ script:
 
 matrix:
   include:
-    - env: TEST=Rna3PairedEndVariantCalling
-    - env: TEST=Rna3PairedEndLncRna
+    - env:
+      - TEST=Rna3PairedEndVariantCalling
+      - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"
+    - env:
+      - TEST=Rna3PairedEndLncRna
+      - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"
     - env: TEST=Rna3SingleEndLncRna
-    - env: TEST=Rna3PairedEndHisat2
-    - env: TEST=Rna3PairedEndHisat2AndStar
+    - env:
+      - TEST=Rna3PairedEndHisat2
+      - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"
+    - env:
+      - TEST=Rna3PairedEndHisat2AndStar
+      - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"
     # Below is for testing if all files are valid and if all submodules are up to date.
     - env: TEST=Womtool validate and submodule up to date
       install:

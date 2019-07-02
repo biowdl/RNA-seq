@@ -11,7 +11,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multisample_variants/stats"
 
 - name: Rna3PairedEndVariantCalling
   tags:
@@ -28,7 +27,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multisample_variants/stats"
     - path: "test-output/multiqc/multiqc_report.html"
 
 - name: Rna3SingleEndLncRna
@@ -44,13 +42,12 @@
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-single-end/lib_lib1/hisat2/rna3-single-end-lib1.bam"
-      should_exist: false
+
 
 - name: Rna3PairedEndLncRna
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndLncRna.json ;
@@ -82,13 +79,11 @@
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
-      should_exist: false
-    - path: "test-output/samples/rna3-single-end/lib_lib1/hisat2/rna3-single-end-lib1.bam"
 
 - name: Rna3PairedEndHisat2
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndHisat2.json ;
@@ -110,6 +105,7 @@
 - name: Rna3PairedEndHisat2AndStar
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndHisat2AndStar.json ;
@@ -141,7 +137,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multisample_variants/stats"
     - path: "test-output/multiqc/multiqc_report.html"
 
 - name: FunctionalPairedEndLncRna
