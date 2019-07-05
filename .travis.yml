@@ -23,7 +23,7 @@ install:
   - conda install --file requirements-test.txt
 
 script:
-  - pytest --tag $TEST tests/
+  - travis_wait 30 python3 -m pytest --tag $TEST tests/
 
 matrix:
   include:
