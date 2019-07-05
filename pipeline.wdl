@@ -31,7 +31,7 @@ workflow pipeline {
         File? cpatHex
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
-        Boolean runMultiQC = if (outputDir == ".") then false else true
+        Boolean runMultiQC = outputDir != "."
     }
 
     String expressionDir = outputDir + "/expression_measures/"
