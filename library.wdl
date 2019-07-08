@@ -21,7 +21,7 @@ workflow Library {
         String strandedness
         File? refflatFile
         Boolean variantCalling = false
-        Map[String, String] dockerTags
+        Map[String, String] dockerImages
     }
 
     String sampleId = sample.id
@@ -36,37 +36,36 @@ workflow Library {
                 sample = sample,
                 library = library,
                 readgroup = rg,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
+        FastqPair cleanReads = object {R1: readgroupWorkflow.cleanR1, R2: readgroupWorkflow.cleanR2}
 
-        File cleanR1 = readgroupWorkflow.cleanReads.R1
-        File? cleanR2 = readgroupWorkflow.cleanReads.R2
     }
 
     if (defined(starIndex)) {
         call star.AlignStar as starAlignment {
             input:
-                inputR1 = cleanR1,
-                inputR2 = select_all(cleanR2),
+                inputR1 = readgroupWorkflow.cleanR1,
+                inputR2 = select_all(readgroupWorkflow.cleanR2),
                 outputDir = outputDir + "/star/",
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
                 indexFiles = select_first([starIndex]),
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
     if (defined(hisat2Index)) {
         call hisat2.AlignHisat2 as hisat2Alignment {
             input:
-                inputReads = readgroupWorkflow.cleanReads,
+                inputReads = cleanReads,
                 outputDir = outputDir + "/hisat2/",
                 sample = sample.id,
                 library = library.id,
                 readgroups = readgroupId,
                 indexFiles = select_first([hisat2Index]),
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -81,7 +80,7 @@ workflow Library {
             inputBamIndexes = [continuationBamFile.index],
             outputBamPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bam",
             metricsPath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.metrics",
-            dockerTag = dockerTags["picard"]
+            dockerImage = dockerImages["picard"]
     }
 
     if (variantCalling) {
@@ -92,12 +91,13 @@ workflow Library {
                     "file": markDuplicates.outputBam,
                     "index": markDuplicates.outputBamIndex
                 },
-                basePath = outputDir + "/" + sampleId + "-" + libraryId + ".markdup.bqsr",
+                outputDir = outputDir + "/",
+                bamName = sampleId + "-" + libraryId + ".markdup.bqsr",
                 outputRecalibratedBam = true,
                 splitSplicedReads = true,
                 dbsnpVCF = select_first([dbsnp]),
                 reference = reference,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -112,7 +112,7 @@ workflow Library {
             reference = reference,
             strandedness = strandedness,
             refRefflat = refflatFile,
-            dockerTags = dockerTags
+            dockerImages = dockerImages
     }
 
     output {

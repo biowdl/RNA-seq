@@ -1,6 +1,6 @@
 {
   "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.yml",
-  "pipeline.dockerTagsFile": "dockerTags.yml",
+  "pipeline.dockerImagesFile": "dockerImages.yml",
   "pipeline.reference": {
     "fasta": "tests/data/reference/reference.fasta",
     "fai": "tests/data/reference/reference.fasta.fai",

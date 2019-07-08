@@ -1,30 +1,21 @@
 - name: Rna3SingleEndVariantCalling
   tags:
     - integration
-  # The gruesome bash command injection using sed is needed
-  # as cromwell does not handle relative outputs well.
-  # It will put them relative to each execution folder.
-  # Therefore the output needs be an absolute path. We can
-  # accomplish this by injecting $PWD (equal to whatever absolute
-  # dir our test is running) into the inputs.json
-  # It is a gruesome hack, but it works.
+    - no_docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SingleEndVariantCalling.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndVariantCalling.json pipeline.wdl
   files:
     - path: "test-output/multisample_variants/multisample.vcf.gz"
     - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multisample_variants/stats"
-    - path: "test-output/multiqc/multiqc_report.html"
 
 - name: Rna3PairedEndVariantCalling
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndVariantCalling.json ;
@@ -36,31 +27,27 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multisample_variants/stats"
     - path: "test-output/multiqc/multiqc_report.html"
 
 - name: Rna3SingleEndLncRna
   tags:
     - integration
+    - no_docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SingleEndLncRna.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndLncRna.json pipeline.wdl
   files:
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-single-end/lib_lib1/hisat2/rna3-single-end-lib1.bam"
-      should_exist: false
+
 
 - name: Rna3PairedEndLncRna
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndLncRna.json ;
@@ -80,27 +67,23 @@
 - name: Rna3SingleEndHisat2
   tags:
     - integration
+    - no_docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/SingleEndHisat2.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndHisat2.json pipeline.wdl
   files:
     - path: "test-output/multisample_variants/multisample.vcf.gz"
     - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-single-end/lib_lib1/star/rna3-single-end-lib1.Aligned.sortedByCoord.out.bam"
-      should_exist: false
-    - path: "test-output/samples/rna3-single-end/lib_lib1/hisat2/rna3-single-end-lib1.bam"
 
 - name: Rna3PairedEndHisat2
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndHisat2.json ;
@@ -122,6 +105,7 @@
 - name: Rna3PairedEndHisat2AndStar
   tags:
     - integration
+    - docker_conf
   command: >-
     bash -c '
     TEST_JSON=tests/integration/PairedEndHisat2AndStar.json ;
@@ -153,7 +137,6 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multisample_variants/stats"
     - path: "test-output/multiqc/multiqc_report.html"
 
 - name: FunctionalPairedEndLncRna

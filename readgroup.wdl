@@ -12,7 +12,7 @@ workflow Readgroup {
         Library library
         Sample sample
         String outputDir
-        Map[String, String] dockerTags
+        Map[String, String] dockerImages
     }
 
     FastqPair reads = readgroup.reads
@@ -41,10 +41,11 @@ workflow Readgroup {
             outputDir = outputDir,
             read1 = reads.R1,
             read2 = reads.R2,
-            dockerTags = dockerTags
+            dockerImages = dockerImages
     }
 
     output {
-        FastqPair cleanReads = object { R1: qc.qcRead1, R2: qc.qcRead2 }
+        File cleanR1 = qc.qcRead1
+        File? cleanR2 = qc.qcRead2
     }
 }

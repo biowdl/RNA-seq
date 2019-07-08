@@ -15,7 +15,7 @@ workflow pipeline {
     input {
         File sampleConfigFile
         Array[Sample] samples = []
-        String outputDir
+        String outputDir = "."
         Reference reference
         IndexedVcfFile? dbsnp
         Array[File]+? starIndex
@@ -29,7 +29,9 @@ workflow pipeline {
         Boolean detectNovelTranscipts = false
         File? cpatLogitModel
         File? cpatHex
-        File dockerTagsFile
+        File dockerImagesFile
+        # Only run multiQC if the user specified an outputDir
+        Boolean runMultiQC = outputDir != "."
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -38,10 +40,10 @@ workflow pipeline {
     # Parse docker Tags configuration and sample sheet
     call common.YamlToJson as ConvertDockerTagsFile {
         input:
-            yaml = dockerTagsFile,
-            outputJson = outputDir + "/dockerTags.json"
+            yaml = dockerImagesFile,
+            outputJson = outputDir + "/dockerImages.json"
     }
-    Map[String, String] dockerTags = read_json(ConvertDockerTagsFile.json)
+    Map[String, String] dockerImages = read_json(ConvertDockerTagsFile.json)
 
     call common.YamlToJson as ConvertSampleConfig {
         input:
@@ -50,28 +52,6 @@ workflow pipeline {
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
-
-    # validate dnsnp
-    if (defined(dbsnp)) {
-        IndexedVcfFile definedDBsnp = select_first([dbsnp])
-        call biopet.ValidateVcf as validateVcf {
-            input:
-                vcf = definedDBsnp,
-                reference = reference,
-                dockerTag = dockerTags["biopet-validatevcf"]
-        }
-    }
-
-    # validate annotations
-    if (defined(referenceGtfFile) && defined(refflatFile)) {
-        call biopet.ValidateAnnotation as validateAnnotation {
-            input:
-                refRefflat = refflatFile,
-                gtfFile = referenceGtfFile,
-                reference = reference,
-                dockerTag = dockerTags["biopet-validateannotation"]
-        }
-    }
 
     # Start processing of data
     scatter (sm in allSamples) {
@@ -86,7 +66,7 @@ workflow pipeline {
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 variantCalling = variantCalling,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
     }
 
@@ -97,7 +77,7 @@ workflow pipeline {
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
-            dockerTags = dockerTags
+            dockerImages = dockerImages
     }
 
     if (variantCalling) {
@@ -108,19 +88,12 @@ workflow pipeline {
                 gvcfFiles = select_all(sample.gvcfFile),
                 vcfBasename = "multisample",
                 dbsnpVCF = select_first([dbsnp]),
-                dockerTags = dockerTags
-        }
-
-        # TODO: Look for a MultiQC replacement with good performance.
-        call biopet.VcfStats as vcfStats {
-            input:
-                vcf = genotyping.vcfFile,
-                reference = reference,
-                outputDir = genotypingDir + "/stats",
-                dockerTag = dockerTags["biopet-vcfstats"]
+                dockerImages = dockerImages
         }
         File vcfFile = genotyping.vcfFile.file
+        # TODO: Look for a MultiQC VCF-stats tool with good performance.
     }
+
 
     if (lncRNAdetection) {
         call rnacodingpotential.RnaCodingPotential as RnaCodingPotential {
@@ -131,7 +104,7 @@ workflow pipeline {
                 referenceFastaIndex = reference.fai,
                 cpatLogitModel = select_first([cpatLogitModel]),
                 cpatHex = select_first([cpatHex]),
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
 
         scatter (database in lncRNAdatabases) {
@@ -140,7 +113,7 @@ workflow pipeline {
                     inputGtfFiles = select_all([expression.mergedGtfFile]),
                     referenceAnnotation = database,
                     outputDir = outputDir + "/lncrna/" + basename(database) + ".d",
-                    dockerTag = dockerTags["gffcompare"]
+                    dockerImage = dockerImages["gffcompare"]
             }
         }
         # These files are created so that multiqc has some dependencies to wait for.
@@ -150,20 +123,30 @@ workflow pipeline {
         File gffComparisons = write_lines(GffCompare.annotated)
     }
 
-    call multiqc.MultiQC as multiqcTask {
-        input:
-            # Multiqc will only run if these files are created.
-            # Need to do some select_all and flatten magic here
-            # so only outputs from workflows that are run are taken
-            # as dependencies
-            # vcfFile
-            dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
-            outDir = outputDir + "/multiqc",
-            analysisDirectory = outputDir,
-            dockerTag = dockerTags["multiqc"]
+    if (runMultiQC) {
+        call multiqc.MultiQC as multiqcTask {
+            input:
+                # Multiqc will only run if these files are created.
+                # Need to do some select_all and flatten magic here
+                # so only outputs from workflows that are run are taken
+                # as dependencies
+                # vcfFile
+                dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
+                outDir = outputDir + "/multiqc",
+                analysisDirectory = outputDir,
+                dockerImage = dockerImages["multiqc"]
+        }
     }
 
     output {
-        File report = multiqcTask.multiqcReport
+        File? report = multiqcTask.multiqcReport
+        File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
+        File FPKMTable = expression.FPKMTable
+        File TMPTable = expression.TPMTable
+        File? mergedGtfFile = expression.mergedGtfFile
+        IndexedVcfFile? variants = genotyping.vcfFile
+        File? cpatOutput = RnaCodingPotential.cpatOutput
+        Array[File]? annotatedGtf = GffCompare.annotated
+        Array[IndexedBamFile] bamFiles = sample.bam
     }
 }

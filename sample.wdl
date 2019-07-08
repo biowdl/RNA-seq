@@ -18,7 +18,7 @@ workflow Sample {
         String strandedness
         File? refflatFile
         Boolean variantCalling = false
-        Map[String, String] dockerTags
+        Map[String, String] dockerImages
     }
 
     scatter (lib in sample.libraries) {
@@ -34,7 +34,7 @@ workflow Sample {
                 sample = sample,
                 library = lib,
                 variantCalling = variantCalling,
-                dockerTags = dockerTags
+                dockerImages = dockerImages
         }
         File lbBamFiles = library.bamFile.file
         File indexFiles = library.bamFile.index
@@ -46,7 +46,7 @@ workflow Sample {
         input:
             bamFiles = lbBamFiles,
             outputBamPath = outputDir + "/" + sample.id + ".bam",
-            dockerTag = dockerTags["samtools"]
+            dockerImage = dockerImages["samtools"]
     }
 
     if (variantCalling) {
@@ -55,11 +55,16 @@ workflow Sample {
             input:
 
                 bamFiles = select_all(library.preprocessBamFile),
-                gvcfPath = outputDir + "/" + sample.id + ".g.vcf.gz",
-                dbsnpVCF = select_first([dbsnp]),
-                reference = reference,
-                dockerTags = dockerTags
+                outputDir = outputDir,
+                gvcfName = sample.id + ".g.vcf.gz",
+                dbsnpVCF = select_first([dbsnp]).file,
+                dbsnpVCFIndex = select_first([dbsnp]).index,
+                referenceFasta = reference.fasta,
+                referenceFastaFai = reference.fai,
+                referenceFastaDict = reference.dict,
+                dockerImages = dockerImages
         }
+        IndexedVcfFile gvcf = object {file:  createGvcf.outputGVcf, index: createGvcf.outputGVcfIndex}
     }
 
     output {
@@ -68,6 +73,6 @@ workflow Sample {
             "file": mergeLibraries.outputBam,
             "index": mergeLibraries.outputBamIndex
         }
-        IndexedVcfFile? gvcfFile = createGvcf.outputGVcf
+        IndexedVcfFile? gvcfFile = gvcf
     }
 }
