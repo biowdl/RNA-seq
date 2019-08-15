@@ -9,7 +9,7 @@ quantification (using HTSeq-Count and Stringtie). Optionally variantcalling
 (based on the GATK Best Practises) and lncRNA detection (using CPAT) can also be performed.
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
-developed by [the SASC team](http://sasc.lumc.nl/).
+developed by the SASC team at [Leiden University Medical Center](https://www.lumc.nl/).
 
 ## Usage
 This pipeline can be run using
@@ -194,6 +194,8 @@ For any question about running this pipeline and feature requests, please use
 the
 <a href='https://github.com/biowdl/rna-seq/issues'>github issue tracker</a>
 or contact
-<a href='http://sasc.lumc.nl/'>the SASC team</a> directly at: <a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
+the SASC team
+ directly at: 
+<a href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;'>
 &#115;&#97;&#115;&#99;&#64;&#108;&#117;&#109;&#99;&#46;&#110;&#108;</a>.
 </p>
