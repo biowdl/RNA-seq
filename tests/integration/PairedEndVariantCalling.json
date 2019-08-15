@@ -24,5 +24,7 @@
     "index": "tests/data/wgs2.vcf.gz.tbi"
   },
   "pipeline.variantCalling": true,
-  "pipeline.lncRNAdetection": false
+  "pipeline.lncRNAdetection": false,
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapter": ["AGATCGGAAGAG"],
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapterRead2": ["AGATCGGAAGAG"]
 }

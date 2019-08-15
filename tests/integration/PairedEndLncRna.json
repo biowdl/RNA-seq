@@ -23,5 +23,7 @@
   "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
   "pipeline.lncRNAdatabases": [
     "tests/data/reference/reference.gtf"
-  ]
+  ],
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapter": ["AGATCGGAAGAG"],
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapterRead2": ["AGATCGGAAGAG"]
 }
