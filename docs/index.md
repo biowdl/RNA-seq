@@ -35,7 +35,7 @@ about pipeline inputs.
 ```JSON
 {
  "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
-  "pipeline.starIndexDir": "The STAR index.",
+  "pipeline.starIndex": "A list of star index files.",
   "pipeline.reference": {
     "fasta": "A path to a reference fasta",
     "fai": "The path to the index associated with the reference fasta",
@@ -44,9 +44,13 @@ about pipeline inputs.
   "pipeline.outputDir": "The path to the output directory",
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
-  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
+  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)",
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapter": "Used to set a list of forward read adapters.",
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapterRead2": "Used to set a list of reverse read adapters (for paired-end reads)."
 }
 ```
+If you wish to use hisat2 instead, set the list of hisat2 index files on
+`pipeline.hisat2Index`.
 
 The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to 
 perform an unguided assembly, which will then be used for expression quantification.
@@ -101,7 +105,16 @@ The following is an example of what an inputs JSON might look like:
 ```JSON
 {
  "pipeline.sampleConfigFile":"/home/user/analysis/samples.yml",
-  "pipeline.starIndexDir": "/home/user/genomes/human/bwa/GRCh38/star",
+  "pipeline.starIndex": [
+    "/reference/star/chrLength.txt",
+    "/reference/star/chrName.txt",
+    "/reference/star/chrNameLength.txt",
+    "/reference/star/chrStart.txt",
+    "/reference/star/Genome",
+    "/reference/star/genomeParameters.txt",
+    "/reference/star/SA",
+    "/reference/star/SAindex"
+  ],
   "pipeline.variantCalling": true,
   "pipeline.lncRNAdetection": true,
   "pipeline.reference": {
