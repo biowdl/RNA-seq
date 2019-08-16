@@ -11,4 +11,5 @@ that users understand how the changes affect the new version.
 
 version 1.0.0-dev
 ---------------------------
++ Update documentation to reflect changes in QC pipeline.
 + Update cutadapt version to 2.4
