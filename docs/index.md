@@ -45,8 +45,6 @@ about pipeline inputs.
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
   "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)",
-  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapter": "Used to set a list of forward read adapters.",
-  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.QC.Cutadapt.adapterRead2": "Used to set a list of reverse read adapters (for paired-end reads)."
 }
 ```
 If you wish to use hisat2 instead, set the list of hisat2 index files on
@@ -55,6 +53,13 @@ If you wish to use hisat2 instead, set the list of hisat2 index files on
 The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to 
 perform an unguided assembly, which will then be used for expression quantification.
 
+Optional settings:
+```JSON 
+{
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter",
+  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter"
+}
+```
 #### Sample configuration
 The sample configuration should be a YML file which adheres to the following
 structure:
