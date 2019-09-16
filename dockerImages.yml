@@ -8,7 +8,6 @@
 
 # Tools are sorted alphabetically for ease of use.
 
-fastqsplitter: "quay.io/biocontainers/fastqsplitter:1.0.0--py_0"
 biopet-scatterregions: "quay.io/biocontainers/biopet-scatterregions:0.2--0"
 # A mulled container is needed to have both picard and bwa in one container.
 # quay.io/biocontainers/mulled-v2-002f51ea92721407ef440b921fb5940f424be842
