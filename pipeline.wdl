@@ -102,7 +102,7 @@ workflow pipeline {
                 inputGff = select_first([expression.mergedGtfFile]),
                 genomicSequence = reference.fasta,
                 genomicIndex = reference.fai,
-                exonsFastaPath = outputDir + "/lncrna/coding-potential"+ "/transcripts.fasta",
+                exonsFastaPath = outputDir + "/lncrna/coding-potential/transcripts.fasta",
                 dockerImage = dockerImages["gffread"]
         }
 
@@ -113,7 +113,7 @@ workflow pipeline {
                 referenceGenomeIndex = reference.fai,
                 hex = select_first([cpatHex]),
                 logitModel = select_first([cpatLogitModel]),
-                outFilePath = outputDir + "/lncrna/coding-potential" + "/cpat.tsv",
+                outFilePath = outputDir + "/lncrna/coding-potential/cpat.tsv",
                 dockerImage = dockerImages["cpat"]
         }
 

@@ -52,7 +52,7 @@ Womtool as described in the
   "pipeline.outputDir": "The path to the output directory",
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
-  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)",
+  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
 }
 ```
 If you wish to use hisat2 instead, set the list of hisat2 index files on
@@ -207,6 +207,10 @@ measures.
       in case preprocessing was necessary.
 - **multisample.vcf.gz**: If variantcalling is enabled, a multisample VCF file 
   with the variantcalling results.
+- **lncrna**: contains all the files for detecting long non-coding RNA transcripts
+    - **coding-potential**. Contains a transcripts.fasta file with transcripts from
+      the  GFF. In cpat.tsv these transcripts are rated for their coding potential.
+    - **<reference.gtf.d>** Folders where the found transcripts are compared to gtf files from databases.
 - **multiqc**: Contains the multiqc report.
 
 ## Contact
