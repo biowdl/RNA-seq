@@ -19,9 +19,17 @@ java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
 
 ### Dependency requirements and tool versions
-Included in the repository is an `environment.yml` file. This file includes
-all the tool version on which the workflow was tested. You can use conda and
-this file to create an environment with all the correct tools.
+Biowdl pipelines use docker images to ensure  reproducibility. This
+means that biowdl pipelines will run on any system that has docker
+installed. Alternatively they can be run with singularity.
+
+For more advanced configuration of docker or singularity please check
+the [cromwell documentation on containers](
+https://cromwell.readthedocs.io/en/stable/tutorials/Containers/).
+
+Images from [biocontainers](https://biocontainers.pro) are preferred for
+biowdl pipelines. The list of default images for this pipeline can be
+found in the default for the `dockerImages` input.
 
 ### Inputs
 Inputs are provided through a JSON file. The minimally required inputs are
@@ -35,6 +43,7 @@ about pipeline inputs.
 ```JSON
 {
  "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
+ "pipeline.dockerImagesFile": "A file listing the used docker images.",
   "pipeline.starIndex": "A list of star index files.",
   "pipeline.reference": {
     "fasta": "A path to a reference fasta",
@@ -137,18 +146,19 @@ The following is an example of what an inputs JSON might look like:
   "pipeline.outputDir": "/home/user/analysis/results",
   "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
   "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
-  "pipeline.strandedness": "RF"
+  "pipeline.strandedness": "RF",
+  "pipeline.dockerImagesFile": "dockerImages.yml"
 }
 ```
 
 And the associated sample configuration YML might look like this:
 ```YAML
 samples:
-  - id: patient1:
+  - id: patient1
     libraries:
-      - id: lib1:
+      - id: lib1
         readgroups:
-          - id: lane1:
+          - id: lane1
             reads:
               R1: /home/user/data/patient1/R1.fq.gz
               R1_md5: /home/user/data/patient1/R1.fq.gz.md5
@@ -156,15 +166,15 @@ samples:
               R2_md5: /home/user/data/patient1/R2.fq.gz.md5
   - id: patient2:
     libraries:
-      - id: lib1:
+      - id: lib1
         readgroups:
-          - id: lane1:
+          - id: lane1
             reads:
               R1: /home/user/data/patient2/lane1_R1.fq.gz
               R1_md5: /home/user/data/patient2/lane1_R1.fq.gz.md5
               R2: /home/user/data/patient2/lane1_R2.fq.gz
               R2_md5: /home/user/data/patient2/lane1_R2.fq.gz.md5
-          - id: lane2:
+          - id: lane2
             reads:
               R1: /home/user/data/patient2/lane2_R1.fq.gz
               R1_md5: /home/user/data/patient2/lane2_R1.fq.gz.md5
