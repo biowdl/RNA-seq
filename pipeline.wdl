@@ -10,6 +10,8 @@ import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/common.wdl" as common
 import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/multiqc.wdl" as multiqc
+import "tasks/CPAT.wdl" as cpat
+import "tasks/gffread.wdl" as gffread
 
 workflow pipeline {
     input {
@@ -96,15 +98,24 @@ workflow pipeline {
 
 
     if (lncRNAdetection) {
-        call rnacodingpotential.RnaCodingPotential as RnaCodingPotential {
+        call gffread.GffRead as gffread {
             input:
-                outputDir = outputDir + "/lncrna/coding-potential",
-                transcriptsGff = select_first([expression.mergedGtfFile]),
-                referenceFasta = reference.fasta,
-                referenceFastaIndex = reference.fai,
-                cpatLogitModel = select_first([cpatLogitModel]),
-                cpatHex = select_first([cpatHex]),
-                dockerImages = dockerImages
+                inputGff = select_first([expression.mergedGtfFile]),
+                genomicSequence = reference.fasta,
+                genomicIndex = reference.fai,
+                exonsFastaPath = outputDir + "/lncrna/coding-potential"+ "/transcripts.fasta",
+                dockerImage = dockerImages["gffread"]
+        }
+
+        call cpat.CPAT as CPAT {
+            input:
+                gene = select_first([gffread.exonsFasta]),
+                referenceGenome = reference.fasta,
+                referenceGenomeIndex = reference.fai,
+                hex = select_first([cpatHex]),
+                logitModel = select_first([cpatLogitModel]),
+                outFilePath = outputDir + "/lncrna/coding-potential" + "/cpat.tsv",
+                dockerImage = dockerImages["cpat"]
         }
 
         scatter (database in lncRNAdatabases) {
@@ -119,7 +130,7 @@ workflow pipeline {
         # These files are created so that multiqc has some dependencies to wait for.
         # In theory this could be done by all sort of flattening array stuff, but
         # this is the simplest way. I could not get the other ways to work.
-        File cpatOutputs = write_lines([RnaCodingPotential.cpatOutput])
+        File cpatOutputs = write_lines([CPAT.outFile])
         File gffComparisons = write_lines(GffCompare.annotated)
     }
 
@@ -131,7 +142,7 @@ workflow pipeline {
                 # so only outputs from workflows that are run are taken
                 # as dependencies
                 # vcfFile
-                dependencies = select_all([expression.TPMTable, RnaCodingPotential.cpatOutput, gffComparisons, vcfFile]),
+                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
                 outDir = outputDir + "/multiqc",
                 analysisDirectory = outputDir,
                 dockerImage = dockerImages["multiqc"]
@@ -145,7 +156,7 @@ workflow pipeline {
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
         IndexedVcfFile? variants = genotyping.vcfFile
-        File? cpatOutput = RnaCodingPotential.cpatOutput
+        File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[IndexedBamFile] bamFiles = sample.bam
     }
