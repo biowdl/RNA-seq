@@ -164,7 +164,7 @@ samples:
               R1_md5: /home/user/data/patient1/R1.fq.gz.md5
               R2: /home/user/data/patient1/R2.fq.gz
               R2_md5: /home/user/data/patient1/R2.fq.gz.md5
-  - id: patient2:
+  - id: patient2
     libraries:
       - id: lib1
         readgroups:
@@ -188,17 +188,12 @@ samples:
 This pipeline will produce a number of directories and files:
 - **expression_measures**: Contains a number of directories with expression
 measures.
-  - **stringtie**: Contains the stringtie output. Includes two additional
-  folder:
-    - **FPKM**: Contains per sample FPKM counts, extracted from the stringtie
-    abundance output. Also contains a file called `all_samples.FPKM`, which
-    contains the FPKM values for all samples.
-    - **TPM**: Contains per sample TPM counts, extracted from the stringtie
-    abundance output. Also contains a file called `all_samples.TPM`, which
-    contains the TPM values for all samples.
-  - **fragments_per_gene**: Contains the HTSeq-Count output. Also contains a
-  file called `all_samples.fragments_per_gene`, which contains the counts for
-  all samples.
+  - **stringtie**: Contains the Stringtie output. Includes two additional files:
+    `all_samples.FPKM` and `all_samples.TPM`, which contain the FPKM and TPM values
+    for all samples.
+    - **fragments_per_gene**: Contains the HTSeq-Count output. Also contains a
+    file called `all_samples.fragments_per_gene`, which contains the counts for
+    all samples.
 - **samples**: Contains a folder per sample.
   - **&lt;sample>**: Contains a variety of files, including the BAM and gVCF
   (if variantcalling is enabled) files for this sample, as well as their indexes.
