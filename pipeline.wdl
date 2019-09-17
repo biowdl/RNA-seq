@@ -2,7 +2,6 @@ version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
-import "rna-coding-potential/rna-coding-potential.wdl" as rnacodingpotential
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
