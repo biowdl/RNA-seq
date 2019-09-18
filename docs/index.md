@@ -19,9 +19,17 @@ java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
 ```
 
 ### Dependency requirements and tool versions
-Included in the repository is an `environment.yml` file. This file includes
-all the tool version on which the workflow was tested. You can use conda and
-this file to create an environment with all the correct tools.
+Biowdl pipelines use docker images to ensure  reproducibility. This
+means that biowdl pipelines will run on any system that has docker
+installed. Alternatively they can be run with singularity.
+
+For more advanced configuration of docker or singularity please check
+the [cromwell documentation on containers](
+https://cromwell.readthedocs.io/en/stable/tutorials/Containers/).
+
+Images from [biocontainers](https://biocontainers.pro) are preferred for
+biowdl pipelines. The list of default images for this pipeline can be
+found in the default for the `dockerImages` input.
 
 ### Inputs
 Inputs are provided through a JSON file. The minimally required inputs are
@@ -29,12 +37,12 @@ described below, but additional inputs are available.
 A template containing all possible inputs can be generated using
 Womtool as described in the
 [WOMtool documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-See [this page](/inputs.html) for some additional general notes and information
-about pipeline inputs.
+
 
 ```JSON
 {
  "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
+ "pipeline.dockerImagesFile": "A file listing the used docker images.",
   "pipeline.starIndex": "A list of star index files.",
   "pipeline.reference": {
     "fasta": "A path to a reference fasta",
@@ -44,7 +52,7 @@ about pipeline inputs.
   "pipeline.outputDir": "The path to the output directory",
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
-  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)",
+  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
 }
 ```
 If you wish to use hisat2 instead, set the list of hisat2 index files on
@@ -137,34 +145,35 @@ The following is an example of what an inputs JSON might look like:
   "pipeline.outputDir": "/home/user/analysis/results",
   "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
   "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
-  "pipeline.strandedness": "RF"
+  "pipeline.strandedness": "RF",
+  "pipeline.dockerImagesFile": "dockerImages.yml"
 }
 ```
 
 And the associated sample configuration YML might look like this:
 ```YAML
 samples:
-  - id: patient1:
+  - id: patient1
     libraries:
-      - id: lib1:
+      - id: lib1
         readgroups:
-          - id: lane1:
+          - id: lane1
             reads:
               R1: /home/user/data/patient1/R1.fq.gz
               R1_md5: /home/user/data/patient1/R1.fq.gz.md5
               R2: /home/user/data/patient1/R2.fq.gz
               R2_md5: /home/user/data/patient1/R2.fq.gz.md5
-  - id: patient2:
+  - id: patient2
     libraries:
-      - id: lib1:
+      - id: lib1
         readgroups:
-          - id: lane1:
+          - id: lane1
             reads:
               R1: /home/user/data/patient2/lane1_R1.fq.gz
               R1_md5: /home/user/data/patient2/lane1_R1.fq.gz.md5
               R2: /home/user/data/patient2/lane1_R2.fq.gz
               R2_md5: /home/user/data/patient2/lane1_R2.fq.gz.md5
-          - id: lane2:
+          - id: lane2
             reads:
               R1: /home/user/data/patient2/lane2_R1.fq.gz
               R1_md5: /home/user/data/patient2/lane2_R1.fq.gz.md5
@@ -178,17 +187,12 @@ samples:
 This pipeline will produce a number of directories and files:
 - **expression_measures**: Contains a number of directories with expression
 measures.
-  - **stringtie**: Contains the stringtie output. Includes two additional
-  folder:
-    - **FPKM**: Contains per sample FPKM counts, extracted from the stringtie
-    abundance output. Also contains a file called `all_samples.FPKM`, which
-    contains the FPKM values for all samples.
-    - **TPM**: Contains per sample TPM counts, extracted from the stringtie
-    abundance output. Also contains a file called `all_samples.TPM`, which
-    contains the TPM values for all samples.
-  - **fragments_per_gene**: Contains the HTSeq-Count output. Also contains a
-  file called `all_samples.fragments_per_gene`, which contains the counts for
-  all samples.
+  - **stringtie**: Contains the Stringtie output. Includes two additional files:
+    `all_samples.FPKM` and `all_samples.TPM`, which contain the FPKM and TPM values
+    for all samples.
+    - **fragments_per_gene**: Contains the HTSeq-Count output. Also contains a
+    file called `all_samples.fragments_per_gene`, which contains the counts for
+    all samples.
 - **samples**: Contains a folder per sample.
   - **&lt;sample>**: Contains a variety of files, including the BAM and gVCF
   (if variantcalling is enabled) files for this sample, as well as their indexes.
@@ -203,6 +207,10 @@ measures.
       in case preprocessing was necessary.
 - **multisample.vcf.gz**: If variantcalling is enabled, a multisample VCF file 
   with the variantcalling results.
+- **lncrna**: contains all the files for detecting long non-coding RNA transcripts
+    - **coding-potential**. Contains a transcripts.fasta file with transcripts from
+      the  GFF. In cpat.tsv these transcripts are rated for their coding potential.
+    - **<reference.gtf.d>** Folders where the found transcripts are compared to gtf files from databases.
 - **multiqc**: Contains the multiqc report.
 
 ## Contact
