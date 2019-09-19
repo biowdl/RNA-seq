@@ -4,8 +4,7 @@ title: Home
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
-It will perform adapter clipping (using cutadapt), mapping (using STAR) and expression
-quantification (using HTSeq-Count and Stringtie). Optionally variantcalling 
+It will perform quality control (using FastQC), adapter clipping (using cutadapt), mapping (using STAR or HISAT2) and expression quantification and transcript assembly (using HTSeq-Count and Stringtie). Optionally variantcalling 
 (based on the GATK Best Practises) and lncRNA detection (using CPAT) can also be performed.
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
