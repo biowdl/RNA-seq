@@ -9,7 +9,7 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 1.0.0-dev
+version 1.0.0
 ---------------------------
 + Make sure documentation is up to date with the latest pipeline.
 + Update documentation to reflect changes in QC pipeline.
