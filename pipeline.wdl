@@ -11,6 +11,7 @@ import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/multiqc.wdl" as multiqc
 import "tasks/CPAT.wdl" as cpat
 import "tasks/gffread.wdl" as gffread
+import "tasks/biowdl.wdl" as biowdl
 
 workflow pipeline {
     input {
@@ -46,10 +47,11 @@ workflow pipeline {
     }
     Map[String, String] dockerImages = read_json(ConvertDockerTagsFile.json)
 
-    call common.YamlToJson as ConvertSampleConfig {
+    call biowdl.InputConverter as ConvertSampleConfig {
         input:
-            yaml = sampleConfigFile,
-            outputJson = outputDir + "/samples.json"
+            samplesheet = sampleConfigFile,
+            outputFile = outputDir + "/samples.json",
+            old=true
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
     Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
