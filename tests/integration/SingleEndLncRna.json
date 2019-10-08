@@ -1,5 +1,5 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.yml",
+  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
   "pipeline.dockerImagesFile": "dockerImages.yml",
   "pipeline.reference": {
     "fasta": "tests/data/reference/reference.fasta",
