@@ -91,9 +91,9 @@ column name | function
 sample | sample ID
 library | library ID. These are the libraries that are sequenced. Usually there is only one library per sample
 readgroup | readgroup ID. Usually a library is sequenced on multiple lanes in the sequencer, which gives multiple fastq files (referred to as readgroups). Each readgroup pair should have an ID.
-R1| The fastq file containing the forward reads 
+R1| The fastq file containing the first reads of the read pairs
 R1_md5 | Optional: md5sum for the R1 file.
-R2| Optional: The fastq file containing the reverse reads
+R2| Optional: The fastq file containing the second reads of the read pairs
 R2_md5| Optional: md5sum for the R2 file
 
 The easiest way to create a samplesheet is to use a spreadsheet program
