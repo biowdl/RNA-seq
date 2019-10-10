@@ -9,6 +9,15 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 2.0.0
+---------------------------
++ Simplify the pipeline so it uses much less subworkflows. This reduces
+  the complexity for cromwell and reduces inefficiencies that are caused
+  by waiting for the subworkflows to finish.
+  
+  It also makes configuring memory or cpu requirements for tasks in the
+  workflow a lot easier, as these are not as deeply nested anymore.
+  
 version 1.1.0
 ---------------------------
 + Allow using csv table format samplesheet as input format.
