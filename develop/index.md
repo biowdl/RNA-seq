@@ -4,8 +4,7 @@ title: Home
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
-It will perform adapter clipping (using cutadapt), mapping (using STAR) and expression
-quantification (using HTSeq-Count and Stringtie). Optionally variantcalling 
+It will perform quality control (using FastQC and MultiQC), adapter clipping (using cutadapt), mapping (using STAR or HISAT2) and expression quantification and transcript assembly (using HTSeq-Count and Stringtie). Optionally variantcalling 
 (based on the GATK Best Practises) and lncRNA detection (using CPAT) can also be performed.
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
@@ -69,7 +68,49 @@ Optional settings:
 }
 ```
 #### Sample configuration
-The sample configuration should be a YML file which adheres to the following
+
+##### Verification
+
+All samplesheet formats can be verified using `biowdl-input-converter`. 
+It can be installed with `pip install biowdl-input-converter` or 
+`conda install biowdl-input-converter` (from the bioconda channel). 
+Python 3.7 or higher is required.
+
+With `biowdl-input-converter --validate samplesheet.csv` The file
+"samplesheet.csv" will be checked. Also the presence of all files in
+the samplesheet will be checked to ensure no typos were made. For more
+information check out the [biowdl-input-converter readthedocs page](
+https://biowdl-input-converter.readthedocs.io).
+
+##### CSV Format
+The sample configuration can be given as a csv file with the following 
+columns: sample, library, readgroup, R1, R1_md5, R2, R2_md5.
+
+column name | function
+---|---
+sample | sample ID
+library | library ID. These are the libraries that are sequenced. Usually there is only one library per sample
+readgroup | readgroup ID. Usually a library is sequenced on multiple lanes in the sequencer, which gives multiple fastq files (referred to as readgroups). Each readgroup pair should have an ID.
+R1| The fastq file containing the first reads of the read pairs
+R1_md5 | Optional: md5sum for the R1 file.
+R2| Optional: The fastq file containing the second reads of the read pairs
+R2_md5| Optional: md5sum for the R2 file
+
+The easiest way to create a samplesheet is to use a spreadsheet program
+such as LibreOffice Calc or Microsoft Excel, and create a table:
+
+sample | library | read | R1 | R1_md5 | R2 | R2_md5
+-------|---------|------|----|--------|----|-------
+sample1|lib1|rg1|data/s1-l1-rg1-r1.fastq|||
+sample2|lib1|rg1|data/s1-l1-rg1-r2.fastq|||
+
+NOTE: R1_md5, R2 and R2_md5 are optional do not have to be filled. And additional fields may be added (eg. for documentation purposes), these will be ignored by the pipeline.
+
+After creating the table in a spreadsheet program it can be saved in 
+csv format.
+ 
+##### YAML format
+The sample configuration can also be a YML file which adheres to the following
 structure:
 ```YML
 samples:
@@ -150,37 +191,22 @@ The following is an example of what an inputs JSON might look like:
 }
 ```
 
-And the associated sample configuration YML might look like this:
-```YAML
-samples:
-  - id: patient1
-    libraries:
-      - id: lib1
-        readgroups:
-          - id: lane1
-            reads:
-              R1: /home/user/data/patient1/R1.fq.gz
-              R1_md5: /home/user/data/patient1/R1.fq.gz.md5
-              R2: /home/user/data/patient1/R2.fq.gz
-              R2_md5: /home/user/data/patient1/R2.fq.gz.md5
-  - id: patient2
-    libraries:
-      - id: lib1
-        readgroups:
-          - id: lane1
-            reads:
-              R1: /home/user/data/patient2/lane1_R1.fq.gz
-              R1_md5: /home/user/data/patient2/lane1_R1.fq.gz.md5
-              R2: /home/user/data/patient2/lane1_R2.fq.gz
-              R2_md5: /home/user/data/patient2/lane1_R2.fq.gz.md5
-          - id: lane2
-            reads:
-              R1: /home/user/data/patient2/lane2_R1.fq.gz
-              R1_md5: /home/user/data/patient2/lane2_R1.fq.gz.md5
-              R2: /home/user/data/patient2/lane2_R2.fq.gz
-              R2_md5: /home/user/data/patient2/lane2_R2.fq.gz.md5
-```
+And the associated samplesheet might look like this:
 
+sample | library | read | R1 | R1_md5 | R2 | R2_md5
+-------|---------|------|----|--------|----|-------
+patient1|lib1|lane1|/home/user/data/patient1/R1.fq.gz|181a657e3f9c3cde2d3bb14ee7e894a3|/home/user/data/patient1/R2.fq.gz|ebe473b62926dcf6b38548851715820e
+patient2|lib1|lane1|/home/user/data/patient2/lane1_R1.fq.gz|7e79b87d95573b06ff2c5e49508e9dbf|/home/user/data/patient2/lane1_R2.fq.gz|dc2776dc3a07c4f468455bae1a8ff872
+patient2|lib1|lane2|/home/user/data/patient2/lane2_R1.fq.gz|18e9b2fef67f6c69396760c09af8e778|/home/user/data/patient2/lane2_R2.fq.gz|72209cc64510827bc3f849bab00dfe7d
+
+Saved as csv format it will look like this.
+```csv
+"sample","library","read","R1","R1_md5","R2","R2_md5"
+"patient1","lib1","lane1","/home/user/data/patient1/R1.fq.gz","181a657e3f9c3cde2d3bb14ee7e894a3","/home/user/data/patient1/R2.fq.gz","ebe473b62926dcf6b38548851715820e"
+"patient2","lib1","lane1","/home/user/data/patient2/lane1_R1.fq.gz","7e79b87d95573b06ff2c5e49508e9dbf","/home/user/data/patient2/lane1_R2.fq.gz","dc2776dc3a07c4f468455bae1a8ff872"
+"patient2","lib1","lane2","/home/user/data/patient2/lane2_R1.fq.gz","18e9b2fef67f6c69396760c09af8e778","/home/user/data/patient2/lane2_R2.fq.gz","72209cc64510827bc3f849bab00dfe7d"
+```
+The pipeline also supports tab- and ;-delimited files.
 
 
 ### Output
