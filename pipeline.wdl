@@ -16,7 +16,6 @@ import "tasks/biowdl.wdl" as biowdl
 workflow pipeline {
     input {
         File sampleConfigFile
-        Array[Sample] samples = []
         String outputDir = "."
         Reference reference
         IndexedVcfFile? dbsnp
@@ -50,11 +49,10 @@ workflow pipeline {
     call biowdl.InputConverter as ConvertSampleConfig {
         input:
             samplesheet = sampleConfigFile,
-            outputFile = outputDir + "/samples.json",
-            old=true
+            outputFile = outputDir + "/samples.json"
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
-    Array[Sample] allSamples = flatten([samples, sampleConfig.samples])
+    Array[Sample] allSamples = sampleConfig.samples
 
     # Start processing of data
     scatter (sm in allSamples) {
