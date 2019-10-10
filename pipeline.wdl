@@ -52,14 +52,13 @@ workflow pipeline {
             outputFile = outputDir + "/samples.json"
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
-    Array[Sample] allSamples = sampleConfig.samples
 
     # Start processing of data
-    scatter (sm in allSamples) {
+    scatter (sample in sampleConfig.samples) {
         call sampleWorkflow.Sample as sample {
             input:
-                sample = sm,
-                outputDir = outputDir + "/samples/" + sm.id,
+                sample = sample,
+                outputDir = outputDir + "/samples/" + sample.id,
                 reference = reference,
                 dbsnp = dbsnp,
                 starIndex = starIndex,
