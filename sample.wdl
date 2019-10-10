@@ -44,11 +44,11 @@ workflow Sample {
         if (defined(starIndex)) {
             call star_task.Star as star {
                 input:
-                    inputR1 = qc.qcRead1,
-                    inputR2 = if defined(qc.qcRead2) then select_all([qc.qcRead2]) else qc.qcRead2,
-                    outFileNamePrefix = outputDir + "/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
-                    outSAMattrRGline = rgLine,
-                    indexFiles = select_first(starIndex),
+                    inputR1 = [qc.qcRead1],
+                    inputR2 = select_all([qc.qcRead2]),
+                    outFileNamePrefix = outputDir + "/star/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
+                    outSAMattrRGline = [rgLine],
+                    indexFiles = select_first([starIndex]),
                     dockerImage = dockerImages["star"]
             }
         }
@@ -59,7 +59,7 @@ workflow Sample {
                 indexFiles = select_first([hisat2Index]),
                 inputR1 = readgroup.R1,
                 inputR2 = readgroup.R2,
-                outputBam = outputDir + "/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".bam",
+                outputBam = outputDir + "/hisat2/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".bam",
                 sample = sample.id,
                 library = readgroup.lib_id,
                 readgroup = readgroup.id,
@@ -67,12 +67,14 @@ workflow Sample {
                 dockerImage = dockerImages["hisat2"]
             }
         }
+        # Choose whether to use the STAR or HISAT2 bamfiles for downstream analyses,
+        # star is taken over hisat2.
+        File continuationBam = select_first([star.bamFile, hisat2.bamFile])
     }
-    # Choose whether to use the STAR or HISAT2 bamfiles for downstream analyses,
-    # star is taken over hisat2.
+
     call samtools.Merge as samtoolsMerge {
             input:
-                bamFiles =  select_first([star.bamFile, hisat2.bamFile]),
+                bamFiles = continuationBam,
                 outputBamPath = outputDir + "/" + sample.id + ".bam",
                 dockerImage = dockerImages["samtools"]
     }
@@ -119,7 +121,7 @@ workflow Sample {
         call gvcf.Gvcf as createGvcf {
             input:
 
-                bamFiles = select_first([preprocessing.outputBamFile]),
+                bamFiles = select_all([preprocessing.outputBamFile]),
                 outputDir = outputDir,
                 gvcfName = sample.id + ".g.vcf.gz",
                 dbsnpVCF = select_first([dbsnp]).file,
