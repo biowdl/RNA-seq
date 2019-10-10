@@ -60,8 +60,8 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/lib_lib1/star/rna3-paired-end-lib1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-paired-end/lib_lib1/hisat2/rna3-paired-end-lib1.bam"
+    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
+    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
       should_exist: false
 
 - name: Rna3SingleEndHisat2
@@ -98,9 +98,9 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/lib_lib1/star/rna3-paired-end-lib1.Aligned.sortedByCoord.out.bam"
+    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
       should_exist: false
-    - path: "test-output/samples/rna3-paired-end/lib_lib1/hisat2/rna3-paired-end-lib1.bam"
+    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
 
 - name: Rna3PairedEndHisat2AndStar
   tags:
@@ -120,8 +120,8 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/lib_lib1/star/rna3-paired-end-lib1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-paired-end/lib_lib1/hisat2/rna3-paired-end-lib1.bam"
+    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
+    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
 
 - name: FunctionalPairedEndVariantCalling
   tags:
