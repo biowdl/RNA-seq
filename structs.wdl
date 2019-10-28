@@ -1,24 +1,17 @@
 version 1.0
 
-import "tasks/bwa.wdl" as bwa
-import "tasks/common.wdl" as common
-
 struct Readgroup {
     String id
-    FastqPair reads
-}
-
-struct Library {
-    String id
-    Array[Readgroup] readgroups
+    String lib_id
+    File R1
+    File? R2
 }
 
 struct Sample {
     String id
-    Array[Library] libraries
+    Array[Readgroup] readgroups
 }
 
 struct SampleConfig {
     Array[Sample] samples
 }
-

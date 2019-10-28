@@ -63,8 +63,8 @@ perform an unguided assembly, which will then be used for expression quantificat
 Optional settings:
 ```JSON 
 {
-  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter",
-  "pipeline.sample.Sample.library.Library.readgroupWorkflow.Readgroup.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter"
+  "pipeline.sample.Sample.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG"
 }
 ```
 #### Sample configuration
@@ -222,12 +222,13 @@ measures.
 - **samples**: Contains a folder per sample.
   - **&lt;sample>**: Contains a variety of files, including the BAM and gVCF
   (if variantcalling is enabled) files for this sample, as well as their indexes.
-  It also contains a directory per library.
-    - **&lt;library>**: Contains the BAM files for this library
-    (`*.markdup.bam`) and a BAM file with additional preprocessing performed
+  (`*.markdup.bam`) and a BAM file with additional preprocessing performed
     used for variantcalling (`*.markdup.bsqr.bam`). This second BAM file should
     not be used for expression quantification, because splicing events have
-    been split into separate reads to improve variantcalling.  
+    been split into separate reads to improve variantcalling. 
+    It also contains a directory per library.
+    
+    - **&lt;library>**: 
     This directory also contains a directory per readgroup.
       - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
       in case preprocessing was necessary.
