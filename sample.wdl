@@ -46,10 +46,16 @@ workflow Sample {
                 input:
                     inputR1 = [qc.qcRead1],
                     inputR2 = select_all([qc.qcRead2]),
-                    outFileNamePrefix = outputDir + "/star/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
+                    outFileNamePrefix = sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
                     outSAMattrRGline = [rgLine],
                     indexFiles = select_first([starIndex]),
                     dockerImage = dockerImages["star"]
+            }
+
+            call samtools.Index as indexStarBam {
+                input:
+                    outputBamPath = outputDir + "/star/" + basename(star.bamFile),
+                    bamFile = star.bamFile
             }
         }
 
@@ -69,20 +75,14 @@ workflow Sample {
         }
         # Choose whether to use the STAR or HISAT2 bamfiles for downstream analyses,
         # star is taken over hisat2.
-        File continuationBam = select_first([star.bamFile, hisat2.bamFile])
+        File continuationBam = select_first([indexStarBam.indexedBam, hisat2.bamFile])
+        File continuationBamIndex = select_first([indexStarBam.index, hisat2.bamIndex])
     }
 
-    call samtools.Merge as samtoolsMerge {
-            input:
-                bamFiles = continuationBam,
-                outputBamPath = outputDir + "/" + sample.id + ".bam",
-                dockerImage = dockerImages["samtools"]
-    }
-
-     call picard.MarkDuplicates as markDuplicates {
+    call picard.MarkDuplicates as markDuplicates {
         input:
-            inputBams = [samtoolsMerge.outputBam],
-            inputBamIndexes = [samtoolsMerge.outputBamIndex],
+            inputBams = continuationBam,
+            inputBamIndexes = continuationBamIndex,
             outputBamPath = outputDir + "/" + sample.id + ".markdup.bam",
             metricsPath = outputDir + "/" + sample.id + ".markdup.metrics",
             dockerImage = dockerImages["picard"]
