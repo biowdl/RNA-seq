@@ -46,15 +46,16 @@ workflow Sample {
                 input:
                     inputR1 = [qc.qcRead1],
                     inputR2 = select_all([qc.qcRead2]),
-                    outFileNamePrefix = sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
+                    outFileNamePrefix = outputDir + "/star/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
                     outSAMattrRGline = [rgLine],
                     indexFiles = select_first([starIndex]),
                     dockerImage = dockerImages["star"]
             }
 
+            # This creates the index only in the cromwell-executions directory
+            # this is the least headache-inducing way of doing this.
             call samtools.Index as indexStarBam {
                 input:
-                    outputBamPath = outputDir + "/star/" + basename(star.bamFile),
                     bamFile = star.bamFile
             }
         }
