@@ -64,8 +64,8 @@ workflow Sample {
             call hisat2Task.Hisat2 as hisat2 {
                  input:
                     indexFiles = select_first([hisat2Index]),
-                    inputR1 = readgroup.R1,
-                    inputR2 = readgroup.R2,
+                    inputR1 = qc.qcRead1,
+                    inputR2 = qc.qcRead2,
                     outputBam = outputDir + "/hisat2/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".bam",
                     sample = sample.id,
                     library = readgroup.lib_id,
