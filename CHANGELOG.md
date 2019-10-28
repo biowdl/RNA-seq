@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 2.0.0
 ---------------------------
++ Update STAR version to 2.7.3a
 + Simplify the pipeline so it uses much less subworkflows. This reduces
   the complexity for cromwell and reduces inefficiencies that are caused
   by waiting for the subworkflows to finish.
