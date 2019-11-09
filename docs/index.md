@@ -193,7 +193,7 @@ The following is an example of what an inputs JSON might look like:
 
 And the associated samplesheet might look like this:
 
-sample | library | read | R1 | R1_md5 | R2 | R2_md5
+sample | library | readgroup | R1 | R1_md5 | R2 | R2_md5
 -------|---------|------|----|--------|----|-------
 patient1|lib1|lane1|/home/user/data/patient1/R1.fq.gz|181a657e3f9c3cde2d3bb14ee7e894a3|/home/user/data/patient1/R2.fq.gz|ebe473b62926dcf6b38548851715820e
 patient2|lib1|lane1|/home/user/data/patient2/lane1_R1.fq.gz|7e79b87d95573b06ff2c5e49508e9dbf|/home/user/data/patient2/lane1_R2.fq.gz|dc2776dc3a07c4f468455bae1a8ff872
@@ -201,7 +201,7 @@ patient2|lib1|lane2|/home/user/data/patient2/lane2_R1.fq.gz|18e9b2fef67f6c693967
 
 Saved as csv format it will look like this.
 ```csv
-"sample","library","read","R1","R1_md5","R2","R2_md5"
+"sample","library","readgroup","R1","R1_md5","R2","R2_md5"
 "patient1","lib1","lane1","/home/user/data/patient1/R1.fq.gz","181a657e3f9c3cde2d3bb14ee7e894a3","/home/user/data/patient1/R2.fq.gz","ebe473b62926dcf6b38548851715820e"
 "patient2","lib1","lane1","/home/user/data/patient2/lane1_R1.fq.gz","7e79b87d95573b06ff2c5e49508e9dbf","/home/user/data/patient2/lane1_R2.fq.gz","dc2776dc3a07c4f468455bae1a8ff872"
 "patient2","lib1","lane2","/home/user/data/patient2/lane2_R1.fq.gz","18e9b2fef67f6c69396760c09af8e778","/home/user/data/patient2/lane2_R2.fq.gz","72209cc64510827bc3f849bab00dfe7d"
