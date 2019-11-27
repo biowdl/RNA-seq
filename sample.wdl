@@ -1,9 +1,7 @@
 version 1.0
 
-import "bam-to-gvcf/gvcf.wdl" as gvcf
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
-import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
@@ -103,44 +101,11 @@ workflow Sample {
             dockerImages = dockerImages
     }
 
-    if (variantCalling) {
-        # Preprocess BAM for variant calling
-        call preprocess.GatkPreprocess as preprocessing {
-            input:
-                bamFile = {
-                    "file": markDuplicates.outputBam,
-                    "index": markDuplicates.outputBamIndex
-                },
-                outputDir = outputDir + "/",
-                bamName = sample.id + ".markdup.bqsr",
-                outputRecalibratedBam = true,
-                splitSplicedReads = true,
-                dbsnpVCF = select_first([dbsnp]),
-                reference = reference,
-                dockerImages = dockerImages
-        }
-        call gvcf.Gvcf as createGvcf {
-            input:
-
-                bamFiles = select_all([preprocessing.outputBamFile]),
-                outputDir = outputDir,
-                gvcfName = sample.id + ".g.vcf.gz",
-                dbsnpVCF = select_first([dbsnp]).file,
-                dbsnpVCFIndex = select_first([dbsnp]).index,
-                referenceFasta = reference.fasta,
-                referenceFastaFai = reference.fai,
-                referenceFastaDict = reference.dict,
-                dockerImages = dockerImages
-        }
-        IndexedVcfFile gvcf = object {file:  createGvcf.outputGVcf, index: createGvcf.outputGVcfIndex}
-    }
-
     output {
         String sampleName = sample.id
         IndexedBamFile bam = {
             "file": markDuplicates.outputBam,
             "index": markDuplicates.outputBamIndex
         }
-        IndexedVcfFile? gvcfFile = gvcf
     }
 }
