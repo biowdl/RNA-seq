@@ -19,6 +19,12 @@ before_install:
   - conda config --add channels bioconda
   - conda config --add channels conda-forge
 
+stages:
+  - lint
+  - test
+
+stage: test
+
 install:
   - conda install --file requirements-test.txt
 
@@ -40,21 +46,8 @@ matrix:
     - env:
       - TEST=Rna3PairedEndHisat2AndStar
       - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"
-    # Below is for testing if all files are valid and if all submodules are up to date.
-    - env: TEST=Womtool validate and submodule up to date
+    - env: TEST="Womtool validate and submodule up to date"
+      stage: lint
       install:
         - conda install cromwell
-      script:
-        - set -e
-        - for F in *.wdl; do echo $F; womtool validate $F; done
-        - >
-          if [ "$TRAVIS_PULL_REQUEST" != "false" ];
-          then git submodule foreach bash -c
-          'if [ "$(git tag --contains)" == "" ] ;
-          then git checkout develop && git pull &&
-          git submodule update --init --recursive ;
-          else echo "on tag: $(git tag --contains)" ; fi' ;
-          fi
-        - >
-          git diff --exit-code ||
-          (echo ERROR: Git changes detected. Submodules should either be tagged or on the latest version of develop. && exit 1)
+      script: bash scripts/biowdl_lint.sh
