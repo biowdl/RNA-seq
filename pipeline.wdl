@@ -75,7 +75,7 @@ workflow pipeline {
             call preprocess.GatkPreprocess as preprocessing {
                 input:
                     bamFile = sample.bam,
-                    outputDir = outputDir + "/multisample_variants/",
+                    outputDir = outputDir + "/",
                     bamName = sample.id + ".markdup.bqsr",
                     outputRecalibratedBam = true,
                     splitSplicedReads = true,
@@ -91,7 +91,7 @@ workflow pipeline {
             input:
 
                 bamFiles = select_all(preprocessing.outputBamFile),
-                outputDir = outputDir,
+                outputDir = outputDir + "/multisample_variants/",
                 dbsnpVCF = select_first([dbsnp]).file,
                 dbsnpVCFIndex = select_first([dbsnp]).index,
                 referenceFasta = reference.fasta,
