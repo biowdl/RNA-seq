@@ -6,14 +6,6 @@
     branch = develop
 	path = tasks
 	url = https://github.com/biowdl/tasks.git
-[submodule "bam-to-gvcf"]
-    branch = develop
-	path = bam-to-gvcf
-	url = https://github.com/biowdl/bam-to-gvcf.git
-[submodule "jointgenotyping"]
-    branch = develop
-	path = jointgenotyping
-	url = https://github.com/biowdl/jointgenotyping.git
 [submodule "expression-quantification"]
     branch = develop
 	path = expression-quantification
