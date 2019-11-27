@@ -75,7 +75,7 @@ workflow pipeline {
             call preprocess.GatkPreprocess as preprocessing {
                 input:
                     bamFile = sample.bam,
-                    outputDir = outputDir + "/",
+                    outputDir = outputDir + "/multisample_variants/",
                     bamName = sample.id + ".markdup.bqsr",
                     outputRecalibratedBam = true,
                     splitSplicedReads = true,
