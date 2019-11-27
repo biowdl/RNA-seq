@@ -29,3 +29,6 @@
 [submodule "scripts"]
 	path = scripts
 	url = https://github.com/biowdl/scripts.git
+[submodule "gatk-variantcalling"]
+	path = gatk-variantcalling
+	url = https://github.com/biowdl/gatk-variantcalling.git
