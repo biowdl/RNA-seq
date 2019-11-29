@@ -169,7 +169,8 @@ workflow pipeline {
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
-        IndexedVcfFile? variants = object {file:  variantcalling.outputVcf, index: variantcalling.outputVcfIndex}
+        File? outputVcf = variantcalling.outputVcf
+        File? outputVcfIndex = variantcalling.outputVcfIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[IndexedBamFile] bamFiles = sample.bam
