@@ -11,6 +11,11 @@ that users understand how the changes affect the new version.
 
 version 2.0.0
 ---------------------------
++ Replace the bam-to-gvcf and jointgenotyping pipelines with a 
+  gatk-variantcalling pipeline. This reduces complexity, allows for 
+  more efficient running of the pipeline and uses less filesystem 
+  storage.
++ Update biowdl-input-converter tot the latest bugfix release (0.2.1)
 + Update STAR version to 2.7.3a
 + Simplify the pipeline so it uses much less subworkflows. This reduces
   the complexity for cromwell and reduces inefficiencies that are caused
