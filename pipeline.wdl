@@ -1,7 +1,8 @@
 version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
+import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
@@ -68,6 +69,36 @@ workflow pipeline {
                 variantCalling = variantCalling,
                 dockerImages = dockerImages
         }
+
+        if (variantCalling) {
+        # Preprocess BAM for variant calling
+            call preprocess.GatkPreprocess as preprocessing {
+                input:
+                    bamFile = sample.bam,
+                    outputDir = outputDir + "/samples/" + sample.id + "/",
+                    bamName = sample.id + ".markdup.bqsr",
+                    outputRecalibratedBam = true,
+                    splitSplicedReads = true,
+                    dbsnpVCF = select_first([dbsnp]),
+                    reference = reference,
+                    dockerImages = dockerImages
+            }
+        }
+    }
+
+    if (variantCalling) {
+        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
+            input:
+
+                bamFiles = select_all(preprocessing.outputBamFile),
+                outputDir = outputDir + "/multisample_variants/",
+                dbsnpVCF = select_first([dbsnp]).file,
+                dbsnpVCFIndex = select_first([dbsnp]).index,
+                referenceFasta = reference.fasta,
+                referenceFastaFai = reference.fai,
+                referenceFastaDict = reference.dict,
+                dockerImages = dockerImages
+        }
     }
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
@@ -79,21 +110,6 @@ workflow pipeline {
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
             dockerImages = dockerImages
     }
-
-    if (variantCalling) {
-        call jointgenotyping.JointGenotyping as genotyping {
-            input:
-                reference = reference,
-                outputDir = genotypingDir,
-                gvcfFiles = select_all(sample.gvcfFile),
-                vcfBasename = "multisample",
-                dbsnpVCF = select_first([dbsnp]),
-                dockerImages = dockerImages
-        }
-        File vcfFile = genotyping.vcfFile.file
-        # TODO: Look for a MultiQC VCF-stats tool with good performance.
-    }
-
 
     if (lncRNAdetection) {
         call gffread.GffRead as gffread {
@@ -140,7 +156,7 @@ workflow pipeline {
                 # so only outputs from workflows that are run are taken
                 # as dependencies
                 # vcfFile
-                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
+                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, variantcalling.outputVcfIndex]),
                 outDir = outputDir + "/multiqc",
                 analysisDirectory = outputDir,
                 dockerImage = dockerImages["multiqc"]
@@ -153,7 +169,8 @@ workflow pipeline {
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
-        IndexedVcfFile? variants = genotyping.vcfFile
+        File? outputVcf = variantcalling.outputVcf
+        File? outputVcfIndex = variantcalling.outputVcfIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[IndexedBamFile] bamFiles = sample.bam
