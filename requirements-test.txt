@@ -6,3 +6,4 @@
 cromwell
 pytest-workflow
 pysam
+miniwdl

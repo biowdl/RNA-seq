@@ -56,7 +56,7 @@ workflow pipeline {
 
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
-        call sampleWorkflow.Sample as sample {
+        call sampleWorkflow.Sample as sampleJobs {
             input:
                 sample = sample,
                 outputDir = outputDir + "/samples/" + sample.id,
@@ -74,7 +74,7 @@ workflow pipeline {
         # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
                 input:
-                    bamFile = sample.bam,
+                    bamFile = sampleJobs.bam,
                     outputDir = outputDir + "/samples/" + sample.id + "/",
                     bamName = sample.id + ".markdup.bqsr",
                     outputRecalibratedBam = true,
@@ -103,7 +103,7 @@ workflow pipeline {
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sample.sampleName, sample.bam),
+            bams = zip(sampleJobs.sampleName, sampleJobs.bam),
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
@@ -173,6 +173,6 @@ workflow pipeline {
         File? outputVcfIndex = variantcalling.outputVcfIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
-        Array[IndexedBamFile] bamFiles = sample.bam
+        Array[IndexedBamFile] bamFiles = sampleJobs.bam
     }
 }
