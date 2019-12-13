@@ -1,8 +1,7 @@
 version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
-import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
+import "jointgenotyping/jointgenotyping.wdl" as jointgenotyping
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
@@ -13,6 +12,7 @@ import "tasks/multiqc.wdl" as multiqc
 import "tasks/CPAT.wdl" as cpat
 import "tasks/gffread.wdl" as gffread
 import "tasks/biowdl.wdl" as biowdl
+import "tasks/prepareShiny.wdl" as shiny
 
 workflow pipeline {
     input {
@@ -25,6 +25,7 @@ workflow pipeline {
         String strandedness
         File? refflatFile
         File? referenceGtfFile
+        File? referenceTsvFile
         Array[File] lncRNAdatabases = []
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
@@ -54,9 +55,28 @@ workflow pipeline {
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
 
+    # ----------------------------------------------------------------------------
+
+    call shiny.CreateSampleSheet as shinySample {
+        input:
+            inputSheet = ConvertSampleConfig.json,
+            outputSheet = outputDir + "/shiny" + "/sampleSheet.tsv"
+    }
+
+    call shiny.CollectFilesAndZip as shinyCollectZip {
+        input:
+            sampleSheet = shinySample.sampleTsv,
+            countTable = expression.fragmentsPerGeneTable,
+            annotation = referenceTsvFile,
+            dirToZip = outputDir + "/shiny",
+            outputZip = outputDir + "/shiny.tar.gz"
+    }
+
+    # ----------------------------------------------------------------------------
+
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
-        call sampleWorkflow.Sample as sampleJobs {
+        call sampleWorkflow.Sample as sample {
             input:
                 sample = sample,
                 outputDir = outputDir + "/samples/" + sample.id,
@@ -69,47 +89,32 @@ workflow pipeline {
                 variantCalling = variantCalling,
                 dockerImages = dockerImages
         }
-
-        if (variantCalling) {
-        # Preprocess BAM for variant calling
-            call preprocess.GatkPreprocess as preprocessing {
-                input:
-                    bamFile = sampleJobs.bam,
-                    outputDir = outputDir + "/samples/" + sample.id + "/",
-                    bamName = sample.id + ".markdup.bqsr",
-                    outputRecalibratedBam = true,
-                    splitSplicedReads = true,
-                    dbsnpVCF = select_first([dbsnp]),
-                    reference = reference,
-                    dockerImages = dockerImages
-            }
-        }
-    }
-
-    if (variantCalling) {
-        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
-            input:
-
-                bamFiles = select_all(preprocessing.outputBamFile),
-                outputDir = outputDir + "/multisample_variants/",
-                dbsnpVCF = select_first([dbsnp]).file,
-                dbsnpVCFIndex = select_first([dbsnp]).index,
-                referenceFasta = reference.fasta,
-                referenceFastaFai = reference.fai,
-                referenceFastaDict = reference.dict,
-                dockerImages = dockerImages
-        }
     }
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sampleJobs.sampleName, sampleJobs.bam),
+            bams = zip(sample.sampleName, sample.bam),
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscipts,
             dockerImages = dockerImages
     }
+
+    if (variantCalling) {
+        call jointgenotyping.JointGenotyping as genotyping {
+            input:
+                reference = reference,
+                outputDir = genotypingDir,
+                gvcfFiles = select_all(sample.gvcfFile),
+                vcfBasename = "multisample",
+                dbsnpVCF = select_first([dbsnp]),
+                dockerImages = dockerImages
+        }
+        File vcfFile = genotyping.vcfFile.file
+        # TODO: Look for a MultiQC VCF-stats tool with good performance.
+    }
+
 
     if (lncRNAdetection) {
         call gffread.GffRead as gffread {
@@ -156,7 +161,7 @@ workflow pipeline {
                 # so only outputs from workflows that are run are taken
                 # as dependencies
                 # vcfFile
-                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, variantcalling.outputVcfIndex]),
+                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, vcfFile]),
                 outDir = outputDir + "/multiqc",
                 analysisDirectory = outputDir,
                 dockerImage = dockerImages["multiqc"]
@@ -169,10 +174,10 @@ workflow pipeline {
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
-        File? outputVcf = variantcalling.outputVcf
-        File? outputVcfIndex = variantcalling.outputVcfIndex
+        IndexedVcfFile? variants = genotyping.vcfFile
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
-        Array[IndexedBamFile] bamFiles = sampleJobs.bam
+        Array[IndexedBamFile] bamFiles = sample.bam
+        File ShinyZip = shinyCollectZip.shinyZip
     }
 }
