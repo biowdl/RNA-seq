@@ -24,7 +24,7 @@ gffread: "quay.io/biocontainers/gffread:0.9.12--0"
 # quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1
 # this particular tag has versions hisat2=2.1.0,samtools=1.8
 hisat2: "quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1:2388ff67fc407dad75774291ca5038f40cac4be0-0"
-htseq: "quay.io/biocontainers/htseq:0.9.1--py36h7eb728f_2"
+htseq: "quay.io/biocontainers/htseq:0.11.2--py37h637b7d7_1"
 multiqc: "quay.io/biocontainers/multiqc:1.7--py_1"
 picard: "quay.io/biocontainers/picard:2.20.5--0"
 samtools: "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
