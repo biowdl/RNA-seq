@@ -7,3 +7,4 @@ cromwell
 pytest-workflow
 pysam
 miniwdl
+wdl-aid
