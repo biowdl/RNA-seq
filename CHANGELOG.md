@@ -11,6 +11,9 @@ that users understand how the changes affect the new version.
 
 version 2.1.0-dev
 -----------------
++ Fixed a typo in the inputs: detectNovelTranscipts -> detectNovelTranscripts.
++ Removed a number of unused inputs ("dbsnp", "targetIntervals", 
+  "ampliconIntervals" and "variantCalling") from the sample workflow.
 + Added input overview to docs.
 + Added WDL-AID to linting.
 + Update default htseq image version to 0.11.2.
