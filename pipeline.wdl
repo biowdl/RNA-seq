@@ -190,7 +190,7 @@ workflow pipeline {
                       category: "common"}
         referenceGtfFile: {description: "A reference GTF file. Used for expression quantification or to guide the transcriptome assembly if detectNovelTranscripts is set to `true` (this GTF won't be be used directly for the expression quantification in that case.",
                            category: "common"}
-        lncRNAdatabases: {description: "A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`", category: "common"}
+        lncRNAdatabases: {description: "A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`.", category: "common"}
         variantCalling: {description: "Whether or not variantcalling should be performed.", category: "common"}
         lncRNAdetection: {description: "Whether or not lncRNA detection should be run. This will enable detectNovelTranscript (this cannot be disabled by setting detectNovelTranscript to false). This will require cpatLogitModel and cpatHex to be defined.",
                           category: "common"}
