@@ -15,16 +15,12 @@ workflow Sample {
         Sample sample
         String outputDir
         Reference reference
-        IndexedVcfFile? dbsnp
         Array[File]+? starIndex
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        Boolean variantCalling = false
         Map[String, String] dockerImages
         String platform = "illumina"
-        Array[File]+? targetIntervals
-        File? ampliconIntervals
     }
 
     scatter (readgroup in sample.readgroups) {
@@ -106,6 +102,28 @@ workflow Sample {
         IndexedBamFile bam = {
             "file": markDuplicates.outputBam,
             "index": markDuplicates.outputBamIndex
+        }
+    }
+
+    parameter_meta {
+        sample: {description: "The sample data.", category: "required"}
+        outputDir: {description: "The output directory.", category: "required"}
+        reference: {description: "The reference files: a fasta, its index and the associated sequence dictionary.", category: "required"}
+        starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses.",
+                    category: "common"}
+        hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses.",
+                      category: "common"}
+        strandedness: {description: "The strandedness of the RNA sequencing library preparation. One of \"None\" (unstranded), \"FR\" (forward-reverse: first read equal transcript) or \"RF\" (reverse-forward: second read equals transcript).",
+                       category: "required"}
+        refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
+                      category: "common"}
+        dockerImages: {description: "The docker images used.", category: "advanced"}
+        platform: {description: "The platform used for sequencing.", category: "advanced"}
+    }
+
+    meta {
+        WDL_AID: {
+            exclude: ["star.outSAMtype", "star.readFilesCommand"]
         }
     }
 }

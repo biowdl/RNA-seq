@@ -36,7 +36,7 @@ described below, but additional inputs are available.
 A template containing all possible inputs can be generated using
 Womtool as described in the
 [WOMtool documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-
+For an overview of all available inputs, see [this page](./inputs.html).
 
 ```JSON
 {
