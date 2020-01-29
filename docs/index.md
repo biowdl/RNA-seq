@@ -135,9 +135,9 @@ In order to perform variant calling the following inputs are also required:
 ```JSON
 {
   "pipeline.variantCalling": "Whether or not variantcalling should be performed, defaults to False",
-  "pipeline.dbSNP": {
-    "file": "A path to a dbSNP VCF file",
-    "index": "The path to the index (.tbi) file associated with the dbSNP VCF"
+  "pipeline.dbsnp": {
+    "file": "A path to a dbsnp VCF file",
+    "index": "The path to the index (.tbi) file associated with the dbsnp VCF"
   }
 }
 ```
@@ -176,7 +176,7 @@ The following is an example of what an inputs JSON might look like:
     "fai": "/home/user/genomes/human/GRCh38.fasta.fai",
     "dict": "/home/user/genomes/human/GRCh38.dict"
   },
-  "pipeline.dbSNP": {
+  "pipeline.dbsnp": {
     "file": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
     "index": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi"
   },

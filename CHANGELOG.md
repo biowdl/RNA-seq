@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 2.1.0-dev
 -----------------
++ Fixed typo in index.md for dbsnp input.
 + Fixed a typo in the inputs: detectNovelTranscipts -> detectNovelTranscripts.
 + Removed a number of unused inputs ("dbsnp", "targetIntervals", 
   "ampliconIntervals" and "variantCalling") from the sample workflow.
