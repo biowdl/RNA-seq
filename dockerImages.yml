@@ -31,3 +31,7 @@ samtools: "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
 star:  "quay.io/biocontainers/star:2.7.3a--0"
 stringtie: "quay.io/biocontainers/stringtie:1.3.4--py35_0"
 tabix: "quay.io/biocontainers/tabix:0.2.6--ha92aebf_0"
+# "UMI-tools" uses a combined container that has both UMI-tools and samtools
+# quay.io/biocontainers/mulled-v2-509311a44630c01d9cb7d2ac5727725f51ea43af
+# this particular tag has versions umi_tools=0.5.5,samtools=1.9
+umi-tools: "quay.io/biocontainers/mulled-v2-509311a44630c01d9cb7d2ac5727725f51ea43af:6089936aca6219b5bb5f54210ac5eb456c7503f2-0"

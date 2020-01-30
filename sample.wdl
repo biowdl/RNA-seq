@@ -2,13 +2,14 @@ version 1.0
 
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
+import "structs.wdl" as structs
 import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
-import "structs.wdl" as structs
-import "tasks/star.wdl" as star_task
+import "tasks/star.wdl" as starTask
 import "tasks/hisat2.wdl" as hisat2Task
 import "tasks/picard.wdl" as picard
+import "tasks/umi-tools.wdl" as umiTools
 
 workflow Sample {
     input {
@@ -19,24 +20,38 @@ workflow Sample {
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        Map[String, String] dockerImages
+        String? bcPattern
+        Boolean umiDeduplication = false
         String platform = "illumina"
+
+        Map[String, String] dockerImages
     }
 
     scatter (readgroup in sample.readgroups) {
         String libDir = outputDir + "/lib_" + readgroup.lib_id
         String readgroupDir = libDir + "/rg_" + readgroup.id
         String rgLine ='"ID:${readgroup.id}" "LB:${readgroup.lib_id}" "PL:${platform}" "SM:${sample.id}"'
+
+        if (defined(bcPattern)) {
+            call umiTools.Extract as umiExtraction {
+                input:
+                    read1 = readgroup.R1,
+                    read2 = readgroup.R2,
+                    bcPattern = select_first([bcPattern]),
+                    dockerImage = dockerImages["umi-tools"]
+            }
+        }
+
         call qcWorkflow.QC as qc {
             input:
                 outputDir = readgroupDir,
-                read1 = readgroup.R1,
-                read2 = readgroup.R2,
+                read1 = select_first([umiExtraction.extractedRead1, readgroup.R1]),
+                read2 = select_first([umiExtraction.extractedRead2, readgroup.R2]),
                 dockerImages = dockerImages
         }
 
         if (defined(starIndex)) {
-            call star_task.Star as star {
+            call starTask.Star as star {
                 input:
                     inputR1 = [qc.qcRead1],
                     inputR2 = select_all([qc.qcRead2]),
@@ -72,6 +87,9 @@ workflow Sample {
         # star is taken over hisat2.
         File continuationBam = select_first([indexStarBam.indexedBam, hisat2.bamFile])
         File continuationBamIndex = select_first([indexStarBam.index, hisat2.bamIndex])
+
+        # Determine if the sample is paired-end
+        Boolean paired = defined(readgroup.R2)
     }
 
     call picard.MarkDuplicates as markDuplicates {
@@ -83,13 +101,26 @@ workflow Sample {
             dockerImage = dockerImages["picard"]
     }
 
+    if (umiDeduplication) {
+        call umiTools.Dedup as umiDeduplication {
+            input:
+                inputBam = markDuplicates.outputBam,
+                inputBamIndex = markDuplicates.outputBamIndex,
+                outputBamPath = outputDir + "/" + sample.id + ".dedup.bam",
+                paired = paired[0], # Assumes that if one readgroup is paired, all are
+                dockerImage = dockerImages["umi-tools"]
+        }
+    }
+
+    IndexedBamFile outputBam = {
+                "file": select_first([umiDeduplication.deduppedBam, markDuplicates.outputBam]),
+                "index": select_first([umiDeduplication.deduppedBamIndex, markDuplicates.outputBamIndex])
+            }
+
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = {
-                "file": markDuplicates.outputBam,
-                "index": markDuplicates.outputBamIndex
-            },
+            bam = outputBam,
             outputDir = outputDir + "/metrics",
             reference = reference,
             strandedness = strandedness,
@@ -99,10 +130,7 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        IndexedBamFile bam = {
-            "file": markDuplicates.outputBam,
-            "index": markDuplicates.outputBamIndex
-        }
+        IndexedBamFile bam = outputBam
     }
 
     parameter_meta {
@@ -117,8 +145,11 @@ workflow Sample {
                        category: "required"}
         refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
                       category: "common"}
-        dockerImages: {description: "The docker images used.", category: "advanced"}
+        bcPattern: {description: "The pattern to be used for UMI extraction. See the umi_tools docs for more information.", category: "common"}
+        umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}
+        dockerImages: {description: "The docker images used.", category: "advanced"}
+
     }
 
     meta {

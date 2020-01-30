@@ -31,6 +31,8 @@ workflow pipeline {
         Boolean detectNovelTranscripts = false
         File? cpatLogitModel
         File? cpatHex
+        String? bcPattern
+        Boolean umiDeduplication = false
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
@@ -65,6 +67,8 @@ workflow pipeline {
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
+                bcPattern = bcPattern,
+                umiDeduplication = umiDeduplication,
                 dockerImages = dockerImages
         }
 
