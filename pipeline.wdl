@@ -1,7 +1,7 @@
 version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/rna-variantcalling.wdl" as variantCallingWorkflow
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
@@ -77,10 +77,10 @@ workflow pipeline {
         # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
                 input:
-                    bamFile = sampleJobs.bam,
+                    bam = sampleJobs.outputBam,
+                    bamIndex = sampleJobs.outputBamIndex,
                     outputDir = outputDir + "/samples/" + sample.id + "/",
                     bamName = sample.id + ".markdup.bqsr",
-                    outputRecalibratedBam = true,
                     splitSplicedReads = true,
                     dbsnpVCF = select_first([dbsnpVCF]),
                     referenceFasta = referenceFasta,
@@ -89,13 +89,14 @@ workflow pipeline {
                     dockerImages = dockerImages
             }
         }
+        IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
     }
 
     if (variantCalling) {
-        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
+        call variantCallingWorkflow.GatkRnaVariantCalling as variantcalling {
             input:
-
-                bamFiles = select_all(preprocessing.outputBamFile),
+                bamFiles = select_all(preprocessing.recalibratedBam),
+                bamIndexes = select_all(preprocessing.recalibratedBamIndex),
                 outputDir = outputDir + "/multisample_variants/",
                 dbsnpVCF = select_first([dbsnpVCF]),
                 dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
@@ -108,7 +109,7 @@ workflow pipeline {
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sampleJobs.sampleName, sampleJobs.bam),
+            bams = zip(sampleJobs.sampleName, bamStructs),
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
@@ -178,7 +179,8 @@ workflow pipeline {
         File? outputVcfIndex = variantcalling.outputVcfIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
-        Array[IndexedBamFile] bamFiles = sampleJobs.bam
+        Array[File] bamFiles = sampleJobs.outputBam
+        Array[File] bamFilesIndex = sampleJobs.outputBamIndex
     }
 
     parameter_meta {
