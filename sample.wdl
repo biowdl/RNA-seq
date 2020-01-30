@@ -46,7 +46,9 @@ workflow Sample {
             input:
                 outputDir = readgroupDir,
                 read1 = select_first([umiExtraction.extractedRead1, readgroup.R1]),
-                read2 = select_first([umiExtraction.extractedRead2, readgroup.R2]),
+                read2 = if defined(umiExtraction.extractedRead2)
+                    then umiExtraction.extractedRead2
+                    else readgroup.R2,
                 dockerImages = dockerImages
         }
 
