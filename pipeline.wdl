@@ -83,6 +83,7 @@ workflow pipeline {
                     bamName = sample.id + ".markdup.bqsr",
                     splitSplicedReads = true,
                     dbsnpVCF = select_first([dbsnpVCF]),
+                    dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
                     referenceFasta = referenceFasta,
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
