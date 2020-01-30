@@ -18,8 +18,11 @@ workflow pipeline {
     input {
         File sampleConfigFile
         String outputDir = "."
-        Reference reference
-        IndexedVcfFile? dbsnp
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
+        File? dbsnpVCF
+        File? dbsnpVCFIndex
         Array[File]+? starIndex
         Array[File]+? hisat2Index
         String strandedness
@@ -60,7 +63,9 @@ workflow pipeline {
             input:
                 sample = sample,
                 outputDir = outputDir + "/samples/" + sample.id,
-                reference = reference,
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
                 starIndex = starIndex,
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
@@ -77,8 +82,10 @@ workflow pipeline {
                     bamName = sample.id + ".markdup.bqsr",
                     outputRecalibratedBam = true,
                     splitSplicedReads = true,
-                    dbsnpVCF = select_first([dbsnp]),
-                    reference = reference,
+                    dbsnpVCF = select_first([dbsnpVCF]),
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
+                    referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages
             }
         }
@@ -90,11 +97,11 @@ workflow pipeline {
 
                 bamFiles = select_all(preprocessing.outputBamFile),
                 outputDir = outputDir + "/multisample_variants/",
-                dbsnpVCF = select_first([dbsnp]).file,
-                dbsnpVCFIndex = select_first([dbsnp]).index,
-                referenceFasta = reference.fasta,
-                referenceFastaFai = reference.fai,
-                referenceFastaDict = reference.dict,
+                dbsnpVCF = select_first([dbsnpVCF]),
+                dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
                 dockerImages = dockerImages
         }
     }
@@ -113,8 +120,8 @@ workflow pipeline {
         call gffread.GffRead as gffread {
             input:
                 inputGff = select_first([expression.mergedGtfFile]),
-                genomicSequence = reference.fasta,
-                genomicIndex = reference.fai,
+                genomicSequence = referenceFastaFai,
+                genomicIndex = referenceFastaFai,
                 exonsFastaPath = outputDir + "/lncrna/coding-potential/transcripts.fasta",
                 dockerImage = dockerImages["gffread"]
         }
@@ -122,8 +129,8 @@ workflow pipeline {
         call cpat.CPAT as CPAT {
             input:
                 gene = select_first([gffread.exonsFasta]),
-                referenceGenome = reference.fasta,
-                referenceGenomeIndex = reference.fai,
+                referenceGenome = referenceFasta,
+                referenceGenomeIndex = referenceFastaFai,
                 hex = select_first([cpatHex]),
                 logitModel = select_first([cpatLogitModel]),
                 outFilePath = outputDir + "/lncrna/coding-potential/cpat.tsv",
