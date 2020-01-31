@@ -104,7 +104,7 @@ workflow Sample {
     }
 
     if (umiDeduplication) {
-        call umiTools.Dedup as umiDeduplication {
+        call umiTools.Dedup as umiDedup {
             input:
                 inputBam = markDuplicates.outputBam,
                 inputBamIndex = markDuplicates.outputBamIndex,
@@ -115,8 +115,8 @@ workflow Sample {
     }
 
     IndexedBamFile outputBam = {
-                "file": select_first([umiDeduplication.deduppedBam, markDuplicates.outputBam]),
-                "index": select_first([umiDeduplication.deduppedBamIndex, markDuplicates.outputBamIndex])
+                "file": select_first([umiDedup.deduppedBam, markDuplicates.outputBam]),
+                "index": select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex])
             }
 
     # Gather BAM Metrics
