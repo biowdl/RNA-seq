@@ -1,7 +1,7 @@
 version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "gatk-variantcalling/rna-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
@@ -83,6 +83,7 @@ workflow pipeline {
                     bamName = sample.id + ".markdup.bqsr",
                     splitSplicedReads = true,
                     dbsnpVCF = select_first([dbsnpVCF]),
+                    dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
                     referenceFasta = referenceFasta,
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
@@ -90,19 +91,20 @@ workflow pipeline {
             }
         }
         IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
+        BamAndGender bamGenders = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
     }
 
     if (variantCalling) {
-        call variantCallingWorkflow.GatkRnaVariantCalling as variantcalling {
+        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
             input:
-                bamFiles = select_all(preprocessing.recalibratedBam),
-                bamIndexes = select_all(preprocessing.recalibratedBamIndex),
+                bamFilesAndGenders = bamGenders,
                 outputDir = outputDir + "/multisample_variants/",
                 dbsnpVCF = select_first([dbsnpVCF]),
                 dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
+                jointgenotyping=false,
                 dockerImages = dockerImages
         }
     }
@@ -121,7 +123,7 @@ workflow pipeline {
         call gffread.GffRead as gffread {
             input:
                 inputGff = select_first([expression.mergedGtfFile]),
-                genomicSequence = referenceFastaFai,
+                genomicSequence = referenceFasta,
                 genomicIndex = referenceFastaFai,
                 exonsFastaPath = outputDir + "/lncrna/coding-potential/transcripts.fasta",
                 dockerImage = dockerImages["gffread"]
