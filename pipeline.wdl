@@ -176,6 +176,9 @@ workflow pipeline {
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[IndexedBamFile] bamFiles = sampleJobs.bam
+        Array[File?] umiEditDistance = sampleJobs.umiEditDistance
+        Array[File?] umiStats = sampleJobs.umiStats
+        Array[File?] umiPositionStats = sampleJobs.umiPositionStats
     }
 
     parameter_meta {

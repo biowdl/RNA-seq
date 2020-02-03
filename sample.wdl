@@ -109,6 +109,7 @@ workflow Sample {
                 inputBam = markDuplicates.outputBam,
                 inputBamIndex = markDuplicates.outputBamIndex,
                 outputBamPath = outputDir + "/" + sample.id + ".dedup.bam",
+                statsPrefix = outputDir + "/" + sample.id,
                 paired = paired[0], # Assumes that if one readgroup is paired, all are
                 dockerImage = dockerImages["umi-tools"]
         }
@@ -133,6 +134,9 @@ workflow Sample {
     output {
         String sampleName = sample.id
         IndexedBamFile bam = outputBam
+        File? umiEditDistance = umiDedup.editDistance
+        File? umiStats = umiDedup.umiStats
+        File? umiPositionStats = umiDedup.positionStats
     }
 
     parameter_meta {
