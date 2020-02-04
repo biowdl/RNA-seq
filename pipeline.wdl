@@ -189,8 +189,11 @@ workflow pipeline {
         sampleConfigFile: {description: "The samplesheet, including sample ids, library ids, readgroup ids and fastq file locations.",
                            category: "required"}
         outputDir: {description: "The output directory.", category: "required"}
-        reference: {description: "The reference files: a fasta, its index and the associated sequence dictionary.", category: "required"}
-        dbsnp: {description: "A dbSNP VCF file and its index.", category: "common"}
+        referenceFasta: { description: "The reference fasta file", category: "required" }
+        referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
+        referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference", category: "required" }
+        dbsnpVCF: { description: "dbsnp VCF file used for checking known sites", category: "common"}
+        dbsnpVCFIndex: { description: "Index (.tbi) file for the dbsnp VCF", category: "common"}
         starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses. May be ommited if hisat2Index is defined.",
                     category: "required"}
         hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses. May be omitted in starIndex is defined.",
