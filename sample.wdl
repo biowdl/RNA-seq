@@ -3,7 +3,6 @@ version 1.0
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
 import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
 import "structs.wdl" as structs
 import "tasks/star.wdl" as star_task
@@ -14,7 +13,9 @@ workflow Sample {
     input {
         Sample sample
         String outputDir
-        Reference reference
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
         Array[File]+? starIndex
         Array[File]+? hisat2Index
         String strandedness
@@ -86,12 +87,12 @@ workflow Sample {
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = {
-                "file": markDuplicates.outputBam,
-                "index": markDuplicates.outputBamIndex
-            },
+            bam = markDuplicates.outputBam,
+            bamIndex = markDuplicates.outputBamIndex,
             outputDir = outputDir + "/metrics",
-            reference = reference,
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            referenceFastaDict = referenceFastaDict,
             strandedness = strandedness,
             refRefflat = refflatFile,
             dockerImages = dockerImages
@@ -99,10 +100,8 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        IndexedBamFile bam = {
-            "file": markDuplicates.outputBam,
-            "index": markDuplicates.outputBamIndex
-        }
+        File outputBam = markDuplicates.outputBam
+        File outputBamIndex = markDuplicates.outputBamIndex
     }
 
     parameter_meta {

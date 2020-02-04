@@ -26,10 +26,20 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"."</code><br />
     The output directory.
 </dd>
-<dt id="pipeline.reference"><a href="#pipeline.reference">pipeline.reference</a></dt>
+<dt id="pipeline.referenceFasta"><a href="#pipeline.referenceFasta">pipeline.referenceFasta</a></dt>
 <dd>
-    <i>struct(dict : File, fai : File, fasta : File) </i><br />
-    The reference files: a fasta, its index and the associated sequence dictionary.
+    <i>File </i><br />
+    The reference fasta file
+</dd>
+<dt id="pipeline.referenceFastaDict"><a href="#pipeline.referenceFastaDict">pipeline.referenceFastaDict</a></dt>
+<dd>
+    <i>File </i><br />
+    Sequence dictionary (.dict) file of the reference
+</dd>
+<dt id="pipeline.referenceFastaFai"><a href="#pipeline.referenceFastaFai">pipeline.referenceFastaFai</a></dt>
+<dd>
+    <i>File </i><br />
+    Fasta index (.fai) file of the reference
 </dd>
 <dt id="pipeline.sampleConfigFile"><a href="#pipeline.sampleConfigFile">pipeline.sampleConfigFile</a></dt>
 <dd>
@@ -60,10 +70,15 @@ pipeline.
     <i>File? </i><br />
     A logit model for CPAT. Required if lncRNAdetection is `true`.
 </dd>
-<dt id="pipeline.dbsnp"><a href="#pipeline.dbsnp">pipeline.dbsnp</a></dt>
+<dt id="pipeline.dbsnpVCF"><a href="#pipeline.dbsnpVCF">pipeline.dbsnpVCF</a></dt>
 <dd>
-    <i>struct(file : File, index : File, md5sum : String?)? </i><br />
-    A dbSNP VCF file and its index.
+    <i>File? </i><br />
+    dbsnp VCF file used for checking known sites
+</dd>
+<dt id="pipeline.dbsnpVCFIndex"><a href="#pipeline.dbsnpVCFIndex">pipeline.dbsnpVCFIndex</a></dt>
+<dd>
+    <i>File? </i><br />
+    Index (.tbi) file for the dbsnp VCF
 </dd>
 <dt id="pipeline.detectNovelTranscripts"><a href="#pipeline.detectNovelTranscripts">pipeline.detectNovelTranscripts</a></dt>
 <dd>
@@ -78,7 +93,7 @@ pipeline.
 <dt id="pipeline.lncRNAdatabases"><a href="#pipeline.lncRNAdatabases">pipeline.lncRNAdatabases</a></dt>
 <dd>
     <i>Array[File] </i><i>&mdash; Default:</i> <code>[]</code><br />
-    A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`
+    A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`.
 </dd>
 <dt id="pipeline.lncRNAdetection"><a href="#pipeline.lncRNAdetection">pipeline.lncRNAdetection</a></dt>
 <dd>
@@ -140,6 +155,26 @@ pipeline.
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Whether or not variantcalling should be performed.
 </dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.excludeIntervalList"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.excludeIntervalList">pipeline.variantcalling.callAutosomal.haplotypeCaller.excludeIntervalList</a></dt>
+<dd>
+    <i>Array[File]+? </i><br />
+    Bed files or interval lists describing the regions to NOT operate on.
+</dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.ploidy"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.ploidy">pipeline.variantcalling.callAutosomal.haplotypeCaller.ploidy</a></dt>
+<dd>
+    <i>Int? </i><br />
+    The ploidy with which the variants should be called.
+</dd>
+<dt id="pipeline.variantcalling.callX.excludeIntervalList"><a href="#pipeline.variantcalling.callX.excludeIntervalList">pipeline.variantcalling.callX.excludeIntervalList</a></dt>
+<dd>
+    <i>Array[File]+? </i><br />
+    Bed files or interval lists describing the regions to NOT operate on.
+</dd>
+<dt id="pipeline.variantcalling.callY.excludeIntervalList"><a href="#pipeline.variantcalling.callY.excludeIntervalList">pipeline.variantcalling.callY.excludeIntervalList</a></dt>
+<dd>
+    <i>Array[File]+? </i><br />
+    Bed files or interval lists describing the regions to NOT operate on.
+</dd>
 <dt id="pipeline.variantcalling.regions"><a href="#pipeline.variantcalling.regions">pipeline.variantcalling.regions</a></dt>
 <dd>
     <i>File? </i><br />
@@ -148,7 +183,17 @@ pipeline.
 <dt id="pipeline.variantcalling.vcfBasename"><a href="#pipeline.variantcalling.vcfBasename">pipeline.variantcalling.vcfBasename</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"multisample"</code><br />
-    The basename of the VCF and GVCF files that are outputted by the workflow.
+    The basename of the VCF and GVCF files that are outputted by the workflow
+</dd>
+<dt id="pipeline.variantcalling.XNonParRegions"><a href="#pipeline.variantcalling.XNonParRegions">pipeline.variantcalling.XNonParRegions</a></dt>
+<dd>
+    <i>File? </i><br />
+    Bed file with the non-PAR regions of X
+</dd>
+<dt id="pipeline.variantcalling.YNonParRegions"><a href="#pipeline.variantcalling.YNonParRegions">pipeline.variantcalling.YNonParRegions</a></dt>
+<dd>
+    <i>File? </i><br />
+    Bed file with the non-PAR regions of Y
 </dd>
 </dl>
 
@@ -614,7 +659,7 @@ pipeline.
 <dt id="pipeline.preprocessing.baseRecalibrator.knownIndelsSitesVCFs"><a href="#pipeline.preprocessing.baseRecalibrator.knownIndelsSitesVCFs">pipeline.preprocessing.baseRecalibrator.knownIndelsSitesVCFs</a></dt>
 <dd>
     <i>Array[File] </i><i>&mdash; Default:</i> <code>[]</code><br />
-    VCf files with known indels.
+    VCF files with known indels.
 </dd>
 <dt id="pipeline.preprocessing.baseRecalibrator.memory"><a href="#pipeline.preprocessing.baseRecalibrator.memory">pipeline.preprocessing.baseRecalibrator.memory</a></dt>
 <dd>
@@ -689,7 +734,7 @@ pipeline.
 <dt id="pipeline.sampleJobs.bamMetrics.ampliconIntervalsLists.javaXmx"><a href="#pipeline.sampleJobs.bamMetrics.ampliconIntervalsLists.javaXmx">pipeline.sampleJobs.bamMetrics.ampliconIntervalsLists.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
-    The maximum memory available to the program. (Should be lower than `memory` to accommodate JVM overhead.
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
 <dt id="pipeline.sampleJobs.bamMetrics.ampliconIntervalsLists.memory"><a href="#pipeline.sampleJobs.bamMetrics.ampliconIntervalsLists.memory">pipeline.sampleJobs.bamMetrics.ampliconIntervalsLists.memory</a></dt>
 <dd>
@@ -729,7 +774,7 @@ pipeline.
 <dt id="pipeline.sampleJobs.bamMetrics.picardMetrics.javaXmx"><a href="#pipeline.sampleJobs.bamMetrics.picardMetrics.javaXmx">pipeline.sampleJobs.bamMetrics.picardMetrics.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"8G"</code><br />
-    The maximum memory available to the program. (Should be lower than `memory` to accommodate JVM overhead.
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
 <dt id="pipeline.sampleJobs.bamMetrics.picardMetrics.meanQualityByCycle"><a href="#pipeline.sampleJobs.bamMetrics.picardMetrics.meanQualityByCycle">pipeline.sampleJobs.bamMetrics.picardMetrics.meanQualityByCycle</a></dt>
 <dd>
@@ -749,7 +794,7 @@ pipeline.
 <dt id="pipeline.sampleJobs.bamMetrics.rnaSeqMetrics.javaXmx"><a href="#pipeline.sampleJobs.bamMetrics.rnaSeqMetrics.javaXmx">pipeline.sampleJobs.bamMetrics.rnaSeqMetrics.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"8G"</code><br />
-    The maximum memory available to the program. (Should be lower than `memory` to accommodate JVM overhead.
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
 <dt id="pipeline.sampleJobs.bamMetrics.rnaSeqMetrics.memory"><a href="#pipeline.sampleJobs.bamMetrics.rnaSeqMetrics.memory">pipeline.sampleJobs.bamMetrics.rnaSeqMetrics.memory</a></dt>
 <dd>
@@ -759,7 +804,7 @@ pipeline.
 <dt id="pipeline.sampleJobs.bamMetrics.targetIntervalsLists.javaXmx"><a href="#pipeline.sampleJobs.bamMetrics.targetIntervalsLists.javaXmx">pipeline.sampleJobs.bamMetrics.targetIntervalsLists.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
-    The maximum memory available to the program. (Should be lower than `memory` to accommodate JVM overhead.
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
 <dt id="pipeline.sampleJobs.bamMetrics.targetIntervalsLists.memory"><a href="#pipeline.sampleJobs.bamMetrics.targetIntervalsLists.memory">pipeline.sampleJobs.bamMetrics.targetIntervalsLists.memory</a></dt>
 <dd>
@@ -769,7 +814,7 @@ pipeline.
 <dt id="pipeline.sampleJobs.bamMetrics.targetMetrics.javaXmx"><a href="#pipeline.sampleJobs.bamMetrics.targetMetrics.javaXmx">pipeline.sampleJobs.bamMetrics.targetMetrics.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
-    The maximum memory available to the program. (Should be lower than `memory` to accommodate JVM overhead.
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
 <dt id="pipeline.sampleJobs.bamMetrics.targetMetrics.memory"><a href="#pipeline.sampleJobs.bamMetrics.targetMetrics.memory">pipeline.sampleJobs.bamMetrics.targetMetrics.memory</a></dt>
 <dd>
@@ -1341,6 +1386,51 @@ pipeline.
     <i>String? </i><i>&mdash; Default:</i> <code>"Basic"</code><br />
     Equivalent to star's `--twopassMode` option.
 </dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination">pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination</a></dt>
+<dd>
+    <i>Float? </i><br />
+    Equivalent to HaplotypeCaller's `-contamination` option.
+</dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.javaXmx"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.javaXmx">pipeline.variantcalling.callAutosomal.haplotypeCaller.javaXmx</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
+</dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.memory"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.memory">pipeline.variantcalling.callAutosomal.haplotypeCaller.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="pipeline.variantcalling.callX.contamination"><a href="#pipeline.variantcalling.callX.contamination">pipeline.variantcalling.callX.contamination</a></dt>
+<dd>
+    <i>Float? </i><br />
+    Equivalent to HaplotypeCaller's `-contamination` option.
+</dd>
+<dt id="pipeline.variantcalling.callX.javaXmx"><a href="#pipeline.variantcalling.callX.javaXmx">pipeline.variantcalling.callX.javaXmx</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
+</dd>
+<dt id="pipeline.variantcalling.callX.memory"><a href="#pipeline.variantcalling.callX.memory">pipeline.variantcalling.callX.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="pipeline.variantcalling.callY.contamination"><a href="#pipeline.variantcalling.callY.contamination">pipeline.variantcalling.callY.contamination</a></dt>
+<dd>
+    <i>Float? </i><br />
+    Equivalent to HaplotypeCaller's `-contamination` option.
+</dd>
+<dt id="pipeline.variantcalling.callY.javaXmx"><a href="#pipeline.variantcalling.callY.javaXmx">pipeline.variantcalling.callY.javaXmx</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
+</dd>
+<dt id="pipeline.variantcalling.callY.memory"><a href="#pipeline.variantcalling.callY.memory">pipeline.variantcalling.callY.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="pipeline.variantcalling.gatherGvcfs.intervals"><a href="#pipeline.variantcalling.gatherGvcfs.intervals">pipeline.variantcalling.gatherGvcfs.intervals</a></dt>
 <dd>
     <i>Array[File] </i><i>&mdash; Default:</i> <code>[]</code><br />
@@ -1366,6 +1456,11 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
     The amount of memory this job will use.
 </dd>
+<dt id="pipeline.variantcalling.genotypeGvcfs.annotationGroups"><a href="#pipeline.variantcalling.genotypeGvcfs.annotationGroups">pipeline.variantcalling.genotypeGvcfs.annotationGroups</a></dt>
+<dd>
+    <i>Array[String] </i><i>&mdash; Default:</i> <code>["StandardAnnotation"]</code><br />
+    Which annotation groups will be used for the annotation
+</dd>
 <dt id="pipeline.variantcalling.genotypeGvcfs.javaXmx"><a href="#pipeline.variantcalling.genotypeGvcfs.javaXmx">pipeline.variantcalling.genotypeGvcfs.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"6G"</code><br />
@@ -1376,47 +1471,67 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"18G"</code><br />
     The amount of memory this job will use.
 </dd>
-<dt id="pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.contamination"><a href="#pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.contamination">pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.contamination</a></dt>
+<dt id="pipeline.variantcalling.mergeBeds.outputBed"><a href="#pipeline.variantcalling.mergeBeds.outputBed">pipeline.variantcalling.mergeBeds.outputBed</a></dt>
 <dd>
-    <i>Float </i><i>&mdash; Default:</i> <code>0.0</code><br />
-    Equivalent to HaplotypeCaller's `-contamination` option.
+    <i>String </i><i>&mdash; Default:</i> <code>"merged.bed"</code><br />
+    The path to write the output to
 </dd>
-<dt id="pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.javaXmx"><a href="#pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.javaXmx">pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.javaXmx</a></dt>
-<dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
-    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
-</dd>
-<dt id="pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.memory"><a href="#pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.memory">pipeline.variantcalling.Gvcf.haplotypeCallerGvcf.memory</a></dt>
-<dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
-    The amount of memory this job will use.
-</dd>
-<dt id="pipeline.variantcalling.orderedScatters.dockerImage"><a href="#pipeline.variantcalling.orderedScatters.dockerImage">pipeline.variantcalling.orderedScatters.dockerImage</a></dt>
+<dt id="pipeline.variantcalling.orderedAllScatters.dockerImage"><a href="#pipeline.variantcalling.orderedAllScatters.dockerImage">pipeline.variantcalling.orderedAllScatters.dockerImage</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"python:3.7-slim"</code><br />
     The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
 </dd>
-<dt id="pipeline.variantcalling.scatterList.bamFile"><a href="#pipeline.variantcalling.scatterList.bamFile">pipeline.variantcalling.scatterList.bamFile</a></dt>
+<dt id="pipeline.variantcalling.orderedAutosomalScatters.dockerImage"><a href="#pipeline.variantcalling.orderedAutosomalScatters.dockerImage">pipeline.variantcalling.orderedAutosomalScatters.dockerImage</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"python:3.7-slim"</code><br />
+    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+</dd>
+<dt id="pipeline.variantcalling.scatterAllRegions.bamFile"><a href="#pipeline.variantcalling.scatterAllRegions.bamFile">pipeline.variantcalling.scatterAllRegions.bamFile</a></dt>
 <dd>
     <i>File? </i><br />
     Equivalent to biopet scatterregions' `--bamfile` option.
 </dd>
-<dt id="pipeline.variantcalling.scatterList.bamIndex"><a href="#pipeline.variantcalling.scatterList.bamIndex">pipeline.variantcalling.scatterList.bamIndex</a></dt>
+<dt id="pipeline.variantcalling.scatterAllRegions.bamIndex"><a href="#pipeline.variantcalling.scatterAllRegions.bamIndex">pipeline.variantcalling.scatterAllRegions.bamIndex</a></dt>
 <dd>
     <i>File? </i><br />
     The index for the bamfile given through bamFile.
 </dd>
-<dt id="pipeline.variantcalling.scatterList.javaXmx"><a href="#pipeline.variantcalling.scatterList.javaXmx">pipeline.variantcalling.scatterList.javaXmx</a></dt>
+<dt id="pipeline.variantcalling.scatterAllRegions.javaXmx"><a href="#pipeline.variantcalling.scatterAllRegions.javaXmx">pipeline.variantcalling.scatterAllRegions.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"8G"</code><br />
     The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
-<dt id="pipeline.variantcalling.scatterList.memory"><a href="#pipeline.variantcalling.scatterList.memory">pipeline.variantcalling.scatterList.memory</a></dt>
+<dt id="pipeline.variantcalling.scatterAllRegions.memory"><a href="#pipeline.variantcalling.scatterAllRegions.memory">pipeline.variantcalling.scatterAllRegions.memory</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
     The amount of memory this job will use.
 </dd>
-<dt id="pipeline.variantcalling.scatterList.notSplitContigs"><a href="#pipeline.variantcalling.scatterList.notSplitContigs">pipeline.variantcalling.scatterList.notSplitContigs</a></dt>
+<dt id="pipeline.variantcalling.scatterAllRegions.notSplitContigs"><a href="#pipeline.variantcalling.scatterAllRegions.notSplitContigs">pipeline.variantcalling.scatterAllRegions.notSplitContigs</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    Equivalent to biopet scatterregions' `--notSplitContigs` flag.
+</dd>
+<dt id="pipeline.variantcalling.scatterAutosomalRegions.bamFile"><a href="#pipeline.variantcalling.scatterAutosomalRegions.bamFile">pipeline.variantcalling.scatterAutosomalRegions.bamFile</a></dt>
+<dd>
+    <i>File? </i><br />
+    Equivalent to biopet scatterregions' `--bamfile` option.
+</dd>
+<dt id="pipeline.variantcalling.scatterAutosomalRegions.bamIndex"><a href="#pipeline.variantcalling.scatterAutosomalRegions.bamIndex">pipeline.variantcalling.scatterAutosomalRegions.bamIndex</a></dt>
+<dd>
+    <i>File? </i><br />
+    The index for the bamfile given through bamFile.
+</dd>
+<dt id="pipeline.variantcalling.scatterAutosomalRegions.javaXmx"><a href="#pipeline.variantcalling.scatterAutosomalRegions.javaXmx">pipeline.variantcalling.scatterAutosomalRegions.javaXmx</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"8G"</code><br />
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
+</dd>
+<dt id="pipeline.variantcalling.scatterAutosomalRegions.memory"><a href="#pipeline.variantcalling.scatterAutosomalRegions.memory">pipeline.variantcalling.scatterAutosomalRegions.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="pipeline.variantcalling.scatterAutosomalRegions.notSplitContigs"><a href="#pipeline.variantcalling.scatterAutosomalRegions.notSplitContigs">pipeline.variantcalling.scatterAutosomalRegions.notSplitContigs</a></dt>
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Equivalent to biopet scatterregions' `--notSplitContigs` flag.

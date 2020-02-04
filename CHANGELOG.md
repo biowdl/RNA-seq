@@ -9,8 +9,17 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 2.1.0-dev
+version 3.0.0-dev
 -----------------
+In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best 
+practices pipeline. Several errors in the variant calling part of the pipeline 
+were fixed.
+
++ Major fix: Joint genotyping is not performed on RNA-seq reads. Instead, each
+  sample is genotyped seperately by the HaplotypeCaller.
++ Major fix: base recalibration is now applied after splitting the cigar reads. 
+  previously this was done in an erroneous manner.
++ Structs are removed from the input.
 + Fixed a typo in the inputs: detectNovelTranscipts -> detectNovelTranscripts.
 + Removed a number of unused inputs ("dbsnp", "targetIntervals", 
   "ampliconIntervals" and "variantCalling") from the sample workflow.
