@@ -31,7 +31,6 @@ workflow pipeline {
         Boolean detectNovelTranscripts = false
         File? cpatLogitModel
         File? cpatHex
-        String? bcPattern
         Boolean umiDeduplication = false
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
@@ -205,6 +204,7 @@ workflow pipeline {
                                  category: "common"}
         cpatLogitModel: {description: "A logit model for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         cpatHex: {description: "A hexamer frequency table for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
+        umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}

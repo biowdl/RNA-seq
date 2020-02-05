@@ -20,7 +20,6 @@ workflow Sample {
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        String? bcPattern
         Boolean umiDeduplication = false
         String platform = "illumina"
 
@@ -32,23 +31,11 @@ workflow Sample {
         String readgroupDir = libDir + "/rg_" + readgroup.id
         String rgLine ='"ID:${readgroup.id}" "LB:${readgroup.lib_id}" "PL:${platform}" "SM:${sample.id}"'
 
-        if (defined(bcPattern)) {
-            call umiTools.Extract as umiExtraction {
-                input:
-                    read1 = readgroup.R1,
-                    read2 = readgroup.R2,
-                    bcPattern = select_first([bcPattern]),
-                    dockerImage = dockerImages["umi-tools"]
-            }
-        }
-
         call qcWorkflow.QC as qc {
             input:
                 outputDir = readgroupDir,
-                read1 = select_first([umiExtraction.extractedRead1, readgroup.R1]),
-                read2 = if defined(umiExtraction.extractedRead2)
-                    then umiExtraction.extractedRead2
-                    else readgroup.R2,
+                read1 = readgroup.R1,
+                read2 = readgroup.R2,
                 dockerImages = dockerImages
         }
 
@@ -151,7 +138,6 @@ workflow Sample {
                        category: "required"}
         refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
                       category: "common"}
-        bcPattern: {description: "The pattern to be used for UMI extraction. See the umi_tools docs for more information.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}
         dockerImages: {description: "The docker images used.", category: "advanced"}

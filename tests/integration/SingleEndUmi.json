@@ -1,5 +1,5 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
+  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd_umi.csv",
   "pipeline.dockerImagesFile": "dockerImages.yml",
   "pipeline.reference": {
     "fasta": "tests/data/reference/reference.fasta",
@@ -21,6 +21,5 @@
   "pipeline.refflatFile": "tests/data/reference/reference.refflat",
   "pipeline.variantCalling": false,
   "pipeline.lncRNAdetection": false,
-  "pipeline.bcPattern": "NNXNN",
   "pipeline.umiDeduplication": true
 }
