@@ -1,11 +1,9 @@
 {
   "pipeline.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd_umi.yml",
   "pipeline.dockerImagesFile": "dockerImages.yml",
-  "pipeline.reference": {
-    "fasta": "tests/data/reference/reference.fasta",
-    "fai": "tests/data/reference/reference.fasta.fai",
-    "dict": "tests/data/reference/reference.dict"
-  },
+  "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
+  "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "pipeline.referenceFastaDict": "tests/data/reference/reference.dict",
   "pipeline.strandedness": "None",
   "pipeline.hisat2Index": [
     "tests/data/reference/hisat2/reference.1.ht2",

@@ -18,8 +18,11 @@ workflow pipeline {
     input {
         File sampleConfigFile
         String outputDir = "."
-        Reference reference
-        IndexedVcfFile? dbsnp
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
+        File? dbsnpVCF
+        File? dbsnpVCFIndex
         Array[File]+? starIndex
         Array[File]+? hisat2Index
         String strandedness
@@ -61,12 +64,13 @@ workflow pipeline {
             input:
                 sample = sample,
                 outputDir = outputDir + "/samples/" + sample.id,
-                reference = reference,
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
                 starIndex = starIndex,
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
-                bcPattern = bcPattern,
                 umiDeduplication = umiDeduplication,
                 dockerImages = dockerImages
         }
@@ -75,36 +79,41 @@ workflow pipeline {
         # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
                 input:
-                    bamFile = sampleJobs.bam,
+                    bam = sampleJobs.outputBam,
+                    bamIndex = sampleJobs.outputBamIndex,
                     outputDir = outputDir + "/samples/" + sample.id + "/",
                     bamName = sample.id + ".markdup.bqsr",
-                    outputRecalibratedBam = true,
                     splitSplicedReads = true,
-                    dbsnpVCF = select_first([dbsnp]),
-                    reference = reference,
+                    dbsnpVCF = select_first([dbsnpVCF]),
+                    dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
+                    referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages
             }
         }
+        IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
+        BamAndGender bamGenders = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
     }
 
     if (variantCalling) {
         call variantCallingWorkflow.GatkVariantCalling as variantcalling {
             input:
-
-                bamFiles = select_all(preprocessing.outputBamFile),
+                bamFilesAndGenders = bamGenders,
                 outputDir = outputDir + "/multisample_variants/",
-                dbsnpVCF = select_first([dbsnp]).file,
-                dbsnpVCFIndex = select_first([dbsnp]).index,
-                referenceFasta = reference.fasta,
-                referenceFastaFai = reference.fai,
-                referenceFastaDict = reference.dict,
+                dbsnpVCF = select_first([dbsnpVCF]),
+                dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                jointgenotyping=false,
                 dockerImages = dockerImages
         }
     }
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sampleJobs.sampleName, sampleJobs.bam),
+            bams = zip(sampleJobs.sampleName, bamStructs),
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
@@ -116,8 +125,8 @@ workflow pipeline {
         call gffread.GffRead as gffread {
             input:
                 inputGff = select_first([expression.mergedGtfFile]),
-                genomicSequence = reference.fasta,
-                genomicIndex = reference.fai,
+                genomicSequence = referenceFasta,
+                genomicIndex = referenceFastaFai,
                 exonsFastaPath = outputDir + "/lncrna/coding-potential/transcripts.fasta",
                 dockerImage = dockerImages["gffread"]
         }
@@ -125,8 +134,8 @@ workflow pipeline {
         call cpat.CPAT as CPAT {
             input:
                 gene = select_first([gffread.exonsFasta]),
-                referenceGenome = reference.fasta,
-                referenceGenomeIndex = reference.fai,
+                referenceGenome = referenceFasta,
+                referenceGenomeIndex = referenceFastaFai,
                 hex = select_first([cpatHex]),
                 logitModel = select_first([cpatLogitModel]),
                 outFilePath = outputDir + "/lncrna/coding-potential/cpat.tsv",
@@ -174,7 +183,8 @@ workflow pipeline {
         File? outputVcfIndex = variantcalling.outputVcfIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
-        Array[IndexedBamFile] bamFiles = sampleJobs.bam
+        Array[File] bamFiles = sampleJobs.outputBam
+        Array[File] bamFilesIndex = sampleJobs.outputBamIndex
         Array[File?] umiEditDistance = sampleJobs.umiEditDistance
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats
@@ -184,8 +194,11 @@ workflow pipeline {
         sampleConfigFile: {description: "The samplesheet, including sample ids, library ids, readgroup ids and fastq file locations.",
                            category: "required"}
         outputDir: {description: "The output directory.", category: "required"}
-        reference: {description: "The reference files: a fasta, its index and the associated sequence dictionary.", category: "required"}
-        dbsnp: {description: "A dbSNP VCF file and its index.", category: "common"}
+        referenceFasta: { description: "The reference fasta file", category: "required" }
+        referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
+        referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference", category: "required" }
+        dbsnpVCF: { description: "dbsnp VCF file used for checking known sites", category: "common"}
+        dbsnpVCFIndex: { description: "Index (.tbi) file for the dbsnp VCF", category: "common"}
         starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses. May be ommited if hisat2Index is defined.",
                     category: "required"}
         hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses. May be omitted in starIndex is defined.",

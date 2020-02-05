@@ -7,12 +7,8 @@
 # command.
 
 # Tools are sorted alphabetically for ease of use.
-
 biowdl-input-converter: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_0"
 biopet-scatterregions: "quay.io/biocontainers/biopet-scatterregions:0.2--0"
-# A mulled container is needed to have both picard and bwa in one container.
-# quay.io/biocontainers/mulled-v2-002f51ea92721407ef440b921fb5940f424be842
-# This container contains: picard (2.18.7), bwa (0.7.17-r1188)
 cutadapt: "quay.io/biocontainers/cutadapt:2.4--py37h14c3975_0"
 cpat: "biocontainers/cpat:v1.2.4_cv1"
 collect-columns: "quay.io/biocontainers/collect-columns:0.2.0--py_1"

@@ -15,7 +15,9 @@ workflow Sample {
     input {
         Sample sample
         String outputDir
-        Reference reference
+        File referenceFasta
+        File referenceFastaFai
+        File referenceFastaDict
         Array[File]+? starIndex
         Array[File]+? hisat2Index
         String strandedness
@@ -102,17 +104,15 @@ workflow Sample {
         }
     }
 
-    IndexedBamFile outputBam = {
-                "file": select_first([umiDedup.deduppedBam, markDuplicates.outputBam]),
-                "index": select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex])
-            }
-
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = outputBam,
+            bam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam]),
+            bamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex]),
             outputDir = outputDir + "/metrics",
-            reference = reference,
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            referenceFastaDict = referenceFastaDict,
             strandedness = strandedness,
             refRefflat = refflatFile,
             dockerImages = dockerImages
@@ -120,7 +120,8 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        IndexedBamFile bam = outputBam
+        File outputBam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam])
+        File outputBamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex])
         File? umiEditDistance = umiDedup.editDistance
         File? umiStats = umiDedup.umiStats
         File? umiPositionStats = umiDedup.positionStats
@@ -141,7 +142,6 @@ workflow Sample {
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}
         dockerImages: {description: "The docker images used.", category: "advanced"}
-
     }
 
     meta {

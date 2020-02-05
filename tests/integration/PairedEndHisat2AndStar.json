@@ -1,11 +1,9 @@
 {
   "pipeline.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd.yml",
   "pipeline.dockerImagesFile": "dockerImages.yml",
-  "pipeline.reference": {
-    "fasta": "tests/data/reference/reference.fasta",
-    "fai": "tests/data/reference/reference.fasta.fai",
-    "dict": "tests/data/reference/reference.dict"
-  },
+  "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
+  "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "pipeline.referenceFastaDict": "tests/data/reference/reference.dict",
   "pipeline.strandedness": "None",
   "pipeline.starIndex": [
     "tests/data/reference/star/chrLength.txt",
@@ -36,8 +34,6 @@
   ],
   "pipeline.refflatFile": "tests/data/reference/reference.refflat",
   "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
-  "pipeline.dbsnp": {
-    "file": "tests/data/wgs2.vcf.gz",
-    "index": "tests/data/wgs2.vcf.gz.tbi"
-  }
+  "pipeline.dbsnpVCF": "tests/data/wgs2.vcf.gz",
+  "pipeline.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi"
 }
