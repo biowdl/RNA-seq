@@ -130,7 +130,9 @@ workflow Sample {
     parameter_meta {
         sample: {description: "The sample data.", category: "required"}
         outputDir: {description: "The output directory.", category: "required"}
-        reference: {description: "The reference files: a fasta, its index and the associated sequence dictionary.", category: "required"}
+        referenceFasta: { description: "The reference fasta file", category: "required" }
+        referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
+        referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference", category: "required" }
         starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses.",
                     category: "common"}
         hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses.",

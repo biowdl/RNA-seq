@@ -63,9 +63,15 @@ Optional settings:
 ```JSON 
 {
   "pipeline.sample.Sample.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
-  "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG"
+  "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs."
 }
 ```
+UMIs are expected to have been extracted from the input fastq files and added to the
+headers of the reads. A tool like [UMI-tools](https://umi-tools.readthedocs.io/en/latest/)
+may be used to do so. Please be aware that different library preparation protocols
+will put the UMIs in different locations in you reads, so be careful when extracting
+the UMIs!
 
 #### Sample configuration
 

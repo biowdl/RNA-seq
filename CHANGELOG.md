@@ -15,6 +15,7 @@ In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best
 practices pipeline. Several errors in the variant calling part of the pipeline 
 were fixed.
 
++ Added UMI based deduplication as an optional step.
 + Major fix: Joint genotyping is not performed on RNA-seq reads. Instead, each
   sample is genotyped seperately by the HaplotypeCaller.
 + Major fix: base recalibration is now applied after splitting the cigar reads. 

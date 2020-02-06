@@ -150,6 +150,11 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>sub(basename(read1),"(\.fq)?(\.fastq)?(\.gz)?","")</code><br />
     The name of the readgroup.
 </dd>
+<dt id="pipeline.umiDeduplication"><a href="#pipeline.umiDeduplication">pipeline.umiDeduplication</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    Whether or not UMI based deduplication should be performed.
+</dd>
 <dt id="pipeline.variantCalling"><a href="#pipeline.variantCalling">pipeline.variantCalling</a></dt>
 <dd>
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
@@ -1385,6 +1390,11 @@ pipeline.
 <dd>
     <i>String? </i><i>&mdash; Default:</i> <code>"Basic"</code><br />
     Equivalent to star's `--twopassMode` option.
+</dd>
+<dt id="pipeline.sampleJobs.umiDedup.memory"><a href="#pipeline.sampleJobs.umiDedup.memory">pipeline.sampleJobs.umiDedup.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"20G"</code><br />
+    The amount of memory required for the task.
 </dd>
 <dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination">pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination</a></dt>
 <dd>
