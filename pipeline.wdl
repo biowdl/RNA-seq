@@ -34,6 +34,7 @@ workflow pipeline {
         Boolean detectNovelTranscripts = false
         File? cpatLogitModel
         File? cpatHex
+        Boolean umiDeduplication = false
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
@@ -70,6 +71,7 @@ workflow pipeline {
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
+                umiDeduplication = umiDeduplication,
                 dockerImages = dockerImages
         }
 
@@ -183,6 +185,9 @@ workflow pipeline {
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
         Array[File] bamFilesIndex = sampleJobs.outputBamIndex
+        Array[File?] umiEditDistance = sampleJobs.umiEditDistance
+        Array[File?] umiStats = sampleJobs.umiStats
+        Array[File?] umiPositionStats = sampleJobs.umiPositionStats
     }
 
     parameter_meta {
@@ -212,6 +217,7 @@ workflow pipeline {
                                  category: "common"}
         cpatLogitModel: {description: "A logit model for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         cpatHex: {description: "A hexamer frequency table for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
+        umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}

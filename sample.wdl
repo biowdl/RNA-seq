@@ -2,12 +2,14 @@ version 1.0
 
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
-import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/samtools.wdl" as samtools
 import "structs.wdl" as structs
-import "tasks/star.wdl" as star_task
+import "tasks/biopet/biopet.wdl" as biopet
+import "tasks/common.wdl" as common
+import "tasks/samtools.wdl" as samtools
+import "tasks/star.wdl" as starTask
 import "tasks/hisat2.wdl" as hisat2Task
 import "tasks/picard.wdl" as picard
+import "tasks/umi-tools.wdl" as umiTools
 
 workflow Sample {
     input {
@@ -20,14 +22,17 @@ workflow Sample {
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        Map[String, String] dockerImages
+        Boolean umiDeduplication = false
         String platform = "illumina"
+
+        Map[String, String] dockerImages
     }
 
     scatter (readgroup in sample.readgroups) {
         String libDir = outputDir + "/lib_" + readgroup.lib_id
         String readgroupDir = libDir + "/rg_" + readgroup.id
         String rgLine ='"ID:${readgroup.id}" "LB:${readgroup.lib_id}" "PL:${platform}" "SM:${sample.id}"'
+
         call qcWorkflow.QC as qc {
             input:
                 outputDir = readgroupDir,
@@ -37,7 +42,7 @@ workflow Sample {
         }
 
         if (defined(starIndex)) {
-            call star_task.Star as star {
+            call starTask.Star as star {
                 input:
                     inputR1 = [qc.qcRead1],
                     inputR2 = select_all([qc.qcRead2]),
@@ -73,6 +78,9 @@ workflow Sample {
         # star is taken over hisat2.
         File continuationBam = select_first([indexStarBam.indexedBam, hisat2.bamFile])
         File continuationBamIndex = select_first([indexStarBam.index, hisat2.bamIndex])
+
+        # Determine if the sample is paired-end
+        Boolean paired = defined(readgroup.R2)
     }
 
     call picard.MarkDuplicates as markDuplicates {
@@ -84,11 +92,23 @@ workflow Sample {
             dockerImage = dockerImages["picard"]
     }
 
+    if (umiDeduplication) {
+        call umiTools.Dedup as umiDedup {
+            input:
+                inputBam = markDuplicates.outputBam,
+                inputBamIndex = markDuplicates.outputBamIndex,
+                outputBamPath = outputDir + "/" + sample.id + ".dedup.bam",
+                statsPrefix = outputDir + "/" + sample.id,
+                paired = paired[0], # Assumes that if one readgroup is paired, all are
+                dockerImage = dockerImages["umi-tools"]
+        }
+    }
+
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = markDuplicates.outputBam,
-            bamIndex = markDuplicates.outputBamIndex,
+            bam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam]),
+            bamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex]),
             outputDir = outputDir + "/metrics",
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
@@ -100,14 +120,19 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        File outputBam = markDuplicates.outputBam
-        File outputBamIndex = markDuplicates.outputBamIndex
+        File outputBam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam])
+        File outputBamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex])
+        File? umiEditDistance = umiDedup.editDistance
+        File? umiStats = umiDedup.umiStats
+        File? umiPositionStats = umiDedup.positionStats
     }
 
     parameter_meta {
         sample: {description: "The sample data.", category: "required"}
         outputDir: {description: "The output directory.", category: "required"}
-        reference: {description: "The reference files: a fasta, its index and the associated sequence dictionary.", category: "required"}
+        referenceFasta: { description: "The reference fasta file", category: "required" }
+        referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
+        referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference", category: "required" }
         starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses.",
                     category: "common"}
         hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses.",
@@ -116,8 +141,9 @@ workflow Sample {
                        category: "required"}
         refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
                       category: "common"}
-        dockerImages: {description: "The docker images used.", category: "advanced"}
+        umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}
+        dockerImages: {description: "The docker images used.", category: "advanced"}
     }
 
     meta {

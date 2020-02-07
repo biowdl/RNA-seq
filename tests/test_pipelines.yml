@@ -64,6 +64,18 @@
     - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
       should_exist: false
 
+- name: Rna3SingleEndUmi
+  tags:
+    - umi
+    - integration
+    - no_docker_conf
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndUmi.json pipeline.wdl
+  files:
+    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.bam"
+    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.bai"
+
 - name: Rna3SingleEndHisat2
   tags:
     - integration
@@ -101,6 +113,18 @@
     - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
       should_exist: false
     - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
+
+- name: Rna3PairedEndUmi
+  tags:
+    - umi
+    - integration
+    - no_docker_conf
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndUmi.json pipeline.wdl
+  files:
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.bam"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.bai"
 
 - name: Rna3PairedEndHisat2AndStar
   tags:
