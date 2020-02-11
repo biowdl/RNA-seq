@@ -165,6 +165,11 @@ pipeline.
     <i>Array[File]+? </i><br />
     Bed files or interval lists describing the regions to NOT operate on.
 </dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.pedigree"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.pedigree">pipeline.variantcalling.callAutosomal.haplotypeCaller.pedigree</a></dt>
+<dd>
+    <i>File? </i><br />
+    Pedigree file for determining the population "founders"
+</dd>
 <dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.ploidy"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.ploidy">pipeline.variantcalling.callAutosomal.haplotypeCaller.ploidy</a></dt>
 <dd>
     <i>Int? </i><br />
@@ -175,15 +180,35 @@ pipeline.
     <i>Array[File]+? </i><br />
     Bed files or interval lists describing the regions to NOT operate on.
 </dd>
+<dt id="pipeline.variantcalling.callX.pedigree"><a href="#pipeline.variantcalling.callX.pedigree">pipeline.variantcalling.callX.pedigree</a></dt>
+<dd>
+    <i>File? </i><br />
+    Pedigree file for determining the population "founders"
+</dd>
 <dt id="pipeline.variantcalling.callY.excludeIntervalList"><a href="#pipeline.variantcalling.callY.excludeIntervalList">pipeline.variantcalling.callY.excludeIntervalList</a></dt>
 <dd>
     <i>Array[File]+? </i><br />
     Bed files or interval lists describing the regions to NOT operate on.
 </dd>
+<dt id="pipeline.variantcalling.callY.pedigree"><a href="#pipeline.variantcalling.callY.pedigree">pipeline.variantcalling.callY.pedigree</a></dt>
+<dd>
+    <i>File? </i><br />
+    Pedigree file for determining the population "founders"
+</dd>
+<dt id="pipeline.variantcalling.genotypeGvcfs.pedigree"><a href="#pipeline.variantcalling.genotypeGvcfs.pedigree">pipeline.variantcalling.genotypeGvcfs.pedigree</a></dt>
+<dd>
+    <i>File? </i><br />
+    Pedigree file for determining the population "founders"
+</dd>
 <dt id="pipeline.variantcalling.regions"><a href="#pipeline.variantcalling.regions">pipeline.variantcalling.regions</a></dt>
 <dd>
     <i>File? </i><br />
     A bed file describing the regions to operate on.
+</dd>
+<dt id="pipeline.variantcalling.singleSampleGvcf"><a href="#pipeline.variantcalling.singleSampleGvcf">pipeline.variantcalling.singleSampleGvcf</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
+    Whether to output single-sample gvcfs
 </dd>
 <dt id="pipeline.variantcalling.vcfBasename"><a href="#pipeline.variantcalling.vcfBasename">pipeline.variantcalling.vcfBasename</a></dt>
 <dd>
@@ -690,11 +715,6 @@ pipeline.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
     The amount of memory this job will use.
-</dd>
-<dt id="pipeline.preprocessing.orderedScatters.dockerImage"><a href="#pipeline.preprocessing.orderedScatters.dockerImage">pipeline.preprocessing.orderedScatters.dockerImage</a></dt>
-<dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"python:3.7-slim"</code><br />
-    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
 </dd>
 <dt id="pipeline.preprocessing.scatterList.bamFile"><a href="#pipeline.preprocessing.scatterList.bamFile">pipeline.preprocessing.scatterList.bamFile</a></dt>
 <dd>
@@ -1486,15 +1506,20 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"merged.bed"</code><br />
     The path to write the output to
 </dd>
-<dt id="pipeline.variantcalling.orderedAllScatters.dockerImage"><a href="#pipeline.variantcalling.orderedAllScatters.dockerImage">pipeline.variantcalling.orderedAllScatters.dockerImage</a></dt>
+<dt id="pipeline.variantcalling.mergeSingleSample.intervals"><a href="#pipeline.variantcalling.mergeSingleSample.intervals">pipeline.variantcalling.mergeSingleSample.intervals</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"python:3.7-slim"</code><br />
-    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+    <i>Array[File] </i><i>&mdash; Default:</i> <code>[]</code><br />
+    Bed files or interval lists describing the regions to operate on.
 </dd>
-<dt id="pipeline.variantcalling.orderedAutosomalScatters.dockerImage"><a href="#pipeline.variantcalling.orderedAutosomalScatters.dockerImage">pipeline.variantcalling.orderedAutosomalScatters.dockerImage</a></dt>
+<dt id="pipeline.variantcalling.mergeSingleSample.javaXmx"><a href="#pipeline.variantcalling.mergeSingleSample.javaXmx">pipeline.variantcalling.mergeSingleSample.javaXmx</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"python:3.7-slim"</code><br />
-    The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
+    <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
+</dd>
+<dt id="pipeline.variantcalling.mergeSingleSample.memory"><a href="#pipeline.variantcalling.mergeSingleSample.memory">pipeline.variantcalling.mergeSingleSample.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="pipeline.variantcalling.scatterAllRegions.bamFile"><a href="#pipeline.variantcalling.scatterAllRegions.bamFile">pipeline.variantcalling.scatterAllRegions.bamFile</a></dt>
 <dd>

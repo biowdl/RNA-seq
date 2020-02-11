@@ -93,7 +93,7 @@ workflow pipeline {
             }
         }
         IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
-        BamAndGender bamGenders = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
+        BamAndGender bamGenders = object {file: sampleJobs.outputBam, index: sampleJobs.outputBamIndex, gender: sample.gender }
     }
 
     if (variantCalling) {
