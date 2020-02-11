@@ -34,8 +34,6 @@ workflow pipeline {
         Boolean detectNovelTranscripts = false
         File? cpatLogitModel
         File? cpatHex
-        File? xNonParRegions
-        File? yNonParRegions
         Boolean umiDeduplication = false
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
