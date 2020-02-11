@@ -34,6 +34,8 @@ workflow pipeline {
         Boolean detectNovelTranscripts = false
         File? cpatLogitModel
         File? cpatHex
+        File? xNonParRegions
+        File? yNonParRegions
         Boolean umiDeduplication = false
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
@@ -93,7 +95,7 @@ workflow pipeline {
             }
         }
         IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
-        BamAndGender bamGenders = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
+        BamAndGender bamGenders = object {file: sampleJobs.outputBam, index: sampleJobs.outputBamIndex, gender: sample.gender }
     }
 
     if (variantCalling) {
