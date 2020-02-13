@@ -7,6 +7,7 @@
 # command.
 
 # Tools are sorted alphabetically for ease of use.
+bedtools: "quay.io/biocontainers/bedtools:2.23.0--hdbcaa40_3"
 biowdl-input-converter: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_0"
 biopet-scatterregions: "quay.io/biocontainers/biopet-scatterregions:0.2--0"
 cutadapt: "quay.io/biocontainers/cutadapt:2.4--py37h14c3975_0"
