@@ -112,8 +112,11 @@ workflow pipeline {
                     dockerImages = dockerImages
             }
         }
-        IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
-        BamAndGender bamGenders = object {file: sampleJobs.outputBam, index: sampleJobs.outputBamIndex, gender: sample.gender }
+
+        File bamFile = select_first([preprocessing.recalibratedBam, sampleJobs.outputBam])
+        File bamIndex = select_first([preprocessing.recalibratedBamIndex, sampleJobs.outputBamIndex])
+        IndexedBamFile bamStructs = {"file": bamFile, "index": bamIndex}
+        BamAndGender bamGenders = object {file: bamFile, index: bamIndex, gender: sample.gender }
     }
 
     if (variantCalling) {
