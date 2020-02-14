@@ -204,6 +204,8 @@ workflow pipeline {
         File? mergedGtfFile = expression.mergedGtfFile
         File? outputVcf = variantcalling.outputVcf
         File? outputVcfIndex = variantcalling.outputVcfIndex
+        Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
+        Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
