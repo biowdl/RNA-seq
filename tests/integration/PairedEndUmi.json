@@ -1,5 +1,5 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd.yml",
+  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd_umi.yml",
   "pipeline.dockerImagesFile": "dockerImages.yml",
   "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
   "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
@@ -15,15 +15,9 @@
     "tests/data/reference/hisat2/reference.7.ht2",
     "tests/data/reference/hisat2/reference.8.ht2"
   ],
-  "pipeline.variantCalling": true,
-  "pipeline.lncRNAdetection": true,
-  "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
-  "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
-  "pipeline.lncRNAdatabases": [
-    "tests/data/reference/reference.gtf"
-  ],
-  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
   "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
-  "pipeline.dbsnpVCF": "tests/data/wgs2.vcf.gz",
-  "pipeline.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi"
+  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
+  "pipeline.variantCalling": false,
+  "pipeline.lncRNAdetection": false,
+  "pipeline.umiDeduplication": true
 }

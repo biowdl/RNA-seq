@@ -1,5 +1,5 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
+  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd_umi.csv",
   "pipeline.dockerImagesFile": "dockerImages.yml",
   "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
   "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
@@ -15,11 +15,9 @@
     "tests/data/reference/star/SA",
     "tests/data/reference/star/SAindex"
   ],
+  "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
+  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
   "pipeline.variantCalling": false,
-  "pipeline.lncRNAdetection": true,
-  "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
-  "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
-  "pipeline.lncRNAdatabases": [
-    "tests/data/reference/reference.gtf"
-  ]
+  "pipeline.lncRNAdetection": false,
+  "pipeline.umiDeduplication": true
 }

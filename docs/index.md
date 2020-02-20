@@ -36,18 +36,16 @@ described below, but additional inputs are available.
 A template containing all possible inputs can be generated using
 Womtool as described in the
 [WOMtool documentation](http://cromwell.readthedocs.io/en/stable/WOMtool/).
-
+For an overview of all available inputs, see [this page](./inputs.html).
 
 ```JSON
 {
- "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
- "pipeline.dockerImagesFile": "A file listing the used docker images.",
+  "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
+  "pipeline.dockerImagesFile": "A file listing the used docker images.",
   "pipeline.starIndex": "A list of star index files.",
-  "pipeline.reference": {
-    "fasta": "A path to a reference fasta",
-    "fai": "The path to the index associated with the reference fasta",
-    "dict": "The path to the dict file associated with the reference fasta"
-  },
+  "pipeline.referenceFasta": "A path to a reference fasta",
+  "pipeline.referenceFastaFai": "The path to the index associated with the reference fasta",
+  "pipeline.referenceFastaDict": "The path to the dict file associated with the reference fasta",
   "pipeline.outputDir": "The path to the output directory",
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
@@ -61,12 +59,20 @@ The `referenceGtfFile` may also be omitted, in this case Stringtie will be used 
 perform an unguided assembly, which will then be used for expression quantification.
 
 Optional settings:
+
 ```JSON 
 {
   "pipeline.sample.Sample.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
-  "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG"
+  "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs."
 }
 ```
+UMIs are expected to have been extracted from the input fastq files and added to the
+headers of the reads. A tool like [UMI-tools](https://umi-tools.readthedocs.io/en/latest/)
+may be used to do so. Please be aware that different library preparation protocols
+will put the UMIs in different locations in your reads, so be careful when extracting
+the UMIs!
+
 #### Sample configuration
 
 ##### Verification
@@ -135,10 +141,8 @@ In order to perform variant calling the following inputs are also required:
 ```JSON
 {
   "pipeline.variantCalling": "Whether or not variantcalling should be performed, defaults to False",
-  "pipeline.dbSNP": {
-    "file": "A path to a dbSNP VCF file",
-    "index": "The path to the index (.tbi) file associated with the dbSNP VCF"
-  }
+  "pipeline.dbsnpVCF": "A VCF file to aid in the variantcalling. Necessary when variantcalling is true.", 
+  "pipeline.dbsnpVCFIndex": "The index for the dbsnpVCF"
 }
 ```
 
@@ -171,15 +175,11 @@ The following is an example of what an inputs JSON might look like:
   ],
   "pipeline.variantCalling": true,
   "pipeline.lncRNAdetection": true,
-  "pipeline.reference": {
-    "fasta": "/home/user/genomes/human/GRCh38.fasta",
-    "fai": "/home/user/genomes/human/GRCh38.fasta.fai",
-    "dict": "/home/user/genomes/human/GRCh38.dict"
-  },
-  "pipeline.dbSNP": {
-    "file": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
-    "index": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi"
-  },
+  "pipeline.referenceFasta": "/home/user/genomes/human/GRCh38.fasta",
+  "pipeline.referenceFastaFai": "/home/user/genomes/human/GRCh38.fasta.fai",
+  "pipeline.referenceFastaDict": "/home/user/genomes/human/GRCh38.dict",
+  "pipeline.dbsnpVCF": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
+  "pipeline.dbsnpVCFIndex": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi",
   "pipeline.lncRNAdatabases": ["/home/user/genomes/human/NONCODE.gtf"],
   "pipeline.cpatLogitModel": "/home/user/genomes/human/GRCH38_logit",
   "pipeline.cpatHex": "/home/user/genomes/human/GRCH38_hex.tab",
