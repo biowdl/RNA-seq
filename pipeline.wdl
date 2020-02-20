@@ -94,7 +94,7 @@ workflow pipeline {
                 umiDeduplication = umiDeduplication,
                 dockerImages = dockerImages
         }
-
+        IndexedBamFile markdupBams = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
         if (variantCalling) {
         # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
@@ -111,18 +111,14 @@ workflow pipeline {
                     referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages
             }
+            BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
         }
-
-        File bamFile = select_first([preprocessing.recalibratedBam, sampleJobs.outputBam])
-        File bamIndex = select_first([preprocessing.recalibratedBamIndex, sampleJobs.outputBamIndex])
-        IndexedBamFile bamStructs = {"file": bamFile, "index": bamIndex}
-        BamAndGender bamGenders = object {file: bamFile, index: bamIndex, gender: sample.gender }
     }
 
     if (variantCalling) {
         call variantCallingWorkflow.GatkVariantCalling as variantcalling {
             input:
-                bamFilesAndGenders = bamGenders,
+                bamFilesAndGenders = select_all(bamGenders),
                 outputDir = outputDir + "/multisample_variants/",
                 dbsnpVCF = select_first([dbsnpVCF]),
                 dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
@@ -136,7 +132,7 @@ workflow pipeline {
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sampleJobs.sampleName, bamStructs),
+            bams = zip(sampleJobs.sampleName, markdupBams),
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
