@@ -15,6 +15,8 @@ In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best
 practices pipeline. Several errors in the variant calling part of the pipeline 
 were fixed.
 
++ Multisample VCFs are no longer generated for RNA-seq as this is not GATK best
+  practice.
 + Add proper copyright headers to WDL files. So the free software license
   is clear to end users who wish to adapt and modify.
 + Added UMI based deduplication as an optional step.

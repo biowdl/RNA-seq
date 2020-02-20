@@ -94,7 +94,7 @@ workflow pipeline {
                 umiDeduplication = umiDeduplication,
                 dockerImages = dockerImages
         }
-
+        IndexedBamFile markdupBams = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
         if (variantCalling) {
         # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
@@ -111,15 +111,14 @@ workflow pipeline {
                     referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages
             }
+            BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
         }
-        IndexedBamFile bamStructs = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
-        BamAndGender bamGenders = object {file: sampleJobs.outputBam, index: sampleJobs.outputBamIndex, gender: sample.gender }
     }
 
     if (variantCalling) {
         call variantCallingWorkflow.GatkVariantCalling as variantcalling {
             input:
-                bamFilesAndGenders = bamGenders,
+                bamFilesAndGenders = select_all(bamGenders),
                 outputDir = outputDir + "/multisample_variants/",
                 dbsnpVCF = select_first([dbsnpVCF]),
                 dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
@@ -133,7 +132,7 @@ workflow pipeline {
 
     call expressionQuantification.MultiBamExpressionQuantification as expression {
         input:
-            bams = zip(sampleJobs.sampleName, bamStructs),
+            bams = zip(sampleJobs.sampleName, markdupBams),
             outputDir = expressionDir,
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
@@ -201,6 +200,8 @@ workflow pipeline {
         File? mergedGtfFile = expression.mergedGtfFile
         File? outputVcf = variantcalling.outputVcf
         File? outputVcfIndex = variantcalling.outputVcfIndex
+        Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
+        Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam

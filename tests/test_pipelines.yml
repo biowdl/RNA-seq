@@ -6,8 +6,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndVariantCalling.json pipeline.wdl
   files:
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/multisample_variants/samples/rna3-single-end.markdup.bqsr.vcf.gz"
+    - path: "test-output/multisample_variants/samples/rna3-single-end.markdup.bqsr.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -22,8 +22,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -84,8 +84,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndHisat2.json pipeline.wdl
   files:
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/multisample_variants/samples/rna3-single-end.markdup.bqsr.vcf.gz"
+    - path: "test-output/multisample_variants/samples/rna3-single-end.markdup.bqsr.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -102,8 +102,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -136,8 +136,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -156,8 +156,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz.tbi"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
+    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
