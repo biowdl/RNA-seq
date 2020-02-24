@@ -33,6 +33,7 @@ import "tasks/multiqc.wdl" as multiqc
 import "tasks/CPAT.wdl" as cpat
 import "tasks/gffread.wdl" as gffread
 import "tasks/biowdl.wdl" as biowdl
+import "tasks/prepareShiny.wdl" as shiny
 
 workflow pipeline {
     input {
@@ -77,6 +78,23 @@ workflow pipeline {
             outputFile = outputDir + "/samples.json"
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
+
+    # Create sample sheet and collect count data
+    call shiny.CreateSampleGetCount as shinySampleCount {
+        input:
+            countTable = expression.fragmentsPerGeneTable,
+            shinyDir = outputDir + "/shiny"
+    }
+
+    # Create annotation file
+    call shiny.CreateAnnotation as shinyAnnotation {
+        input:
+            referenceFasta = referenceFasta,
+            referenceFastaFai = referenceFastaFai,
+            referenceFastaDict = referenceFastaDict,
+            referenceGtfFile = referenceGtfFile,
+            shinyDir = outputDir + "/shiny"
+    }
 
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
@@ -208,6 +226,7 @@ workflow pipeline {
         Array[File?] umiEditDistance = sampleJobs.umiEditDistance
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats
+        File shinyOutput = shinySampleCount.shinyOutput
     }
 
     parameter_meta {
