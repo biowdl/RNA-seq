@@ -20,5 +20,6 @@
   "pipeline.dbsnpVCF": "tests/data/wgs2.vcf.gz",
   "pipeline.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi",
   "pipeline.variantCalling": true,
+  "pipeline.jointgenotyping": true,
   "pipeline.lncRNAdetection": false
 }
