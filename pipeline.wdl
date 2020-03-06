@@ -49,6 +49,7 @@ workflow pipeline {
         File? refflatFile
         File? referenceGtfFile
         Array[File] lncRNAdatabases = []
+        Boolean jointgenotyping = false
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
         Boolean detectNovelTranscripts = false
@@ -125,7 +126,7 @@ workflow pipeline {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
-                jointgenotyping=false,
+                jointgenotyping=jointgenotyping,
                 dockerImages = dockerImages
         }
     }
@@ -200,8 +201,12 @@ workflow pipeline {
         File? mergedGtfFile = expression.mergedGtfFile
         File? outputVcf = variantcalling.outputVcf
         File? outputVcfIndex = variantcalling.outputVcfIndex
+        File? outputGVcf = variantcalling.outputGVcf
+        File? outputGVcfIndex = variantcalling.outputGVcfIndex
         Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
         Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
+        Array[File]? singleSampleGvcfs = variantcalling.singleSampleGvcfs
+        Array[File]? singleSampleGvcfsIndex = variantcalling.singleSampleGvcfsIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
@@ -232,6 +237,7 @@ workflow pipeline {
                            category: "common"}
         lncRNAdatabases: {description: "A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`.", category: "common"}
         variantCalling: {description: "Whether or not variantcalling should be performed.", category: "common"}
+        jointgenotyping: {description: "Whether joint genotyping should be performed when Variant Calling. Default: false. Warning: joint genotyping is not part of GATK best practices", category: "advanced"}
         lncRNAdetection: {description: "Whether or not lncRNA detection should be run. This will enable detectNovelTranscript (this cannot be disabled by setting detectNovelTranscript to false). This will require cpatLogitModel and cpatHex to be defined.",
                           category: "common"}
         detectNovelTranscripts: {description: "Whether or not a transcripts assembly should be used. If set to true Stringtie will be used to create a new GTF file based on the BAM files. This generated GTF file will be used for expression quantification. If `referenceGtfFile` is also provided this reference GTF will be used to guide the assembly.",
