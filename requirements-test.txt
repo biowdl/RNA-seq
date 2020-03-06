@@ -3,7 +3,8 @@
 # For more information on how to set up conda with bioconda channel see:
 # http://bioconda.github.io/#install-conda
 # this file can be installed with "conda install --file requirements-test.txt"
-cromwell
+# TODO: Cromwell 49 bug should be fixed in cromwell 50
+cromwell<=48
 pytest-workflow
 pysam
 miniwdl
