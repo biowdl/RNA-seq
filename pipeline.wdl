@@ -57,6 +57,8 @@ workflow pipeline {
         File? cpatHex
         Boolean umiDeduplication = false
         File dockerImagesFile
+        Int scatterSizeMillions = 1000
+        Int scatterSize = scatterSizeMillions * 1000000
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
     }
@@ -110,7 +112,8 @@ workflow pipeline {
                     referenceFasta = referenceFasta,
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
-                    dockerImages = dockerImages
+                    dockerImages = dockerImages,
+                    scatterSize = scatterSize
             }
             BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
         }
@@ -127,7 +130,8 @@ workflow pipeline {
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
                 jointgenotyping=jointgenotyping,
-                dockerImages = dockerImages
+                dockerImages = dockerImages,
+                scatterSize = scatterSize
         }
     }
 
@@ -248,5 +252,10 @@ workflow pipeline {
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}
+        scatterSize: {description: "The size of the scattered regions in bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.",
+              category: "advanced"}
+        scatterSizeMillions:{ description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily",
+                              category: "advanced"}
+
     }
 }

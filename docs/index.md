@@ -60,11 +60,12 @@ perform an unguided assembly, which will then be used for expression quantificat
 
 Optional settings:
 
-```JSON 
+```JSON
 {
   "pipeline.sample.Sample.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
   "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
-  "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs."
+  "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs.",
+  "pipeline.scatterSize": "The size of the scattered regions in bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources."
 }
 ```
 UMIs are expected to have been extracted from the input fastq files and added to the
