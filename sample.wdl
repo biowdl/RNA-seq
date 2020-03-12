@@ -43,9 +43,12 @@ workflow Sample {
         String strandedness
         File? refflatFile
         Boolean umiDeduplication = false
+        Boolean collectUmiStats = false
         String platform = "illumina"
 
         Map[String, String] dockerImages
+
+        String? DONOTDEFINE
     }
 
     scatter (readgroup in sample.readgroups) {
@@ -118,7 +121,9 @@ workflow Sample {
                 inputBam = markDuplicates.outputBam,
                 inputBamIndex = markDuplicates.outputBamIndex,
                 outputBamPath = outputDir + "/" + sample.id + ".dedup.bam",
-                statsPrefix = outputDir + "/" + sample.id,
+                statsPrefix = if collectUmiStats
+                    then outputDir + "/" + sample.id
+                    else DONOTDEFINE,
                 paired = paired[0], # Assumes that if one readgroup is paired, all are
                 dockerImage = dockerImages["umi-tools"]
         }
@@ -162,13 +167,15 @@ workflow Sample {
         refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
                       category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
+                          category: "advanced"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}
         dockerImages: {description: "The docker images used.", category: "advanced"}
     }
 
     meta {
         WDL_AID: {
-            exclude: ["star.outSAMtype", "star.readFilesCommand"]
+            exclude: ["star.outSAMtype", "star.readFilesCommand", "DONOTDEFINE"]
         }
     }
 }
