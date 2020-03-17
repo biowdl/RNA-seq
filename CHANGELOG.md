@@ -9,7 +9,7 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 3.0.0-dev
+version 3.0.0
 -----------------
 In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best 
 practices pipeline. Several errors in the variant calling part of the pipeline 
