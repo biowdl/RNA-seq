@@ -207,7 +207,7 @@ pipeline.
 </dd>
 <dt id="pipeline.variantcalling.singleSampleGvcf"><a href="#pipeline.variantcalling.singleSampleGvcf">pipeline.variantcalling.singleSampleGvcf</a></dt>
 <dd>
-    <i>Boolean </i><i>&mdash; Default:</i> <code>true</code><br />
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Whether to output single-sample gvcfs
 </dd>
 <dt id="pipeline.variantcalling.vcfBasename"><a href="#pipeline.variantcalling.vcfBasename">pipeline.variantcalling.vcfBasename</a></dt>
@@ -521,6 +521,11 @@ pipeline.
     <i>String? </i><br />
     The location the protein fasta should be written to.
 </dd>
+<dt id="pipeline.jointgenotyping"><a href="#pipeline.jointgenotyping">pipeline.jointgenotyping</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    Whether joint genotyping should be performed when Variant Calling. Default: false. Warning: joint genotyping is not part of GATK best practices
+</dd>
 <dt id="pipeline.multiqcTask.clConfig"><a href="#pipeline.multiqcTask.clConfig">pipeline.multiqcTask.clConfig</a></dt>
 <dd>
     <i>String? </i><br />
@@ -736,10 +741,10 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
     The amount of memory this job will use.
 </dd>
-<dt id="pipeline.preprocessing.scatterSize"><a href="#pipeline.preprocessing.scatterSize">pipeline.preprocessing.scatterSize</a></dt>
+<dt id="pipeline.preprocessing.scatterSizeMillions"><a href="#pipeline.preprocessing.scatterSizeMillions">pipeline.preprocessing.scatterSizeMillions</a></dt>
 <dd>
-    <i>Int </i><i>&mdash; Default:</i> <code>1000000000</code><br />
-    The size of the scattered regions in bases. Scattering is used to speed up certain processes. The genome will be sseperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.
+    <i>Int </i><i>&mdash; Default:</i> <code>1000</code><br />
+    Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily
 </dd>
 <dt id="pipeline.preprocessing.splitNCigarReads.javaXmx"><a href="#pipeline.preprocessing.splitNCigarReads.javaXmx">pipeline.preprocessing.splitNCigarReads.javaXmx</a></dt>
 <dd>
@@ -845,6 +850,11 @@ pipeline.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
     The amount of memory this job will use.
+</dd>
+<dt id="pipeline.sampleJobs.collectUmiStats"><a href="#pipeline.sampleJobs.collectUmiStats">pipeline.sampleJobs.collectUmiStats</a></dt>
+<dd>
+    <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
+    Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.
 </dd>
 <dt id="pipeline.sampleJobs.hisat2.downstreamTranscriptomeAssembly"><a href="#pipeline.sampleJobs.hisat2.downstreamTranscriptomeAssembly">pipeline.sampleJobs.hisat2.downstreamTranscriptomeAssembly</a></dt>
 <dd>
@@ -1156,6 +1166,11 @@ pipeline.
     <i>File? </i><br />
     Equivalent to fastqc's --limits option.
 </dd>
+<dt id="pipeline.sampleJobs.qc.FastqcRead1.memory"><a href="#pipeline.sampleJobs.qc.FastqcRead1.memory">pipeline.sampleJobs.qc.FastqcRead1.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="pipeline.sampleJobs.qc.FastqcRead1.minLength"><a href="#pipeline.sampleJobs.qc.FastqcRead1.minLength">pipeline.sampleJobs.qc.FastqcRead1.minLength</a></dt>
 <dd>
     <i>Int? </i><br />
@@ -1220,6 +1235,11 @@ pipeline.
 <dd>
     <i>File? </i><br />
     Equivalent to fastqc's --limits option.
+</dd>
+<dt id="pipeline.sampleJobs.qc.FastqcRead1After.memory"><a href="#pipeline.sampleJobs.qc.FastqcRead1After.memory">pipeline.sampleJobs.qc.FastqcRead1After.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The amount of memory this job will use.
 </dd>
 <dt id="pipeline.sampleJobs.qc.FastqcRead1After.minLength"><a href="#pipeline.sampleJobs.qc.FastqcRead1After.minLength">pipeline.sampleJobs.qc.FastqcRead1After.minLength</a></dt>
 <dd>
@@ -1286,6 +1306,11 @@ pipeline.
     <i>File? </i><br />
     Equivalent to fastqc's --limits option.
 </dd>
+<dt id="pipeline.sampleJobs.qc.FastqcRead2.memory"><a href="#pipeline.sampleJobs.qc.FastqcRead2.memory">pipeline.sampleJobs.qc.FastqcRead2.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="pipeline.sampleJobs.qc.FastqcRead2.minLength"><a href="#pipeline.sampleJobs.qc.FastqcRead2.minLength">pipeline.sampleJobs.qc.FastqcRead2.minLength</a></dt>
 <dd>
     <i>Int? </i><br />
@@ -1351,6 +1376,11 @@ pipeline.
     <i>File? </i><br />
     Equivalent to fastqc's --limits option.
 </dd>
+<dt id="pipeline.sampleJobs.qc.FastqcRead2After.memory"><a href="#pipeline.sampleJobs.qc.FastqcRead2After.memory">pipeline.sampleJobs.qc.FastqcRead2After.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"4G"</code><br />
+    The amount of memory this job will use.
+</dd>
 <dt id="pipeline.sampleJobs.qc.FastqcRead2After.minLength"><a href="#pipeline.sampleJobs.qc.FastqcRead2After.minLength">pipeline.sampleJobs.qc.FastqcRead2After.minLength</a></dt>
 <dd>
     <i>Int? </i><br />
@@ -1413,13 +1443,33 @@ pipeline.
 </dd>
 <dt id="pipeline.sampleJobs.umiDedup.memory"><a href="#pipeline.sampleJobs.umiDedup.memory">pipeline.sampleJobs.umiDedup.memory</a></dt>
 <dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"20G"</code><br />
+    <i>String </i><i>&mdash; Default:</i> <code>"5G"</code><br />
     The amount of memory required for the task.
+</dd>
+<dt id="pipeline.scatterSize"><a href="#pipeline.scatterSize">pipeline.scatterSize</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>scatterSizeMillions * 1000000</code><br />
+    The size of the scattered regions in bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.
+</dd>
+<dt id="pipeline.scatterSizeMillions"><a href="#pipeline.scatterSizeMillions">pipeline.scatterSizeMillions</a></dt>
+<dd>
+    <i>Int </i><i>&mdash; Default:</i> <code>1000</code><br />
+    Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily.
+</dd>
+<dt id="pipeline.variantcalling.calculateRegions.mergeBeds.outputBed"><a href="#pipeline.variantcalling.calculateRegions.mergeBeds.outputBed">pipeline.variantcalling.calculateRegions.mergeBeds.outputBed</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"merged.bed"</code><br />
+    The path to write the output to
 </dd>
 <dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination">pipeline.variantcalling.callAutosomal.haplotypeCaller.contamination</a></dt>
 <dd>
     <i>Float? </i><br />
     Equivalent to HaplotypeCaller's `-contamination` option.
+</dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.emitRefConfidence"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.emitRefConfidence">pipeline.variantcalling.callAutosomal.haplotypeCaller.emitRefConfidence</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>if gvcf then "GVCF" else "NONE"</code><br />
+    Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'
 </dd>
 <dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.javaXmx"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.javaXmx">pipeline.variantcalling.callAutosomal.haplotypeCaller.javaXmx</a></dt>
 <dd>
@@ -1431,10 +1481,20 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
     The amount of memory this job will use.
 </dd>
+<dt id="pipeline.variantcalling.callAutosomal.haplotypeCaller.outputMode"><a href="#pipeline.variantcalling.callAutosomal.haplotypeCaller.outputMode">pipeline.variantcalling.callAutosomal.haplotypeCaller.outputMode</a></dt>
+<dd>
+    <i>String? </i><br />
+    Specifies which type of calls we should output. Same as HaplotypeCaller's `--output-mode` option.
+</dd>
 <dt id="pipeline.variantcalling.callX.contamination"><a href="#pipeline.variantcalling.callX.contamination">pipeline.variantcalling.callX.contamination</a></dt>
 <dd>
     <i>Float? </i><br />
     Equivalent to HaplotypeCaller's `-contamination` option.
+</dd>
+<dt id="pipeline.variantcalling.callX.emitRefConfidence"><a href="#pipeline.variantcalling.callX.emitRefConfidence">pipeline.variantcalling.callX.emitRefConfidence</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>if gvcf then "GVCF" else "NONE"</code><br />
+    Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'
 </dd>
 <dt id="pipeline.variantcalling.callX.javaXmx"><a href="#pipeline.variantcalling.callX.javaXmx">pipeline.variantcalling.callX.javaXmx</a></dt>
 <dd>
@@ -1446,10 +1506,20 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
     The amount of memory this job will use.
 </dd>
+<dt id="pipeline.variantcalling.callX.outputMode"><a href="#pipeline.variantcalling.callX.outputMode">pipeline.variantcalling.callX.outputMode</a></dt>
+<dd>
+    <i>String? </i><br />
+    Specifies which type of calls we should output. Same as HaplotypeCaller's `--output-mode` option.
+</dd>
 <dt id="pipeline.variantcalling.callY.contamination"><a href="#pipeline.variantcalling.callY.contamination">pipeline.variantcalling.callY.contamination</a></dt>
 <dd>
     <i>Float? </i><br />
     Equivalent to HaplotypeCaller's `-contamination` option.
+</dd>
+<dt id="pipeline.variantcalling.callY.emitRefConfidence"><a href="#pipeline.variantcalling.callY.emitRefConfidence">pipeline.variantcalling.callY.emitRefConfidence</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>if gvcf then "GVCF" else "NONE"</code><br />
+    Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'
 </dd>
 <dt id="pipeline.variantcalling.callY.javaXmx"><a href="#pipeline.variantcalling.callY.javaXmx">pipeline.variantcalling.callY.javaXmx</a></dt>
 <dd>
@@ -1460,6 +1530,11 @@ pipeline.
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
     The amount of memory this job will use.
+</dd>
+<dt id="pipeline.variantcalling.callY.outputMode"><a href="#pipeline.variantcalling.callY.outputMode">pipeline.variantcalling.callY.outputMode</a></dt>
+<dd>
+    <i>String? </i><br />
+    Specifies which type of calls we should output. Same as HaplotypeCaller's `--output-mode` option.
 </dd>
 <dt id="pipeline.variantcalling.gatherGvcfs.intervals"><a href="#pipeline.variantcalling.gatherGvcfs.intervals">pipeline.variantcalling.gatherGvcfs.intervals</a></dt>
 <dd>
@@ -1501,22 +1576,27 @@ pipeline.
     <i>String </i><i>&mdash; Default:</i> <code>"18G"</code><br />
     The amount of memory this job will use.
 </dd>
-<dt id="pipeline.variantcalling.mergeBeds.outputBed"><a href="#pipeline.variantcalling.mergeBeds.outputBed">pipeline.variantcalling.mergeBeds.outputBed</a></dt>
-<dd>
-    <i>String </i><i>&mdash; Default:</i> <code>"merged.bed"</code><br />
-    The path to write the output to
-</dd>
-<dt id="pipeline.variantcalling.mergeSingleSample.intervals"><a href="#pipeline.variantcalling.mergeSingleSample.intervals">pipeline.variantcalling.mergeSingleSample.intervals</a></dt>
+<dt id="pipeline.variantcalling.mergeSingleSampleGvcf.intervals"><a href="#pipeline.variantcalling.mergeSingleSampleGvcf.intervals">pipeline.variantcalling.mergeSingleSampleGvcf.intervals</a></dt>
 <dd>
     <i>Array[File] </i><i>&mdash; Default:</i> <code>[]</code><br />
     Bed files or interval lists describing the regions to operate on.
 </dd>
-<dt id="pipeline.variantcalling.mergeSingleSample.javaXmx"><a href="#pipeline.variantcalling.mergeSingleSample.javaXmx">pipeline.variantcalling.mergeSingleSample.javaXmx</a></dt>
+<dt id="pipeline.variantcalling.mergeSingleSampleGvcf.javaXmx"><a href="#pipeline.variantcalling.mergeSingleSampleGvcf.javaXmx">pipeline.variantcalling.mergeSingleSampleGvcf.javaXmx</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"12G"</code><br />
     The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
 </dd>
-<dt id="pipeline.variantcalling.mergeSingleSample.memory"><a href="#pipeline.variantcalling.mergeSingleSample.memory">pipeline.variantcalling.mergeSingleSample.memory</a></dt>
+<dt id="pipeline.variantcalling.mergeSingleSampleGvcf.memory"><a href="#pipeline.variantcalling.mergeSingleSampleGvcf.memory">pipeline.variantcalling.mergeSingleSampleGvcf.memory</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
+    The amount of memory this job will use.
+</dd>
+<dt id="pipeline.variantcalling.mergeSingleSampleVcf.javaXmx"><a href="#pipeline.variantcalling.mergeSingleSampleVcf.javaXmx">pipeline.variantcalling.mergeSingleSampleVcf.javaXmx</a></dt>
+<dd>
+    <i>String </i><i>&mdash; Default:</i> <code>"8G"</code><br />
+    The maximum memory available to the program. Should be lower than `memory` to accommodate JVM overhead.
+</dd>
+<dt id="pipeline.variantcalling.mergeSingleSampleVcf.memory"><a href="#pipeline.variantcalling.mergeSingleSampleVcf.memory">pipeline.variantcalling.mergeSingleSampleVcf.memory</a></dt>
 <dd>
     <i>String </i><i>&mdash; Default:</i> <code>"24G"</code><br />
     The amount of memory this job will use.
@@ -1571,10 +1651,10 @@ pipeline.
     <i>Boolean </i><i>&mdash; Default:</i> <code>false</code><br />
     Equivalent to biopet scatterregions' `--notSplitContigs` flag.
 </dd>
-<dt id="pipeline.variantcalling.scatterSize"><a href="#pipeline.variantcalling.scatterSize">pipeline.variantcalling.scatterSize</a></dt>
+<dt id="pipeline.variantcalling.scatterSizeMillions"><a href="#pipeline.variantcalling.scatterSizeMillions">pipeline.variantcalling.scatterSizeMillions</a></dt>
 <dd>
-    <i>Int </i><i>&mdash; Default:</i> <code>1000000000</code><br />
-    The size of the scattered regions in bases. Scattering is used to speed up certain processes. The genome will be sseperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.
+    <i>Int </i><i>&mdash; Default:</i> <code>1000</code><br />
+    Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily
 </dd>
 </dl>
 </details>
@@ -1589,6 +1669,7 @@ show them as being available inputs.
 
 * pipeline.sampleJobs.star.outSAMtype
 * pipeline.sampleJobs.star.readFilesCommand
+* pipeline.sampleJobs.DONOTDEFINE
 * pipeline.sampleJobs.qc.FastqcRead1.NoneFile
 * pipeline.sampleJobs.qc.FastqcRead1.NoneArray
 * pipeline.sampleJobs.qc.FastqcRead2.NoneFile

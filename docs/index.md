@@ -65,7 +65,7 @@ Optional settings:
   "pipeline.sample.Sample.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
   "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
   "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs.",
-  "pipeline.scatterSize": "The size of the scattered regions in bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources."
+  "pipeline.scatterSizeMillions": "The size of the scattered regions in million bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources."
 }
 ```
 UMIs are expected to have been extracted from the input fastq files and added to the
@@ -142,7 +142,7 @@ In order to perform variant calling the following inputs are also required:
 ```JSON
 {
   "pipeline.variantCalling": "Whether or not variantcalling should be performed, defaults to False",
-  "pipeline.dbsnpVCF": "A VCF file to aid in the variantcalling. Necessary when variantcalling is true.", 
+  "pipeline.dbsnpVCF": "A VCF file to aid in the variantcalling",
   "pipeline.dbsnpVCFIndex": "The index for the dbsnpVCF"
 }
 ```
@@ -221,20 +221,18 @@ measures.
     file called `all_samples.fragments_per_gene`, which contains the counts for
     all samples.
 - **samples**: Contains a folder per sample.
-  - **&lt;sample>**: Contains a variety of files, including the BAM and gVCF
-  (if variantcalling is enabled) files for this sample, as well as their indexes.
-  (`*.markdup.bam`) and a BAM file with additional preprocessing performed
-    used for variantcalling (`*.markdup.bsqr.bam`). This second BAM file should
-    not be used for expression quantification, because splicing events have
-    been split into separate reads to improve variantcalling. 
+  - **&lt;sample>**: Contains a variety of files, including the BAM and its index
+    (`*.markdup.bam`) and (if variant calling is enabled) a BAM file with additional
+    preprocessing performed used for variantcalling (`*.markdup.bsqr.bam`).
+    This second BAM file should not be used for expression quantification, because
+    splicing events have  been split into separate reads to improve variantcalling.
     It also contains a directory per library.
     
     - **&lt;library>**: 
     This directory also contains a directory per readgroup.
       - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
       in case preprocessing was necessary.
-- **multisample.vcf.gz**: If variantcalling is enabled, a multisample VCF file 
-  with the variantcalling results.
+- **multisample_variants**: If variantcalling is enabled, the variant calling results.
 - **lncrna**: contains all the files for detecting long non-coding RNA transcripts
     - **coding-potential**. Contains a transcripts.fasta file with transcripts from
       the  GFF. In cpat.tsv these transcripts are rated for their coding potential.
