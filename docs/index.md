@@ -236,7 +236,7 @@ measures.
 - **lncrna**: contains all the files for detecting long non-coding RNA transcripts
     - **coding-potential**. Contains a transcripts.fasta file with transcripts from
       the  GFF. In cpat.tsv these transcripts are rated for their coding potential.
-    - **<reference.gtf.d>** Folders where the found transcripts are compared to gtf files from databases.
+    - **&lt;reference.gtf.d>** Folders where the found transcripts are compared to gtf files from databases.
 - **multiqc**: Contains the multiqc report.
 
 ## Contact
