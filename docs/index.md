@@ -217,7 +217,7 @@ measures.
   - **stringtie**: Contains the Stringtie output. Includes two additional files:
     `all_samples.FPKM` and `all_samples.TPM`, which contain the FPKM and TPM values
     for all samples.
-    - **fragments_per_gene**: Contains the HTSeq-Count output. Also contains a
+  - **fragments_per_gene**: Contains the HTSeq-Count output. Also contains a
     file called `all_samples.fragments_per_gene`, which contains the counts for
     all samples.
 - **samples**: Contains a folder per sample.
