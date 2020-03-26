@@ -58,6 +58,11 @@ workflow pipeline {
         File dockerImagesFile
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
+
+        File? XNonParRegions
+        File? YNonParRegions
+        File? variantCallingRegions
+
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -126,7 +131,10 @@ workflow pipeline {
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
                 jointgenotyping=false,
-                dockerImages = dockerImages
+                dockerImages = dockerImages,
+                regions = variantCallingRegions,
+                XNonParRegions = XNonParRegions,
+                YNonParRegions = YNonParRegions
         }
     }
 
@@ -239,6 +247,9 @@ workflow pipeline {
         cpatLogitModel: {description: "A logit model for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         cpatHex: {description: "A hexamer frequency table for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        variantCallingRegions: {description: "A bed file describing the regions to operate on for variant calling.", category: "common"}
+        XNonParRegions: {description: "Bed file with the non-PAR regions of X for variant calling", category: "advanced"}
+        YNonParRegions: {description: "Bed file with the non-PAR regions of Y for variant calling", category: "advanced"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}
