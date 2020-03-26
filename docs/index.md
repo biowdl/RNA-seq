@@ -62,8 +62,8 @@ Optional settings:
 
 ```JSON 
 {
-  "pipeline.sample.Sample.qc.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
-  "pipeline.sample.Sample.qc.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "pipeline.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "pipeline.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
   "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs."
 }
 ```
@@ -143,6 +143,12 @@ In order to perform variant calling the following inputs are also required:
   "pipeline.variantCalling": "Whether or not variantcalling should be performed, defaults to False",
   "pipeline.dbsnpVCF": "A VCF file to aid in the variantcalling. Necessary when variantcalling is true.", 
   "pipeline.dbsnpVCFIndex": "The index for the dbsnpVCF"
+}
+```
+And these settings are optional when variant calling is performed:
+```JSON
+{
+  "pipeline.variantCallingRegions": "A BED file that describes the regions where variants should be called"
 }
 ```
 
