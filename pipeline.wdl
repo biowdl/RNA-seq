@@ -59,7 +59,7 @@ workflow pipeline {
         File? cpatLogitModel
         File? cpatHex
         Boolean umiDeduplication = false
-        Boolean collectUmiStats
+        Boolean collectUmiStats = false
         File dockerImagesFile
         Int scatterSizeMillions = 1000
         Int scatterSize = scatterSizeMillions * 1000000
