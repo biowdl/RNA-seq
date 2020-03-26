@@ -9,6 +9,11 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 3.1.0-dev
+-----------------
++ Move common optional inputs to top-level workflow, so nested inputs are not
+  required anymore for the majority of configurations.
+
 version 3.0.0
 -----------------
 In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best 
