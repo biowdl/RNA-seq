@@ -9,14 +9,16 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 3.0.0-dev
+version 3.0.0
 -----------------
 In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best 
 practices pipeline. Several errors in the variant calling part of the pipeline 
 were fixed.
 
-+ Multisample VCFs are no longer generated for RNA-seq as this is not GATK best
-  practice.
++ UMI deduplication stats collection is now optional.
++ Add scatterSize option to centrally control the scatter size
++ Multisample VCFs are no longer generated for RNA-seq by default as this is 
+  not GATK best practice. It can optionally be turned on again.
 + Add proper copyright headers to WDL files. So the free software license
   is clear to end users who wish to adapt and modify.
 + Added UMI based deduplication as an optional step.

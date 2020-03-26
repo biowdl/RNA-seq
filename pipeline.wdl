@@ -52,6 +52,7 @@ workflow pipeline {
         File? refflatFile
         File? referenceGtfFile
         Array[File] lncRNAdatabases = []
+        Boolean jointgenotyping = false
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
         Boolean detectNovelTranscripts = false
@@ -59,6 +60,8 @@ workflow pipeline {
         File? cpatHex
         Boolean umiDeduplication = false
         File dockerImagesFile
+        Int scatterSizeMillions = 1000
+        Int scatterSize = scatterSizeMillions * 1000000
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
 
@@ -120,7 +123,8 @@ workflow pipeline {
                     referenceFasta = referenceFasta,
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
-                    dockerImages = dockerImages
+                    dockerImages = dockerImages,
+                    scatterSize = scatterSize
             }
             BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
         }
@@ -136,11 +140,13 @@ workflow pipeline {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
-                jointgenotyping=false,
                 dockerImages = dockerImages,
                 regions = variantCallingRegions,
                 XNonParRegions = XNonParRegions,
                 YNonParRegions = YNonParRegions
+                jointgenotyping=jointgenotyping,
+                dockerImages = dockerImages,
+                scatterSize = scatterSize
         }
     }
 
@@ -214,8 +220,12 @@ workflow pipeline {
         File? mergedGtfFile = expression.mergedGtfFile
         File? outputVcf = variantcalling.outputVcf
         File? outputVcfIndex = variantcalling.outputVcfIndex
+        File? outputGVcf = variantcalling.outputGVcf
+        File? outputGVcfIndex = variantcalling.outputGVcfIndex
         Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
         Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
+        Array[File]? singleSampleGvcfs = variantcalling.singleSampleGvcfs
+        Array[File]? singleSampleGvcfsIndex = variantcalling.singleSampleGvcfsIndex
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
@@ -246,6 +256,7 @@ workflow pipeline {
                            category: "common"}
         lncRNAdatabases: {description: "A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`.", category: "common"}
         variantCalling: {description: "Whether or not variantcalling should be performed.", category: "common"}
+        jointgenotyping: {description: "Whether joint genotyping should be performed when Variant Calling. Default: false. Warning: joint genotyping is not part of GATK best practices", category: "advanced"}
         lncRNAdetection: {description: "Whether or not lncRNA detection should be run. This will enable detectNovelTranscript (this cannot be disabled by setting detectNovelTranscript to false). This will require cpatLogitModel and cpatHex to be defined.",
                           category: "common"}
         detectNovelTranscripts: {description: "Whether or not a transcripts assembly should be used. If set to true Stringtie will be used to create a new GTF file based on the BAM files. This generated GTF file will be used for expression quantification. If `referenceGtfFile` is also provided this reference GTF will be used to guide the assembly.",
@@ -262,5 +273,10 @@ workflow pipeline {
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}
+        scatterSize: {description: "The size of the scattered regions in bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources.",
+              category: "advanced"}
+        scatterSizeMillions:{ description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily.",
+                              category: "advanced"}
+
     }
 }
