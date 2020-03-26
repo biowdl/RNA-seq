@@ -42,11 +42,11 @@ workflow Sample {
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        Boolean umiDeduplication = false
+        Boolean umiDeduplication
         String? adapterForward
         String? adapterReverse
         String platform
-        Boolean collectUmiStats = false
+        Boolean collectUmiStats
 
         Map[String, String] dockerImages
 

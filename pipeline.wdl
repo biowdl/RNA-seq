@@ -59,6 +59,7 @@ workflow pipeline {
         File? cpatLogitModel
         File? cpatHex
         Boolean umiDeduplication = false
+        Boolean collectUmiStats
         File dockerImagesFile
         Int scatterSizeMillions = 1000
         Int scatterSize = scatterSizeMillions * 1000000
@@ -103,6 +104,7 @@ workflow pipeline {
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 umiDeduplication = umiDeduplication,
+                collectUmiStats = collectUmiStats,
                 adapterForward = adapterForward,
                 adapterReverse = adapterReverse,
                 platform = platform,
@@ -143,7 +145,7 @@ workflow pipeline {
                 dockerImages = dockerImages,
                 regions = variantCallingRegions,
                 XNonParRegions = XNonParRegions,
-                YNonParRegions = YNonParRegions
+                YNonParRegions = YNonParRegions,
                 jointgenotyping=jointgenotyping,
                 dockerImages = dockerImages,
                 scatterSize = scatterSize
@@ -264,6 +266,8 @@ workflow pipeline {
         cpatLogitModel: {description: "A logit model for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         cpatHex: {description: "A hexamer frequency table for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
+          category: "advanced"}
         variantCallingRegions: {description: "A bed file describing the regions to operate on for variant calling.", category: "common"}
         XNonParRegions: {description: "Bed file with the non-PAR regions of X for variant calling", category: "advanced"}
         YNonParRegions: {description: "Bed file with the non-PAR regions of Y for variant calling", category: "advanced"}
