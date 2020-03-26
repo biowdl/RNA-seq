@@ -142,7 +142,6 @@ workflow pipeline {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
-                dockerImages = dockerImages,
                 regions = variantCallingRegions,
                 XNonParRegions = XNonParRegions,
                 YNonParRegions = YNonParRegions,
