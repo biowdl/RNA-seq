@@ -9,6 +9,11 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version 3.1.0
+-----------------
++ Added a step to generate the STAR index, if neither a STAR nor a Hisat2 index
+  is provided.
+
 version 3.0.0
 -----------------
 In version 3.0.0 the RNA-seq pipeline was brought up to date with the GATK best 
