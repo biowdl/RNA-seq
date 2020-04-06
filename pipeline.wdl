@@ -45,6 +45,9 @@ workflow pipeline {
         File? dbsnpVCFIndex
         Array[File]+? starIndex
         Array[File]+? hisat2Index
+        String? adapterForward = "AGATCGGAAGAG"  # Illumina universal adapter
+        String? adapterReverse = "AGATCGGAAGAG"  # Illumina universal adapter
+        String platform = "illumina"
         String strandedness
         File? refflatFile
         File? referenceGtfFile
@@ -56,11 +59,17 @@ workflow pipeline {
         File? cpatLogitModel
         File? cpatHex
         Boolean umiDeduplication = false
+        Boolean collectUmiStats = false
         File dockerImagesFile
         Int scatterSizeMillions = 1000
         Int scatterSize = scatterSizeMillions * 1000000
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
+
+        File? XNonParRegions
+        File? YNonParRegions
+        File? variantCallingRegions
+
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -95,6 +104,10 @@ workflow pipeline {
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 umiDeduplication = umiDeduplication,
+                collectUmiStats = collectUmiStats,
+                adapterForward = adapterForward,
+                adapterReverse = adapterReverse,
+                platform = platform,
                 dockerImages = dockerImages
         }
         IndexedBamFile markdupBams = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
@@ -129,6 +142,9 @@ workflow pipeline {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
+                regions = variantCallingRegions,
+                XNonParRegions = XNonParRegions,
+                YNonParRegions = YNonParRegions,
                 jointgenotyping=jointgenotyping,
                 dockerImages = dockerImages,
                 scatterSize = scatterSize
@@ -249,6 +265,14 @@ workflow pipeline {
         cpatLogitModel: {description: "A logit model for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         cpatHex: {description: "A hexamer frequency table for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
+          category: "advanced"}
+        variantCallingRegions: {description: "A bed file describing the regions to operate on for variant calling.", category: "common"}
+        XNonParRegions: {description: "Bed file with the non-PAR regions of X for variant calling", category: "advanced"}
+        YNonParRegions: {description: "Bed file with the non-PAR regions of Y for variant calling", category: "advanced"}
+        adapterForward: {description: "The adapter to be removed from the reads first or single end reads.", category: "common"}
+        adapterReverse: {description: "The adapter to be removed from the reads second end reads.", category: "common"}
+        platform: {description: "The platform used for sequencing.", category: "advanced"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}

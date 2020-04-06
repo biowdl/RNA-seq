@@ -44,6 +44,16 @@ pipeline {
             }
         }
 
+        stage('Pull singularity images') {
+            steps {
+                sh "#!/bin/bash\n" +
+                   "set -e -o pipefail\n" +
+                   "export PATH=$PATH:$CROMWELL_PATH\n" +
+                   "prepull-singularity --show-output-on-success --show-output-on-failure --use-digest dockerImages.yml"
+            }
+        }
+
+
         stage('Submodules develop') {
             when {
                 branch 'develop'

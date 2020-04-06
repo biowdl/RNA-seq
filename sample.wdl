@@ -42,9 +42,11 @@ workflow Sample {
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        Boolean umiDeduplication = false
-        Boolean collectUmiStats = false
-        String platform = "illumina"
+        Boolean umiDeduplication
+        String? adapterForward
+        String? adapterReverse
+        String platform
+        Boolean collectUmiStats
 
         Map[String, String] dockerImages
 
@@ -61,6 +63,8 @@ workflow Sample {
                 outputDir = readgroupDir,
                 read1 = readgroup.R1,
                 read2 = readgroup.R2,
+                adapterForward = adapterForward,
+                adapterReverse = adapterReverse,
                 dockerImages = dockerImages
         }
 
@@ -167,6 +171,8 @@ workflow Sample {
         refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
                       category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        adapterForward: {description: "The adapter to be removed from the reads first or single end reads.", category: "common"}
+        adapterReverse: {description: "The adapter to be removed from the reads second end reads.", category: "common"}
         collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
                           category: "advanced"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}
