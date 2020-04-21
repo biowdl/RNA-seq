@@ -73,8 +73,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndUmi.json pipeline.wdl
   files:
-    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.bam"
-    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.bai"
+    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bam"
+    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bai"
 
 - name: Rna3SingleEndHisat2
   tags:
@@ -123,8 +123,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndUmi.json pipeline.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.bam"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.bai"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bam"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bai"
 
 - name: Rna3PairedEndHisat2AndStar
   tags:

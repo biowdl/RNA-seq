@@ -131,13 +131,22 @@ workflow Sample {
                 paired = paired[0], # Assumes that if one readgroup is paired, all are
                 dockerImage = dockerImages["umi-tools"]
         }
+
+        call picard.MarkDuplicates as postUmiDedupMarkDuplicates {
+            input:
+                inputBams = [umiDedup.deduppedBam],
+                inputBamIndexes = [umiDedup.deduppedBamIndex],
+                outputBamPath = outputDir + "/" + sample.id + ".dedup.markdup.bam",
+                metricsPath = outputDir + "/" + sample.id + ".dedup.markdup.metrics",
+                dockerImage = dockerImages["picard"]
+        }
     }
 
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam]),
-            bamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex]),
+            bam = select_first([postUmiDedupMarkDuplicates.outputBam, markDuplicates.outputBam]),
+            bamIndex = select_first([postUmiDedupMarkDuplicates.outputBamIndex, markDuplicates.outputBamIndex]),
             outputDir = outputDir + "/metrics",
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
@@ -149,8 +158,8 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        File outputBam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam])
-        File outputBamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex])
+        File outputBam = select_first([postUmiDedupMarkDuplicates.outputBam, markDuplicates.outputBam])
+        File outputBamIndex = select_first([postUmiDedupMarkDuplicates.outputBamIndex, markDuplicates.outputBamIndex])
         File? umiEditDistance = umiDedup.editDistance
         File? umiStats = umiDedup.umiStats
         File? umiPositionStats = umiDedup.positionStats

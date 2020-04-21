@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 3.1.0-dev
 -----------------
++ Added a picard markduplicates step after UMI deduplication.
 + Move common optional inputs to top-level workflow, so nested inputs are not
   required anymore for the majority of configurations.
 
