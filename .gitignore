@@ -1,8 +1,0 @@
-.idea/
-*.jar
-cromwell-executions/
-cromwell-workflow-logs/
-output/
-target/
-test-output/
-__pycache__/
