@@ -25,8 +25,6 @@ import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
-import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/common.wdl" as common
 import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/multiqc.wdl" as multiqc
