@@ -21,7 +21,8 @@ version 1.0
 # SOFTWARE.
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
@@ -88,6 +89,19 @@ workflow pipeline {
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
 
+    if (variantCalling) {
+        call calcRegions.CalculateRegions as calculateRegions {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                XNonParRegions = XNonParRegions,
+                YNonParRegions = YNonParRegions,
+                regions = variantCallingRegions,
+                scatterSize = scatterSize
+        }
+    }
+
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
         call sampleWorkflow.Sample as sampleJobs {
@@ -126,26 +140,26 @@ workflow pipeline {
                     dockerImages = dockerImages,
                     scatterSize = scatterSize
             }
-            BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
-        }
-    }
 
-    if (variantCalling) {
-        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
-            input:
-                bamFilesAndGenders = select_all(bamGenders),
-                outputDir = outputDir + "/multisample_variants/",
-                dbsnpVCF = select_first([dbsnpVCF]),
-                dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
-                referenceFasta = referenceFasta,
-                referenceFastaFai = referenceFastaFai,
-                referenceFastaDict = referenceFastaDict,
-                regions = variantCallingRegions,
-                XNonParRegions = XNonParRegions,
-                YNonParRegions = YNonParRegions,
-                jointgenotyping=jointgenotyping,
-                dockerImages = dockerImages,
-                scatterSize = scatterSize
+            call variantCallingWorkflow.SingleSampleCalling as variantcalling {
+                input:
+                    bam = preprocessing.recalibratedBam,
+                    bamIndex = preprocessing.recalibratedBamIndex,
+                    gender = sample.gender,
+                    outputDir = outputDir + "/variants/",
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
+                    referenceFastaDict = referenceFastaDict,
+                    dbsnpVCF = select_first([dbsnpVCF]),
+                    dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
+                    XNonParRegions = calculateRegions.Xregions,
+                    YNonParRegions = calculateRegions.Yregions,
+                    dontUseSoftClippedBases = true,  # This is necessary for RNA
+                    standardMinConfidenceThresholdForCalling = 20.0,  # GATK best practice
+                    autosomalRegionScatters = select_first([calculateRegions.autosomalRegionScatters]),
+                    dockerImages = dockerImages                    
+
+            }
         }
     }
 
@@ -217,14 +231,8 @@ workflow pipeline {
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
-        File? outputVcf = variantcalling.outputVcf
-        File? outputVcfIndex = variantcalling.outputVcfIndex
-        File? outputGVcf = variantcalling.outputGVcf
-        File? outputGVcfIndex = variantcalling.outputGVcfIndex
-        Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
-        Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
-        Array[File]? singleSampleGvcfs = variantcalling.singleSampleGvcfs
-        Array[File]? singleSampleGvcfsIndex = variantcalling.singleSampleGvcfsIndex
+        Array[File] singleSampleVcfs = select_all(variantcalling.outputVcf)
+        Array[File] singleSampleVcfsIndex = select_all(variantcalling.outputVcfIndex)
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
