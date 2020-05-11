@@ -218,7 +218,9 @@ workflow pipeline {
                 # so only outputs from workflows that are run are taken
                 # as dependencies
                 # vcfFile
-                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, variantcalling.outputVcfIndex]),
+                dependencies = flatten([
+                    select_all([expression.TPMTable, cpatOutputs, gffComparisons]), 
+                    select_all(variantcalling.outputVcfIndex)]),
                 outDir = outputDir + "/multiqc",
                 analysisDirectory = outputDir,
                 dockerImage = dockerImages["multiqc"]
