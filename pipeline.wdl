@@ -97,7 +97,8 @@ workflow pipeline {
                 XNonParRegions = XNonParRegions,
                 YNonParRegions = YNonParRegions,
                 regions = variantCallingRegions,
-                scatterSize = scatterSize
+                scatterSize = scatterSize,
+                dockerImages = dockerImages
         }
     }
 
