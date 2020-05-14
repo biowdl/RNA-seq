@@ -145,7 +145,7 @@ workflow pipeline {
                 input:
                     bam = preprocessing.recalibratedBam,
                     bamIndex = preprocessing.recalibratedBamIndex,
-                    gender = sample.gender,
+                    gender = select_first([sample.gender, "unknown"]),
                     sampleName = sample.id,
                     outputDir = outputDir + "/variants/",
                     referenceFasta = referenceFasta,
