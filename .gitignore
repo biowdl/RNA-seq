@@ -1,0 +1,4 @@
+cromwell-executions/
+cromwell-workflow-logs/
+test-output/
+__pycache__/
