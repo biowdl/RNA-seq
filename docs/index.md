@@ -238,7 +238,7 @@ measures.
     This directory also contains a directory per readgroup.
       - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
       in case preprocessing was necessary.
-- **multisample_variants**: If variantcalling is enabled, the variant calling results.
+- **variants**: If variantcalling is enabled, the variant calling results.
 - **lncrna**: contains all the files for detecting long non-coding RNA transcripts
     - **coding-potential**. Contains a transcripts.fasta file with transcripts from
       the  GFF. In cpat.tsv these transcripts are rated for their coding potential.

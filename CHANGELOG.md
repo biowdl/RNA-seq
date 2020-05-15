@@ -14,6 +14,10 @@ version 3.1.0-dev
 + Added a picard markduplicates step after UMI deduplication.
 + Move common optional inputs to top-level workflow, so nested inputs are not
   required anymore for the majority of configurations.
++ The pipeline has been altered so it starts the variant calling jobs in a more
+  efficient way.
++ Major bug fix: The --dont-use-soft-clipped-reads is now used on 
+  HaplotypeCaller in concordance with GATK best practices.
 
 version 3.0.0
 -----------------

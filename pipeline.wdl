@@ -21,12 +21,11 @@ version 1.0
 # SOFTWARE.
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
-import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/common.wdl" as common
 import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/multiqc.wdl" as multiqc
@@ -52,7 +51,6 @@ workflow pipeline {
         File? refflatFile
         File? referenceGtfFile
         Array[File] lncRNAdatabases = []
-        Boolean jointgenotyping = false
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
         Boolean detectNovelTranscripts = false
@@ -89,6 +87,20 @@ workflow pipeline {
             outputFile = outputDir + "/samples.json"
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
+
+    if (variantCalling) {
+        call calcRegions.CalculateRegions as calculateRegions {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                XNonParRegions = XNonParRegions,
+                YNonParRegions = YNonParRegions,
+                regions = variantCallingRegions,
+                scatterSize = scatterSize,
+                dockerImages = dockerImages
+        }
+    }
 
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
@@ -128,26 +140,27 @@ workflow pipeline {
                     dockerImages = dockerImages,
                     scatterSize = scatterSize
             }
-            BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
-        }
-    }
 
-    if (variantCalling) {
-        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
-            input:
-                bamFilesAndGenders = select_all(bamGenders),
-                outputDir = outputDir + "/multisample_variants/",
-                dbsnpVCF = select_first([dbsnpVCF]),
-                dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
-                referenceFasta = referenceFasta,
-                referenceFastaFai = referenceFastaFai,
-                referenceFastaDict = referenceFastaDict,
-                regions = variantCallingRegions,
-                XNonParRegions = XNonParRegions,
-                YNonParRegions = YNonParRegions,
-                jointgenotyping=jointgenotyping,
-                dockerImages = dockerImages,
-                scatterSize = scatterSize
+            call variantCallingWorkflow.SingleSampleCalling as variantcalling {
+                input:
+                    bam = preprocessing.recalibratedBam,
+                    bamIndex = preprocessing.recalibratedBamIndex,
+                    gender = select_first([sample.gender, "unknown"]),
+                    sampleName = sample.id,
+                    outputDir = outputDir + "/variants/",
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
+                    referenceFastaDict = referenceFastaDict,
+                    dbsnpVCF = select_first([dbsnpVCF]),
+                    dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
+                    XNonParRegions = calculateRegions.Xregions,
+                    YNonParRegions = calculateRegions.Yregions,
+                    dontUseSoftClippedBases = true,  # This is necessary for RNA
+                    standardMinConfidenceThresholdForCalling = 20.0,  # GATK best practice
+                    autosomalRegionScatters = select_first([calculateRegions.autosomalRegionScatters]),
+                    dockerImages = dockerImages                    
+
+            }
         }
     }
 
@@ -206,7 +219,9 @@ workflow pipeline {
                 # so only outputs from workflows that are run are taken
                 # as dependencies
                 # vcfFile
-                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, variantcalling.outputVcfIndex]),
+                dependencies = flatten([
+                    select_all([expression.TPMTable, cpatOutputs, gffComparisons]), 
+                    select_all(variantcalling.outputVcfIndex)]),
                 outDir = outputDir + "/multiqc",
                 analysisDirectory = outputDir,
                 dockerImage = dockerImages["multiqc"]
@@ -219,14 +234,8 @@ workflow pipeline {
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
-        File? outputVcf = variantcalling.outputVcf
-        File? outputVcfIndex = variantcalling.outputVcfIndex
-        File? outputGVcf = variantcalling.outputGVcf
-        File? outputGVcfIndex = variantcalling.outputGVcfIndex
-        Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
-        Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
-        Array[File]? singleSampleGvcfs = variantcalling.singleSampleGvcfs
-        Array[File]? singleSampleGvcfsIndex = variantcalling.singleSampleGvcfsIndex
+        Array[File] singleSampleVcfs = select_all(variantcalling.outputVcf)
+        Array[File] singleSampleVcfsIndex = select_all(variantcalling.outputVcfIndex)
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
@@ -257,7 +266,6 @@ workflow pipeline {
                            category: "common"}
         lncRNAdatabases: {description: "A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`.", category: "common"}
         variantCalling: {description: "Whether or not variantcalling should be performed.", category: "common"}
-        jointgenotyping: {description: "Whether joint genotyping should be performed when Variant Calling. Default: false. Warning: joint genotyping is not part of GATK best practices", category: "advanced"}
         lncRNAdetection: {description: "Whether or not lncRNA detection should be run. This will enable detectNovelTranscript (this cannot be disabled by setting detectNovelTranscript to false). This will require cpatLogitModel and cpatHex to be defined.",
                           category: "common"}
         detectNovelTranscripts: {description: "Whether or not a transcripts assembly should be used. If set to true Stringtie will be used to create a new GTF file based on the BAM files. This generated GTF file will be used for expression quantification. If `referenceGtfFile` is also provided this reference GTF will be used to guide the assembly.",
