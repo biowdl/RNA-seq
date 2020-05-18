@@ -161,14 +161,17 @@ workflow SampleWorkflow {
         File? umiEditDistance = umiDedup.editDistance
         File? umiStats = umiDedup.umiStats
         File? umiPositionStats = umiDedup.positionStats
+        Array[File] qcReports = flatten(qc.reports)
+        Array[File] bamMetricsReports = bamMetrics.reports 
+        Array[File] markdupReports = select_all([markDuplicates.metricsFile, postUmiDedupMarkDuplicates.metricsFile])
+        Array[File] umiReports = select_all([umiStats, umiPositionStats])
+        Array[File] alignmentReports = flatten([select_all(star.logFinalOut), select_all(hisat2.summaryFile)])
         Array[File] reports = flatten([
-            flatten(qc.reports), 
-            bamMetrics.reports, 
-            select_all([umiStats, 
-                        umiPositionStats, 
-                        postUmiDedupMarkDuplicates.metricsFile, 
-                        markDuplicates.metricsFile,
-                        star.logFinalOut])
+            qcReports,
+            bamMetricsReports,
+            markdupReports,
+            umiReports,
+            alignmentReports
             ])
     }
 
