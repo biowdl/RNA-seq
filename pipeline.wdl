@@ -202,13 +202,9 @@ workflow pipeline {
                     dockerImage = dockerImages["gffcompare"]
             }
         }
-        # These files are created so that multiqc has some dependencies to wait for.
-        # In theory this could be done by all sort of flattening array stuff, but
-        # this is the simplest way. I could not get the other ways to work.
-        File cpatOutputs = write_lines([CPAT.outFile])
-        File gffComparisons = write_lines(GffCompare.annotated)
+        Array[File] gffComparisonFiles = flatten(GffCompare.allFiles)
     }
-
+    
     Array[File] sampleJobReports = flatten(sampleJobs.reports)
     Array[File] baseRecalibrationReports = select_all(flatten([preprocessing.BQSRreport]))
     Array[File] quantificationReports = flatten([expression.sampleFragmentsPerGeneTables, [expression.fragmentsPerGeneTable]])
@@ -242,7 +238,7 @@ workflow pipeline {
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats
         Array[File] reports = allReports
-
+        Array[File]? gffCompareFiles = gffComparisonFiles 
     }
 
     parameter_meta {
