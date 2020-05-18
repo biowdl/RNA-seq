@@ -209,6 +209,11 @@ workflow pipeline {
         File gffComparisons = write_lines(GffCompare.annotated)
     }
 
+    Array[File] sampleJobReports = flatten(sampleJobs.reports)
+    Array[File] baseRecalibrationReports = select_all(flatten([preprocessing.BQSRreport]))
+    Array[File] quantificationReports = flatten([expression.sampleFragmentsPerGeneTables, [expression.fragmentsPerGeneTable]])
+    Array[File] allReports = flatten([sampleJobReports, baseRecalibrationReports, quantificationReports])
+
     call multiqc.MultiQC as multiqcTask {
         input:
             # Multiqc will only run if these files are created.
@@ -216,13 +221,13 @@ workflow pipeline {
             # so only outputs from workflows that are run are taken
             # as dependencies
             # vcfFile
-            reports = flatten(sampleJobs.reports),
+            reports = allReports,
             outDir = outputDir + "/multiqc",
             dockerImage = dockerImages["multiqc"]
     }
 
     output {
-        File? report = multiqcTask.multiqcReport
+        File report = multiqcTask.multiqcReport
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
@@ -236,6 +241,8 @@ workflow pipeline {
         Array[File?] umiEditDistance = sampleJobs.umiEditDistance
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats
+        Array[File] reports = allReports
+
     }
 
     parameter_meta {
