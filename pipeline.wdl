@@ -61,8 +61,6 @@ workflow pipeline {
         File dockerImagesFile
         Int scatterSizeMillions = 1000
         Int scatterSize = scatterSizeMillions * 1000000
-        # Only run multiQC if the user specified an outputDir
-        Boolean runMultiQC = outputDir != "."
 
         File? XNonParRegions
         File? YNonParRegions
@@ -104,7 +102,7 @@ workflow pipeline {
 
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
-        call sampleWorkflow.Sample as sampleJobs {
+        call sampleWorkflow.SampleWorkflow as sampleJobs {
             input:
                 sample = sample,
                 outputDir = outputDir + "/samples/" + sample.id,
@@ -211,21 +209,16 @@ workflow pipeline {
         File gffComparisons = write_lines(GffCompare.annotated)
     }
 
-    if (runMultiQC) {
-        call multiqc.MultiQC as multiqcTask {
-            input:
-                # Multiqc will only run if these files are created.
-                # Need to do some select_all and flatten magic here
-                # so only outputs from workflows that are run are taken
-                # as dependencies
-                # vcfFile
-                dependencies = flatten([
-                    select_all([expression.TPMTable, cpatOutputs, gffComparisons]), 
-                    select_all(variantcalling.outputVcfIndex)]),
-                outDir = outputDir + "/multiqc",
-                analysisDirectory = outputDir,
-                dockerImage = dockerImages["multiqc"]
-        }
+    call multiqc.MultiQC as multiqcTask {
+        input:
+            # Multiqc will only run if these files are created.
+            # Need to do some select_all and flatten magic here
+            # so only outputs from workflows that are run are taken
+            # as dependencies
+            # vcfFile
+            reports = [],
+            outDir = outputDir + "/multiqc",
+            dockerImage = dockerImages["multiqc"]
     }
 
     output {

@@ -23,15 +23,13 @@ version 1.0
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
 import "structs.wdl" as structs
-import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
 import "tasks/star.wdl" as starTask
 import "tasks/hisat2.wdl" as hisat2Task
 import "tasks/picard.wdl" as picard
 import "tasks/umi-tools.wdl" as umiTools
 
-workflow Sample {
+workflow SampleWorkflow {
     input {
         Sample sample
         String outputDir
