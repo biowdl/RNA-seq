@@ -125,8 +125,6 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
 
 - name: FunctionalPairedEndVariantCalling
   tags:
