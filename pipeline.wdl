@@ -216,7 +216,7 @@ workflow pipeline {
             # so only outputs from workflows that are run are taken
             # as dependencies
             # vcfFile
-            reports = [],
+            reports = flatten(sampleJobs.reports),
             outDir = outputDir + "/multiqc",
             dockerImage = dockerImages["multiqc"]
     }

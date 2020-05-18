@@ -161,6 +161,15 @@ workflow SampleWorkflow {
         File? umiEditDistance = umiDedup.editDistance
         File? umiStats = umiDedup.umiStats
         File? umiPositionStats = umiDedup.positionStats
+        Array[File] reports = flatten([
+            flatten(qc.reports), 
+            bamMetrics.reports, 
+            select_all([umiStats, 
+                        umiPositionStats, 
+                        postUmiDedupMarkDuplicates.metricsFile, 
+                        markDuplicates.metricsFile,
+                        star.logFinalOut])
+            ])
     }
 
     parameter_meta {
