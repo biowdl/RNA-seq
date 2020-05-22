@@ -1,7 +1,6 @@
 - name: Rna3SingleEndVariantCalling
   tags:
     - integration
-    - no_docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndVariantCalling.json pipeline.wdl
@@ -9,16 +8,14 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc/multiqc_report.html"
 
 - name: Rna3PairedEndVariantCalling
   tags:
     - integration
-    - docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/PairedEndVariantCalling.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndVariantCalling.json pipeline.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -30,7 +27,6 @@
 - name: Rna3SingleEndLncRna
   tags:
     - integration
-    - no_docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndLncRna.json pipeline.wdl
@@ -40,33 +36,27 @@
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-
+    - path: "test-output/multiqc/multiqc_report.html"
 
 - name: Rna3PairedEndLncRna
   tags:
     - integration
-    - docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/PairedEndLncRna.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndLncRna.json pipeline.wdl
   files:
+    - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
-      should_exist: false
 
 - name: Rna3SingleEndUmi
   tags:
     - umi
     - integration
-    - no_docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndUmi.json pipeline.wdl
@@ -77,7 +67,6 @@
 - name: Rna3SingleEndHisat2
   tags:
     - integration
-    - no_docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndHisat2.json pipeline.wdl
@@ -93,12 +82,9 @@
 - name: Rna3PairedEndHisat2
   tags:
     - integration
-    - docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/PairedEndHisat2.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndHisat2.json pipeline.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -108,15 +94,11 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
-      should_exist: false
-    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
 
 - name: Rna3PairedEndUmi
   tags:
     - umi
     - integration
-    - no_docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndUmi.json pipeline.wdl
@@ -129,10 +111,8 @@
     - integration
     - docker_conf
   command: >-
-    bash -c '
-    TEST_JSON=tests/integration/PairedEndHisat2AndStar.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndHisat2AndStar.json pipeline.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -142,17 +122,13 @@
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/samples/rna3-paired-end/star/rna3-paired-end-lib1-rg1.Aligned.sortedByCoord.out.bam"
-    - path: "test-output/samples/rna3-paired-end/hisat2/rna3-paired-end-lib1-rg1.bam"
 
 - name: FunctionalPairedEndVariantCalling
   tags:
     - functional
   command: >-
-    bash -c '
-    TEST_JSON=tests/functional/PairedEndVariantCalling.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/functional/PairedEndVariantCalling.json pipeline.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -165,10 +141,8 @@
   tags:
     - functional
   command: >-
-    bash -c '
-    TEST_JSON=tests/functional/PairedEndLncRna.json ;
-    sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
-    cromwell run -i $TEST_JSON pipeline.wdl'
+    cromwell run -o tests/cromwell_options.json
+    -i tests/functional/PairedEndLncRna.json pipeline.wdl
   files:
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"

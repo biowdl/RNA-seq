@@ -61,8 +61,6 @@ workflow pipeline {
         File dockerImagesFile
         Int scatterSizeMillions = 1000
         Int scatterSize = scatterSizeMillions * 1000000
-        # Only run multiQC if the user specified an outputDir
-        Boolean runMultiQC = outputDir != "."
 
         File? XNonParRegions
         File? YNonParRegions
@@ -104,7 +102,7 @@ workflow pipeline {
 
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
-        call sampleWorkflow.Sample as sampleJobs {
+        call sampleWorkflow.SampleWorkflow as sampleJobs {
             input:
                 sample = sample,
                 outputDir = outputDir + "/samples/" + sample.id,
@@ -204,32 +202,23 @@ workflow pipeline {
                     dockerImage = dockerImages["gffcompare"]
             }
         }
-        # These files are created so that multiqc has some dependencies to wait for.
-        # In theory this could be done by all sort of flattening array stuff, but
-        # this is the simplest way. I could not get the other ways to work.
-        File cpatOutputs = write_lines([CPAT.outFile])
-        File gffComparisons = write_lines(GffCompare.annotated)
+        Array[File] gffComparisonFiles = flatten(GffCompare.allFiles)
     }
+    
+    Array[File] sampleJobReports = flatten(sampleJobs.reports)
+    Array[File] baseRecalibrationReports = select_all(flatten([preprocessing.BQSRreport]))
+    Array[File] quantificationReports = flatten([expression.sampleFragmentsPerGeneTables, [expression.fragmentsPerGeneTable]])
+    Array[File] allReports = flatten([sampleJobReports, baseRecalibrationReports, quantificationReports])
 
-    if (runMultiQC) {
-        call multiqc.MultiQC as multiqcTask {
-            input:
-                # Multiqc will only run if these files are created.
-                # Need to do some select_all and flatten magic here
-                # so only outputs from workflows that are run are taken
-                # as dependencies
-                # vcfFile
-                dependencies = flatten([
-                    select_all([expression.TPMTable, cpatOutputs, gffComparisons]), 
-                    select_all(variantcalling.outputVcfIndex)]),
-                outDir = outputDir + "/multiqc",
-                analysisDirectory = outputDir,
-                dockerImage = dockerImages["multiqc"]
-        }
+    call multiqc.MultiQC as multiqcTask {
+        input:
+            reports = allReports,
+            outDir = outputDir + "/multiqc",
+            dockerImage = dockerImages["multiqc"]
     }
 
     output {
-        File? report = multiqcTask.multiqcReport
+        File report = multiqcTask.multiqcReport
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
@@ -243,6 +232,8 @@ workflow pipeline {
         Array[File?] umiEditDistance = sampleJobs.umiEditDistance
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats
+        Array[File] reports = allReports
+        Array[File]? gffCompareFiles = gffComparisonFiles 
     }
 
     parameter_meta {

@@ -14,8 +14,18 @@ developed by the SASC team at [Leiden University Medical Center](https://www.lum
 This pipeline can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
 ```bash
-java -jar cromwell-<version>.jar run -i inputs.json pipeline.wdl
+java -jar cromwell-<version>.jar run -o options.json -i inputs.json pipeline.wdl
 ```
+
+Where `options.json` contains the following json:
+```json
+{
+  "final_workflow_outputs_dir": "/path/to/outputs",
+  "use_relative_output_paths": true,
+}
+```
+The `options.json` will make sure all outputs end up in `/path/to/outputs` in
+an easy to navigate folder structure. 
 
 ### Dependency requirements and tool versions
 Biowdl pipelines use docker images to ensure  reproducibility. This
@@ -46,7 +56,6 @@ For an overview of all available inputs, see [this page](./inputs.html).
   "pipeline.referenceFasta": "A path to a reference fasta",
   "pipeline.referenceFastaFai": "The path to the index associated with the reference fasta",
   "pipeline.referenceFastaDict": "The path to the dict file associated with the reference fasta",
-  "pipeline.outputDir": "The path to the output directory",
   "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
   "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
   "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
@@ -190,7 +199,6 @@ The following is an example of what an inputs JSON might look like:
   "pipeline.lncRNAdatabases": ["/home/user/genomes/human/NONCODE.gtf"],
   "pipeline.cpatLogitModel": "/home/user/genomes/human/GRCH38_logit",
   "pipeline.cpatHex": "/home/user/genomes/human/GRCH38_hex.tab",
-  "pipeline.outputDir": "/home/user/analysis/results",
   "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
   "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
   "pipeline.strandedness": "RF",
