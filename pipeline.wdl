@@ -212,11 +212,6 @@ workflow pipeline {
 
     call multiqc.MultiQC as multiqcTask {
         input:
-            # Multiqc will only run if these files are created.
-            # Need to do some select_all and flatten magic here
-            # so only outputs from workflows that are run are taken
-            # as dependencies
-            # vcfFile
             reports = allReports,
             outDir = outputDir + "/multiqc",
             dockerImage = dockerImages["multiqc"]
