@@ -11,6 +11,9 @@ that users understand how the changes affect the new version.
 
 version 3.1.0-dev
 -----------------
++ Tasks were updated to contain the `time_minutes` runtime attribute and
+  associated `timeMinutes` input, describing the maximum time the task will
+  take to run.
 + Added a step to generate the STAR index, if neither a STAR nor a Hisat2 index
   is provided.
 + Added a picard markduplicates step after UMI deduplication.

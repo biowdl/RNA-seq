@@ -55,6 +55,9 @@ For an overview of all available inputs, see [this page](./inputs.html).
 If you wish to use hisat2 instead, set the list of hisat2 index files on
 `pipeline.hisat2Index`.
 
+If neither a `starIndex` nor a `hisat2Index` is provided, then a STAR index will be generated
+on the fly using the provided GTF file and reference Fasta.
+
 The `referenceGtfFile` may also be omitted, in this case Stringtie will be used to 
 perform an unguided assembly, which will then be used for expression quantification.
 
