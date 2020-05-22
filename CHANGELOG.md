@@ -9,8 +9,14 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 3.1.0-dev
+version 4.0.0-dev
 -----------------
++ Document the use of cromwell's `final_workflow_outputs_dir` feature which 
+  makes the RNA-seq pipeline usable on all of Cromwell's supported backends. 
+  Users are encouraged to use this feature. `outputDir` references are 
+  removed from the documentation.
++ Make the MultiQC task suitable for use with a `final_workflow_outputs_dir` 
+  so it can be used on all of Cromwell's supported backends.
 + Added a picard markduplicates step after UMI deduplication.
 + Move common optional inputs to top-level workflow, so nested inputs are not
   required anymore for the majority of configurations.
