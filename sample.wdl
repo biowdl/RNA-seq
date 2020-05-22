@@ -42,9 +42,11 @@ workflow Sample {
         Array[File]+? hisat2Index
         String strandedness
         File? refflatFile
-        Boolean umiDeduplication = false
-        Boolean collectUmiStats = false
-        String platform = "illumina"
+        Boolean umiDeduplication
+        String? adapterForward
+        String? adapterReverse
+        String platform
+        Boolean collectUmiStats
 
         Map[String, String] dockerImages
 
@@ -61,6 +63,8 @@ workflow Sample {
                 outputDir = readgroupDir,
                 read1 = readgroup.R1,
                 read2 = readgroup.R2,
+                adapterForward = adapterForward,
+                adapterReverse = adapterReverse,
                 dockerImages = dockerImages
         }
 
@@ -127,13 +131,22 @@ workflow Sample {
                 paired = paired[0], # Assumes that if one readgroup is paired, all are
                 dockerImage = dockerImages["umi-tools"]
         }
+
+        call picard.MarkDuplicates as postUmiDedupMarkDuplicates {
+            input:
+                inputBams = [umiDedup.deduppedBam],
+                inputBamIndexes = [umiDedup.deduppedBamIndex],
+                outputBamPath = outputDir + "/" + sample.id + ".dedup.markdup.bam",
+                metricsPath = outputDir + "/" + sample.id + ".dedup.markdup.metrics",
+                dockerImage = dockerImages["picard"]
+        }
     }
 
     # Gather BAM Metrics
     call metrics.BamMetrics as bamMetrics {
         input:
-            bam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam]),
-            bamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex]),
+            bam = select_first([postUmiDedupMarkDuplicates.outputBam, markDuplicates.outputBam]),
+            bamIndex = select_first([postUmiDedupMarkDuplicates.outputBamIndex, markDuplicates.outputBamIndex]),
             outputDir = outputDir + "/metrics",
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
@@ -145,8 +158,8 @@ workflow Sample {
 
     output {
         String sampleName = sample.id
-        File outputBam = select_first([umiDedup.deduppedBam, markDuplicates.outputBam])
-        File outputBamIndex = select_first([umiDedup.deduppedBamIndex, markDuplicates.outputBamIndex])
+        File outputBam = select_first([postUmiDedupMarkDuplicates.outputBam, markDuplicates.outputBam])
+        File outputBamIndex = select_first([postUmiDedupMarkDuplicates.outputBamIndex, markDuplicates.outputBamIndex])
         File? umiEditDistance = umiDedup.editDistance
         File? umiStats = umiDedup.umiStats
         File? umiPositionStats = umiDedup.positionStats
@@ -167,6 +180,8 @@ workflow Sample {
         refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
                       category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        adapterForward: {description: "The adapter to be removed from the reads first or single end reads.", category: "common"}
+        adapterReverse: {description: "The adapter to be removed from the reads second end reads.", category: "common"}
         collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
                           category: "advanced"}
         platform: {description: "The platform used for sequencing.", category: "advanced"}

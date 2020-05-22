@@ -6,8 +6,6 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndVariantCalling.json pipeline.wdl
   files:
-    - path: "test-output/multisample_variants/multisample.g.vcf.gz"
-    - path: "test-output/multisample_variants/multisample.vcf.gz"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -37,8 +35,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -88,8 +86,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndUmi.json pipeline.wdl
   files:
-    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.bam"
-    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.bai"
+    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bam"
+    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bai"
 
 - name: Rna3SingleEndHisat2
   tags:
@@ -99,8 +97,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndHisat2.json pipeline.wdl
   files:
-    - path: "test-output/multisample_variants/samples/rna3-single-end.markdup.bqsr.vcf.gz"
-    - path: "test-output/multisample_variants/samples/rna3-single-end.markdup.bqsr.vcf.gz.tbi"
+    - path: "test-output/variants/rna3-single-end.vcf.gz"
+    - path: "test-output/variants/rna3-single-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -117,8 +115,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -138,8 +136,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndUmi.json pipeline.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.bam"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.bai"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bam"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bai"
 
 - name: Rna3PairedEndHisat2AndStar
   tags:
@@ -151,8 +149,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -171,8 +169,8 @@
     sed -i "2i\"pipeline.outputDir\":\"$PWD/test-output\"," $TEST_JSON ;
     cromwell run -i $TEST_JSON pipeline.wdl'
   files:
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz"
-    - path: "test-output/multisample_variants/samples/rna3-paired-end.markdup.bqsr.vcf.gz.tbi"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz"
+    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"

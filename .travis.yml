@@ -40,6 +40,7 @@ matrix:
       - TEST=Rna3PairedEndLncRna
       - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"
     - env: TEST=Rna3SingleEndLncRna
+    - env: TEST=Rna3PairedEndUmi
     - env:
       - TEST=Rna3PairedEndHisat2
       - _JAVA_OPTIONS="-Dconfig.file=tests/cromwell_config/docker.conf"

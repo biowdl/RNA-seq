@@ -22,11 +22,10 @@ version 1.0
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
-import "gatk-variantcalling/gatk-variantcalling.wdl" as variantCallingWorkflow
+import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
+import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
-import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/biopet/sampleconfig.wdl" as sampleconfig
 import "tasks/biowdl.wdl" as biowdl
 import "tasks/common.wdl" as common
 import "tasks/CPAT.wdl" as cpat
@@ -46,22 +45,30 @@ workflow pipeline {
         File? dbsnpVCFIndex
         Array[File]+? starIndex
         Array[File]+? hisat2Index
+        String? adapterForward = "AGATCGGAAGAG"  # Illumina universal adapter
+        String? adapterReverse = "AGATCGGAAGAG"  # Illumina universal adapter
+        String platform = "illumina"
         String strandedness
         File? refflatFile
         File? referenceGtfFile
         Array[File] lncRNAdatabases = []
-        Boolean jointgenotyping = false
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
         Boolean detectNovelTranscripts = false
         File? cpatLogitModel
         File? cpatHex
         Boolean umiDeduplication = false
+        Boolean collectUmiStats = false
         File dockerImagesFile
         Int scatterSizeMillions = 1000
         Int scatterSize = scatterSizeMillions * 1000000
         # Only run multiQC if the user specified an outputDir
         Boolean runMultiQC = outputDir != "."
+
+        File? XNonParRegions
+        File? YNonParRegions
+        File? variantCallingRegions
+
     }
 
     String expressionDir = outputDir + "/expression_measures/"
@@ -92,6 +99,20 @@ workflow pipeline {
         }
     }
 
+    if (variantCalling) {
+        call calcRegions.CalculateRegions as calculateRegions {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaFai = referenceFastaFai,
+                referenceFastaDict = referenceFastaDict,
+                XNonParRegions = XNonParRegions,
+                YNonParRegions = YNonParRegions,
+                regions = variantCallingRegions,
+                scatterSize = scatterSize,
+                dockerImages = dockerImages
+        }
+    }
+
     # Start processing of data
     scatter (sample in sampleConfig.samples) {
         call sampleWorkflow.Sample as sampleJobs {
@@ -106,6 +127,10 @@ workflow pipeline {
                 strandedness = strandedness,
                 refflatFile = refflatFile,
                 umiDeduplication = umiDeduplication,
+                collectUmiStats = collectUmiStats,
+                adapterForward = adapterForward,
+                adapterReverse = adapterReverse,
+                platform = platform,
                 dockerImages = dockerImages
         }
         IndexedBamFile markdupBams = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
@@ -126,23 +151,27 @@ workflow pipeline {
                     dockerImages = dockerImages,
                     scatterSize = scatterSize
             }
-            BamAndGender bamGenders = object {file: preprocessing.recalibratedBam, index: preprocessing.recalibratedBamIndex, gender: sample.gender }
-        }
-    }
 
-    if (variantCalling) {
-        call variantCallingWorkflow.GatkVariantCalling as variantcalling {
-            input:
-                bamFilesAndGenders = select_all(bamGenders),
-                outputDir = outputDir + "/multisample_variants/",
-                dbsnpVCF = select_first([dbsnpVCF]),
-                dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
-                referenceFasta = referenceFasta,
-                referenceFastaFai = referenceFastaFai,
-                referenceFastaDict = referenceFastaDict,
-                jointgenotyping=jointgenotyping,
-                dockerImages = dockerImages,
-                scatterSize = scatterSize
+            call variantCallingWorkflow.SingleSampleCalling as variantcalling {
+                input:
+                    bam = preprocessing.recalibratedBam,
+                    bamIndex = preprocessing.recalibratedBamIndex,
+                    gender = select_first([sample.gender, "unknown"]),
+                    sampleName = sample.id,
+                    outputDir = outputDir + "/variants/",
+                    referenceFasta = referenceFasta,
+                    referenceFastaFai = referenceFastaFai,
+                    referenceFastaDict = referenceFastaDict,
+                    dbsnpVCF = select_first([dbsnpVCF]),
+                    dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
+                    XNonParRegions = calculateRegions.Xregions,
+                    YNonParRegions = calculateRegions.Yregions,
+                    dontUseSoftClippedBases = true,  # This is necessary for RNA
+                    standardMinConfidenceThresholdForCalling = 20.0,  # GATK best practice
+                    autosomalRegionScatters = select_first([calculateRegions.autosomalRegionScatters]),
+                    dockerImages = dockerImages                    
+
+            }
         }
     }
 
@@ -201,7 +230,9 @@ workflow pipeline {
                 # so only outputs from workflows that are run are taken
                 # as dependencies
                 # vcfFile
-                dependencies = select_all([expression.TPMTable, cpatOutputs, gffComparisons, variantcalling.outputVcfIndex]),
+                dependencies = flatten([
+                    select_all([expression.TPMTable, cpatOutputs, gffComparisons]), 
+                    select_all(variantcalling.outputVcfIndex)]),
                 outDir = outputDir + "/multiqc",
                 analysisDirectory = outputDir,
                 dockerImage = dockerImages["multiqc"]
@@ -214,14 +245,8 @@ workflow pipeline {
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
-        File? outputVcf = variantcalling.outputVcf
-        File? outputVcfIndex = variantcalling.outputVcfIndex
-        File? outputGVcf = variantcalling.outputGVcf
-        File? outputGVcfIndex = variantcalling.outputGVcfIndex
-        Array[File]? singleSampleVcfs = variantcalling.singleSampleVcfs
-        Array[File]? singleSampleVcfsIndex = variantcalling.singleSampleVcfsIndex
-        Array[File]? singleSampleGvcfs = variantcalling.singleSampleGvcfs
-        Array[File]? singleSampleGvcfsIndex = variantcalling.singleSampleGvcfsIndex
+        Array[File] singleSampleVcfs = select_all(variantcalling.outputVcf)
+        Array[File] singleSampleVcfsIndex = select_all(variantcalling.outputVcfIndex)
         File? cpatOutput = CPAT.outFile
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
@@ -253,7 +278,6 @@ workflow pipeline {
                            category: "common"}
         lncRNAdatabases: {description: "A set of GTF files the assembled GTF file should be compared with. Only used if lncRNAdetection is set to `true`.", category: "common"}
         variantCalling: {description: "Whether or not variantcalling should be performed.", category: "common"}
-        jointgenotyping: {description: "Whether joint genotyping should be performed when Variant Calling. Default: false. Warning: joint genotyping is not part of GATK best practices", category: "advanced"}
         lncRNAdetection: {description: "Whether or not lncRNA detection should be run. This will enable detectNovelTranscript (this cannot be disabled by setting detectNovelTranscript to false). This will require cpatLogitModel and cpatHex to be defined.",
                           category: "common"}
         detectNovelTranscripts: {description: "Whether or not a transcripts assembly should be used. If set to true Stringtie will be used to create a new GTF file based on the BAM files. This generated GTF file will be used for expression quantification. If `referenceGtfFile` is also provided this reference GTF will be used to guide the assembly.",
@@ -261,6 +285,14 @@ workflow pipeline {
         cpatLogitModel: {description: "A logit model for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         cpatHex: {description: "A hexamer frequency table for CPAT. Required if lncRNAdetection is `true`.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
+          category: "advanced"}
+        variantCallingRegions: {description: "A bed file describing the regions to operate on for variant calling.", category: "common"}
+        XNonParRegions: {description: "Bed file with the non-PAR regions of X for variant calling", category: "advanced"}
+        YNonParRegions: {description: "Bed file with the non-PAR regions of Y for variant calling", category: "advanced"}
+        adapterForward: {description: "The adapter to be removed from the reads first or single end reads.", category: "common"}
+        adapterReverse: {description: "The adapter to be removed from the reads second end reads.", category: "common"}
+        platform: {description: "The platform used for sequencing.", category: "advanced"}
         dockerImagesFile: {description: "A YAML file describing the docker image used for the tasks. The dockerImages.yml provided with the pipeline is recommended.",
                            category: "advanced"}
         runMultiQC: {description: "Whether or not MultiQC should be run.", category: "advanced"}
