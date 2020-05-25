@@ -21,17 +21,18 @@ version 1.0
 # SOFTWARE.
 
 import "expression-quantification/multi-bam-quantify.wdl" as expressionQuantification
-import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
-import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
 import "gatk-preprocess/gatk-preprocess.wdl" as preprocess
+import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
+import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
-import "tasks/common.wdl" as common
-import "tasks/gffcompare.wdl" as gffcompare
-import "tasks/multiqc.wdl" as multiqc
-import "tasks/CPAT.wdl" as cpat
-import "tasks/gffread.wdl" as gffread
 import "tasks/biowdl.wdl" as biowdl
+import "tasks/common.wdl" as common
+import "tasks/CPAT.wdl" as cpat
+import "tasks/gffcompare.wdl" as gffcompare
+import "tasks/gffread.wdl" as gffread
+import "tasks/multiqc.wdl" as multiqc
+import "tasks/star.wdl" as star
 
 workflow pipeline {
     input {
@@ -86,6 +87,16 @@ workflow pipeline {
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
 
+    # Generate STAR index of no indexes are given
+    if (!defined(starIndex) && !defined(hisat2Index)) {
+        call star.GenomeGenerate as makeStarIndex {
+            input:
+                referenceFasta = referenceFasta,
+                referenceGtf = referenceGtfFile,
+                dockerImage = dockerImages["star"]
+        }
+    }
+
     if (variantCalling) {
         call calcRegions.CalculateRegions as calculateRegions {
             input:
@@ -109,7 +120,7 @@ workflow pipeline {
                 referenceFasta = referenceFasta,
                 referenceFastaFai = referenceFastaFai,
                 referenceFastaDict = referenceFastaDict,
-                starIndex = starIndex,
+                starIndex = if defined(starIndex) then starIndex else makeStarIndex.starIndex,
                 hisat2Index = hisat2Index,
                 strandedness = strandedness,
                 refflatFile = refflatFile,
@@ -232,8 +243,9 @@ workflow pipeline {
         Array[File?] umiEditDistance = sampleJobs.umiEditDistance
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats
+        Array[File]? generatedStarIndex = makeStarIndex.starIndex
         Array[File] reports = allReports
-        Array[File]? gffCompareFiles = gffComparisonFiles 
+        Array[File]? gffCompareFiles = gffComparisonFiles
     }
 
     parameter_meta {
