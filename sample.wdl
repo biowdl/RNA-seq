@@ -23,15 +23,13 @@ version 1.0
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
 import "structs.wdl" as structs
-import "tasks/biopet/biopet.wdl" as biopet
-import "tasks/common.wdl" as common
 import "tasks/samtools.wdl" as samtools
 import "tasks/star.wdl" as starTask
 import "tasks/hisat2.wdl" as hisat2Task
 import "tasks/picard.wdl" as picard
 import "tasks/umi-tools.wdl" as umiTools
 
-workflow Sample {
+workflow SampleWorkflow {
     input {
         Sample sample
         String outputDir
@@ -163,6 +161,18 @@ workflow Sample {
         File? umiEditDistance = umiDedup.editDistance
         File? umiStats = umiDedup.umiStats
         File? umiPositionStats = umiDedup.positionStats
+        Array[File] qcReports = flatten(qc.reports)
+        Array[File] bamMetricsReports = bamMetrics.reports 
+        Array[File] markdupReports = select_all([markDuplicates.metricsFile, postUmiDedupMarkDuplicates.metricsFile])
+        Array[File] umiReports = select_all([umiStats, umiPositionStats])
+        Array[File] alignmentReports = flatten([select_all(star.logFinalOut), select_all(hisat2.summaryFile)])
+        Array[File] reports = flatten([
+            qcReports,
+            bamMetricsReports,
+            markdupReports,
+            umiReports,
+            alignmentReports
+            ])
     }
 
     parameter_meta {
