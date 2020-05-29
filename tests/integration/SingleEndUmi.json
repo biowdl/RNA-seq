@@ -1,11 +1,11 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd_umi.csv",
-  "pipeline.dockerImagesFile": "dockerImages.yml",
-  "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
-  "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
-  "pipeline.referenceFastaDict": "tests/data/reference/reference.dict",
-  "pipeline.strandedness": "None",
-  "pipeline.starIndex": [
+  "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd_umi.csv",
+  "RNAseq.dockerImagesFile": "dockerImages.yml",
+  "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
+  "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
+  "RNAseq.strandedness": "None",
+  "RNAseq.starIndex": [
     "tests/data/reference/star/chrLength.txt",
     "tests/data/reference/star/chrName.txt",
     "tests/data/reference/star/chrNameLength.txt",
@@ -15,9 +15,9 @@
     "tests/data/reference/star/SA",
     "tests/data/reference/star/SAindex"
   ],
-  "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
-  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
-  "pipeline.variantCalling": false,
-  "pipeline.lncRNAdetection": false,
-  "pipeline.umiDeduplication": true
+  "RNAseq.referenceGtfFile": "tests/data/reference/reference.gtf",
+  "RNAseq.refflatFile": "tests/data/reference/reference.refflat",
+  "RNAseq.variantCalling": false,
+  "RNAseq.lncRNAdetection": false,
+  "RNAseq.umiDeduplication": true
 }

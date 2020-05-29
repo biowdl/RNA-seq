@@ -1,14 +1,14 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
-  "pipeline.dockerImagesFile": "dockerImages.yml",
-  "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
-  "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
-  "pipeline.referenceFastaDict": "tests/data/reference/reference.dict",
-  "pipeline.strandedness": "None",
-  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
-  "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
-  "pipeline.dbsnpVCF": "tests/data/wgs2.vcf.gz",
-  "pipeline.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi",
-  "pipeline.variantCalling": true,
-  "pipeline.lncRNAdetection": false
+  "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
+  "RNAseq.dockerImagesFile": "dockerImages.yml",
+  "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
+  "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
+  "RNAseq.strandedness": "None",
+  "RNAseq.refflatFile": "tests/data/reference/reference.refflat",
+  "RNAseq.referenceGtfFile": "tests/data/reference/reference.gtf",
+  "RNAseq.dbsnpVCF": "tests/data/wgs2.vcf.gz",
+  "RNAseq.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi",
+  "RNAseq.variantCalling": true,
+  "RNAseq.lncRNAdetection": false
 }

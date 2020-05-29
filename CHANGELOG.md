@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 4.0.0-dev
 -----------------
++ The pipeline was renamed from "pipeline" to "RNAseq".
 + Tasks were updated to contain the `time_minutes` runtime attribute and
   associated `timeMinutes` input, describing the maximum time the task will
   take to run.

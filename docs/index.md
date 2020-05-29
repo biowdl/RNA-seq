@@ -4,8 +4,10 @@ title: Home
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
-It will perform quality control (using FastQC and MultiQC), adapter clipping (using cutadapt), mapping (using STAR or HISAT2) and expression quantification and transcript assembly (using HTSeq-Count and Stringtie). Optionally variantcalling 
-(based on the GATK Best Practises) and lncRNA detection (using CPAT) can also be performed.
+It will perform quality control (using FastQC and MultiQC), adapter clipping (using cutadapt),
+mapping (using STAR or HISAT2) and expression quantification and transcript assembly (using 
+HTSeq-Count and Stringtie). Optionally variantcalling (based on the GATK Best Practises) and
+lncRNA detection (using CPAT) can also be performed.
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
 developed by the SASC team at [Leiden University Medical Center](https://www.lumc.nl/).
@@ -14,7 +16,7 @@ developed by the SASC team at [Leiden University Medical Center](https://www.lum
 This pipeline can be run using
 [Cromwell](http://cromwell.readthedocs.io/en/stable/):
 ```bash
-java -jar cromwell-<version>.jar run -o options.json -i inputs.json pipeline.wdl
+java -jar cromwell-<version>.jar run -o options.json -i inputs.json RNA-seq.wdl
 ```
 
 Where `options.json` contains the following json:
@@ -50,19 +52,19 @@ For an overview of all available inputs, see [this page](./inputs.html).
 
 ```JSON
 {
-  "pipeline.sampleConfigFile":"The sample configuration file. See below for more details.",
-  "pipeline.dockerImagesFile": "A file listing the used docker images.",
-  "pipeline.starIndex": "A list of star index files.",
-  "pipeline.referenceFasta": "A path to a reference fasta",
-  "pipeline.referenceFastaFai": "The path to the index associated with the reference fasta",
-  "pipeline.referenceFastaDict": "The path to the dict file associated with the reference fasta",
-  "pipeline.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
-  "pipeline.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
-  "pipeline.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
+  "RNAseq.sampleConfigFile":"The sample configuration file. See below for more details.",
+  "RNAseq.dockerImagesFile": "A file listing the used docker images.",
+  "RNAseq.starIndex": "A list of star index files.",
+  "RNAseq.referenceFasta": "A path to a reference fasta",
+  "RNAseq.referenceFastaFai": "The path to the index associated with the reference fasta",
+  "RNAseq.referenceFastaDict": "The path to the dict file associated with the reference fasta",
+  "RNAseq.refflatFile": "Reference annotation Refflat file. This will be used for expression quantification.",
+  "RNAseq.referenceGtfFile": "Reference annotation GTF file. This will be used for expression quantification.",
+  "RNAseq.strandedness": "Indicates the strandedness of the input data. This should be one of the following: FR (Forward, Reverse), RF (Reverse, Forward) or None: (Unstranded)"
 }
 ```
 If you wish to use hisat2 instead, set the list of hisat2 index files on
-`pipeline.hisat2Index`.
+`RNAseq.hisat2Index`.
 
 If neither a `starIndex` nor a `hisat2Index` is provided, then a STAR index will be generated
 on the fly using the provided GTF file and reference Fasta.
@@ -74,10 +76,10 @@ Optional settings:
 
 ```JSON
 {
-  "pipeline.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
-  "pipeline.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
-  "pipeline.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs.",
-  "pipeline.scatterSizeMillions": "The size of the scattered regions in million bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources."
+  "RNAseq.adapterForward": "Used to set a forward read adapter. Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "RNAseq.adapterReverse": "Used to set a reverse read adapter (for paired-end reads). Default: Illumina Universal Adapter  AGATCGGAAGAG",
+  "RNAseq.umiDeduplication": "Whether or not UMI based deduplication should be run. See the notes below on UMIs.",
+  "RNAseq.scatterSizeMillions": "The size of the scattered regions in million bases for the GATK subworkflows. Scattering is used to speed up certain processes. The genome will be seperated into multiple chunks (scatters) which will be processed in their own job, allowing for parallel processing. Higher values will result in a lower number of jobs. The optimal value here will depend on the available resources."
 }
 ```
 UMIs are expected to have been extracted from the input fastq files and added to the
@@ -153,15 +155,15 @@ given per sample.
 In order to perform variant calling the following inputs are also required:
 ```JSON
 {
-  "pipeline.variantCalling": "Whether or not variantcalling should be performed, defaults to False",
-  "pipeline.dbsnpVCF": "A VCF file to aid in the variantcalling",
-  "pipeline.dbsnpVCFIndex": "The index for the dbsnpVCF"
+  "RNAseq.variantCalling": "Whether or not variantcalling should be performed, defaults to False",
+  "RNAseq.dbsnpVCF": "A VCF file to aid in the variantcalling",
+  "RNAseq.dbsnpVCFIndex": "The index for the dbsnpVCF"
 }
 ```
 And these settings are optional when variant calling is performed:
 ```JSON
 {
-  "pipeline.variantCallingRegions": "A BED file that describes the regions where variants should be called"
+  "RNAseq.variantCallingRegions": "A BED file that describes the regions where variants should be called"
 }
 ```
 
@@ -169,10 +171,10 @@ And these settings are optional when variant calling is performed:
 In order to perform lncRNA detection the following inputs are also required:
 ```JSON
 {
-  "pipeline.lncRNAdetection": "Whether or not lncRNA detection should be performed, defaults to False",
-  "pipeline.lncRNAdatabases": "A list of gtf files containing known lncRNAs",
-  "pipeline.cpatLogitModel": "The CPAT logitModel to be used",
-  "pipeline.cpatHex": "The CPAT hexamer tab file to be used"
+  "RNAseq.lncRNAdetection": "Whether or not lncRNA detection should be performed, defaults to False",
+  "RNAseq.lncRNAdatabases": "A list of gtf files containing known lncRNAs",
+  "RNAseq.cpatLogitModel": "The CPAT logitModel to be used",
+  "RNAseq.cpatHex": "The CPAT hexamer tab file to be used"
 }
 ```
 
@@ -181,8 +183,8 @@ In order to perform lncRNA detection the following inputs are also required:
 The following is an example of what an inputs JSON might look like:
 ```JSON
 {
- "pipeline.sampleConfigFile":"/home/user/analysis/samples.yml",
-  "pipeline.starIndex": [
+ "RNAseq.sampleConfigFile":"/home/user/analysis/samples.yml",
+  "RNAseq.starIndex": [
     "/reference/star/chrLength.txt",
     "/reference/star/chrName.txt",
     "/reference/star/chrNameLength.txt",
@@ -192,20 +194,20 @@ The following is an example of what an inputs JSON might look like:
     "/reference/star/SA",
     "/reference/star/SAindex"
   ],
-  "pipeline.variantCalling": true,
-  "pipeline.lncRNAdetection": true,
-  "pipeline.referenceFasta": "/home/user/genomes/human/GRCh38.fasta",
-  "pipeline.referenceFastaFai": "/home/user/genomes/human/GRCh38.fasta.fai",
-  "pipeline.referenceFastaDict": "/home/user/genomes/human/GRCh38.dict",
-  "pipeline.dbsnpVCF": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
-  "pipeline.dbsnpVCFIndex": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi",
-  "pipeline.lncRNAdatabases": ["/home/user/genomes/human/NONCODE.gtf"],
-  "pipeline.cpatLogitModel": "/home/user/genomes/human/GRCH38_logit",
-  "pipeline.cpatHex": "/home/user/genomes/human/GRCH38_hex.tab",
-  "pipeline.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
-  "pipeline.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
-  "pipeline.strandedness": "RF",
-  "pipeline.dockerImagesFile": "dockerImages.yml"
+  "RNAseq.variantCalling": true,
+  "RNAseq.lncRNAdetection": true,
+  "RNAseq.referenceFasta": "/home/user/genomes/human/GRCh38.fasta",
+  "RNAseq.referenceFastaFai": "/home/user/genomes/human/GRCh38.fasta.fai",
+  "RNAseq.referenceFastaDict": "/home/user/genomes/human/GRCh38.dict",
+  "RNAseq.dbsnpVCF": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz",
+  "RNAseq.dbsnpVCFIndex": "/home/user/genomes/human/dbsnp/dbsnp-151.vcf.gz.tbi",
+  "RNAseq.lncRNAdatabases": ["/home/user/genomes/human/NONCODE.gtf"],
+  "RNAseq.cpatLogitModel": "/home/user/genomes/human/GRCH38_logit",
+  "RNAseq.cpatHex": "/home/user/genomes/human/GRCH38_hex.tab",
+  "RNAseq.refflatFile": "/home/user/genomes/human/GRCH38_annotation.refflat",
+  "RNAseq.gtfFile": "/home/user/genomes/human/GRCH38_annotation.gtf",
+  "RNAseq.strandedness": "RF",
+  "RNAseq.dockerImagesFile": "dockerImages.yml"
 }
 ```
 

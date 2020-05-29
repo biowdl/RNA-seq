@@ -1,13 +1,13 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/FunctionalPairedEnd.yml",
-  "pipeline.dockerTagsFile": "dockerTags.yml",
-  "pipeline.reference": {
+  "RNAseq.sampleConfigFile": "tests/samplesheets/FunctionalPairedEnd.yml",
+  "RNAseq.dockerTagsFile": "dockerTags.yml",
+  "RNAseq.reference": {
     "fasta": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa",
     "fai": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa.fai",
     "dict": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.dict"
   },
-  "pipeline.strandedness": "None",
-  "pipeline.starIndex": [
+  "RNAseq.strandedness": "None",
+  "RNAseq.starIndex": [
     "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrLength.txt",
     "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrName.txt",
     "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrNameLength.txt",
@@ -17,12 +17,12 @@
     "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SA",
     "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SAindex"
   ],
-  "pipeline.variantCalling": false,
-  "pipeline.lncRNAdetection": true,
-  "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
-  "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
-  "pipeline.lncRNAdatabases": [
+  "RNAseq.variantCalling": false,
+  "RNAseq.lncRNAdetection": true,
+  "RNAseq.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
+  "RNAseq.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
+  "RNAseq.lncRNAdatabases": [
     "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/features/ensembl_87/ensembl.87.gtf"
   ],
-  "pipeline.sample.Sample.library.Library.starAlignment.AlignStar.star.runThreadN": 8
+  "RNAseq.sample.Sample.library.Library.starAlignment.AlignStar.star.runThreadN": 8
 }
