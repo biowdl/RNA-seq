@@ -34,7 +34,7 @@ import "tasks/gffread.wdl" as gffread
 import "tasks/multiqc.wdl" as multiqc
 import "tasks/star.wdl" as star
 
-workflow pipeline {
+workflow RNAseq {
     input {
         File sampleConfigFile
         String outputDir = "."

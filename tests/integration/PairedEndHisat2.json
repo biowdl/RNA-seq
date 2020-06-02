@@ -1,11 +1,11 @@
 {
-  "pipeline.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd.yml",
-  "pipeline.dockerImagesFile": "dockerImages.yml",
-  "pipeline.referenceFasta": "tests/data/reference/reference.fasta",
-  "pipeline.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
-  "pipeline.referenceFastaDict": "tests/data/reference/reference.dict",
-  "pipeline.strandedness": "None",
-  "pipeline.hisat2Index": [
+  "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3PairedEnd.yml",
+  "RNAseq.dockerImagesFile": "dockerImages.yml",
+  "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
+  "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+  "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
+  "RNAseq.strandedness": "None",
+  "RNAseq.hisat2Index": [
     "tests/data/reference/hisat2/reference.1.ht2",
     "tests/data/reference/hisat2/reference.2.ht2",
     "tests/data/reference/hisat2/reference.3.ht2",
@@ -15,15 +15,15 @@
     "tests/data/reference/hisat2/reference.7.ht2",
     "tests/data/reference/hisat2/reference.8.ht2"
   ],
-  "pipeline.variantCalling": true,
-  "pipeline.lncRNAdetection": true,
-  "pipeline.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
-  "pipeline.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
-  "pipeline.lncRNAdatabases": [
+  "RNAseq.variantCalling": true,
+  "RNAseq.lncRNAdetection": true,
+  "RNAseq.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
+  "RNAseq.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
+  "RNAseq.lncRNAdatabases": [
     "tests/data/reference/reference.gtf"
   ],
-  "pipeline.refflatFile": "tests/data/reference/reference.refflat",
-  "pipeline.referenceGtfFile": "tests/data/reference/reference.gtf",
-  "pipeline.dbsnpVCF": "tests/data/wgs2.vcf.gz",
-  "pipeline.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi"
+  "RNAseq.refflatFile": "tests/data/reference/reference.refflat",
+  "RNAseq.referenceGtfFile": "tests/data/reference/reference.gtf",
+  "RNAseq.dbsnpVCF": "tests/data/wgs2.vcf.gz",
+  "RNAseq.dbsnpVCFIndex": "tests/data/wgs2.vcf.gz.tbi"
 }

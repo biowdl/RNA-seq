@@ -3,7 +3,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/SingleEndVariantCalling.json pipeline.wdl
+    -i tests/integration/SingleEndVariantCalling.json RNA-seq.wdl
   files:
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
@@ -30,7 +30,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/PairedEndVariantCalling.json pipeline.wdl
+    -i tests/integration/PairedEndVariantCalling.json RNA-seq.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -44,7 +44,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/SingleEndLncRna.json pipeline.wdl
+    -i tests/integration/SingleEndLncRna.json RNA-seq.wdl
   files:
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
@@ -58,7 +58,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/PairedEndLncRna.json pipeline.wdl
+    -i tests/integration/PairedEndLncRna.json RNA-seq.wdl
   files:
     - path: "test-output/multiqc/multiqc_report.html"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
@@ -74,7 +74,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/SingleEndUmi.json pipeline.wdl
+    -i tests/integration/SingleEndUmi.json RNA-seq.wdl
   files:
     - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bam"
     - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bai"
@@ -84,7 +84,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/SingleEndHisat2.json pipeline.wdl
+    -i tests/integration/SingleEndHisat2.json RNA-seq.wdl
   files:
     - path: "test-output/variants/rna3-single-end.vcf.gz"
     - path: "test-output/variants/rna3-single-end.vcf.gz.tbi"
@@ -99,7 +99,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/PairedEndHisat2.json pipeline.wdl
+    -i tests/integration/PairedEndHisat2.json RNA-seq.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -116,7 +116,7 @@
     - integration
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/PairedEndUmi.json pipeline.wdl
+    -i tests/integration/PairedEndUmi.json RNA-seq.wdl
   files:
     - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bam"
     - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bai"
@@ -127,7 +127,7 @@
     - docker_conf
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/integration/PairedEndHisat2AndStar.json pipeline.wdl
+    -i tests/integration/PairedEndHisat2AndStar.json RNA-seq.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -143,7 +143,7 @@
     - functional
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/functional/PairedEndVariantCalling.json pipeline.wdl
+    -i tests/functional/PairedEndVariantCalling.json RNA-seq.wdl
   files:
     - path: "test-output/variants/rna3-paired-end.vcf.gz"
     - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
@@ -157,7 +157,7 @@
     - functional
   command: >-
     cromwell run -o tests/cromwell_options.json
-    -i tests/functional/PairedEndLncRna.json pipeline.wdl
+    -i tests/functional/PairedEndLncRna.json RNA-seq.wdl
   files:
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
