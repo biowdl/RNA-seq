@@ -184,7 +184,7 @@ workflow RNAseq {
     }
 
     if (lncRNAdetection) {
-        call gffread.GffRead as gffread {
+        call gffread.GffRead as gffreadTask {
             input:
                 inputGff = select_first([expression.mergedGtfFile]),
                 genomicSequence = referenceFasta,
@@ -195,7 +195,7 @@ workflow RNAseq {
 
         call cpat.CPAT as CPAT {
             input:
-                gene = select_first([gffread.exonsFasta]),
+                gene = select_first([gffreadTask.exonsFasta]),
                 referenceGenome = referenceFasta,
                 referenceGenomeIndex = referenceFastaFai,
                 hex = select_first([cpatHex]),
