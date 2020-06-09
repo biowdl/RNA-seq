@@ -61,7 +61,7 @@ workflow RNAseq {
         Boolean collectUmiStats = false
         File dockerImagesFile
         Int scatterSizeMillions = 1000
-        Int scatterSize = scatterSizeMillions * 1000000
+        Int? scatterSize
 
         File? XNonParRegions
         File? YNonParRegions
@@ -107,6 +107,7 @@ workflow RNAseq {
                 YNonParRegions = YNonParRegions,
                 regions = variantCallingRegions,
                 scatterSize = scatterSize,
+                scatterSizeMillions = scatterSizeMillions,
                 dockerImages = dockerImages
         }
     }
@@ -147,7 +148,8 @@ workflow RNAseq {
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages,
-                    scatterSize = scatterSize
+                    scatterSize = scatterSize,
+                    scatterSizeMillions = scatterSizeMillions
             }
 
             call variantCallingWorkflow.SingleSampleCalling as variantcalling {
