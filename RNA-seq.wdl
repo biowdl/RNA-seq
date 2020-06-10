@@ -26,6 +26,7 @@ import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
 import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
+import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biowdl.wdl" as biowdl
 import "tasks/common.wdl" as common
 import "tasks/CPAT.wdl" as cpat
@@ -98,6 +99,7 @@ workflow RNAseq {
     }
 
     if (variantCalling) {
+        # Prepare variantcalling scatters
         call calcRegions.CalculateRegions as calculateRegions {
             input:
                 referenceFasta = referenceFasta,
@@ -109,6 +111,18 @@ workflow RNAseq {
                 scatterSize = scatterSize,
                 scatterSizeMillions = scatterSizeMillions,
                 dockerImages = dockerImages
+        }
+
+        # Prepare GATK preprocessing scatters. 
+        call biopet.ScatterRegions as scatterList {
+            input:
+                referenceFasta = referenceFasta,
+                referenceFastaDict = referenceFastaDict,
+                scatterSize = scatterSize,
+                scatterSizeMillions = scatterSizeMillions,
+                notSplitContigs = true,
+                regions = variantCallingRegions,
+                dockerImage = dockerImages["biopet-scatterregions"]
         }
     }
 
@@ -132,9 +146,10 @@ workflow RNAseq {
                 platform = platform,
                 dockerImages = dockerImages
         }
+  
         IndexedBamFile markdupBams = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
+  
         if (variantCalling) {
-        # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
                 input:
                     bam = sampleJobs.outputBam,
@@ -148,8 +163,7 @@ workflow RNAseq {
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages,
-                    scatterSize = scatterSize,
-                    scatterSizeMillions = scatterSizeMillions
+                    scatters = select_first([scatterList.scatters])
             }
 
             call variantCallingWorkflow.SingleSampleCalling as variantcalling {
