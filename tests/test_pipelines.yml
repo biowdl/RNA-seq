@@ -12,7 +12,7 @@
     - path: "test-output/STAR_index/chrNameLength.txt"
     - path: "test-output/STAR_index/chrName.txt"
     - path: "test-output/STAR_index/chrStart.txt"
-    - path: "test-output/STAR_index/genome.txt"
+    - path: "test-output/STAR_index/Genome"
     - path: "test-output/STAR_index/genomeParameters.txt"
     - path: "test-output/STAR_index/SA"
     - path: "test-output/STAR_index/SAindex"
