@@ -26,8 +26,8 @@ import "gatk-variantcalling/calculate-regions.wdl" as calcRegions
 import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingWorkflow
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
-import "tasks/biopet/biopet.wdl" as biopet
 import "tasks/biowdl.wdl" as biowdl
+import "tasks/chunked-scatter.wdl" as chunkedScatter
 import "tasks/common.wdl" as common
 import "tasks/CPAT.wdl" as cpat
 import "tasks/gffcompare.wdl" as gffcompare
@@ -114,15 +114,12 @@ workflow RNAseq {
         }
 
         # Prepare GATK preprocessing scatters. 
-        call biopet.ScatterRegions as scatterList {
+        call chunkedScatter.ScatterRegions as scatterList {
             input:
-                referenceFasta = referenceFasta,
-                referenceFastaDict = referenceFastaDict,
+                inputFile = select_first([variantCallingRegions, referenceFastaFai]),
                 scatterSize = scatterSize,
                 scatterSizeMillions = scatterSizeMillions,
-                notSplitContigs = true,
-                regions = variantCallingRegions,
-                dockerImage = dockerImages["biopet-scatterregions"]
+                dockerImage = dockerImages["chunked-scatter"]
         }
     }
 

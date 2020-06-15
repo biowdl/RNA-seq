@@ -9,7 +9,7 @@
 # Tools are sorted alphabetically for ease of use.
 bedtools: "quay.io/biocontainers/bedtools:2.23.0--hdbcaa40_3"
 biowdl-input-converter: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_0"
-biopet-scatterregions: "quay.io/biocontainers/biopet-scatterregions:0.2--0"
+chunked-scatter: "biowdl/chunked-scatter:latest"
 cutadapt: "quay.io/biocontainers/cutadapt:2.8--py37h516909a_0"
 cpat: "biocontainers/cpat:v1.2.4_cv1"
 collect-columns: "quay.io/biocontainers/collect-columns:0.2.0--py_1"
