@@ -232,7 +232,8 @@ workflow RNAseq {
     Array[File] sampleJobReports = flatten(sampleJobs.reports)
     Array[File] baseRecalibrationReports = select_all(flatten([preprocessing.BQSRreport]))
     Array[File] quantificationReports = flatten([expression.sampleFragmentsPerGeneTables, [expression.fragmentsPerGeneTable]])
-    Array[File] allReports = flatten([sampleJobReports, baseRecalibrationReports, quantificationReports])
+    Array[File] variantCallingReports = flatten(select_all(variantcalling.reports))
+    Array[File] allReports = flatten([sampleJobReports, baseRecalibrationReports, quantificationReports, variantCallingReports])
 
     call multiqc.MultiQC as multiqcTask {
         input:
