@@ -27,6 +27,7 @@ import "gatk-variantcalling/single-sample-variantcalling.wdl" as variantCallingW
 import "sample.wdl" as sampleWorkflow
 import "structs.wdl" as structs
 import "tasks/biowdl.wdl" as biowdl
+import "tasks/chunked-scatter.wdl" as chunkedScatter
 import "tasks/common.wdl" as common
 import "tasks/CPAT.wdl" as cpat
 import "tasks/gffcompare.wdl" as gffcompare
@@ -61,7 +62,7 @@ workflow RNAseq {
         Boolean collectUmiStats = false
         File dockerImagesFile
         Int scatterSizeMillions = 1000
-        Int scatterSize = scatterSizeMillions * 1000000
+        Int? scatterSize
 
         File? XNonParRegions
         File? YNonParRegions
@@ -98,6 +99,7 @@ workflow RNAseq {
     }
 
     if (variantCalling) {
+        # Prepare variantcalling scatters
         call calcRegions.CalculateRegions as calculateRegions {
             input:
                 referenceFasta = referenceFasta,
@@ -107,7 +109,17 @@ workflow RNAseq {
                 YNonParRegions = YNonParRegions,
                 regions = variantCallingRegions,
                 scatterSize = scatterSize,
+                scatterSizeMillions = scatterSizeMillions,
                 dockerImages = dockerImages
+        }
+
+        # Prepare GATK preprocessing scatters. 
+        call chunkedScatter.ScatterRegions as scatterList {
+            input:
+                inputFile = select_first([variantCallingRegions, referenceFastaFai]),
+                scatterSize = scatterSize,
+                scatterSizeMillions = scatterSizeMillions,
+                dockerImage = dockerImages["chunked-scatter"]
         }
     }
 
@@ -131,9 +143,10 @@ workflow RNAseq {
                 platform = platform,
                 dockerImages = dockerImages
         }
+  
         IndexedBamFile markdupBams = {"file": sampleJobs.outputBam, "index": sampleJobs.outputBamIndex}
+  
         if (variantCalling) {
-        # Preprocess BAM for variant calling
             call preprocess.GatkPreprocess as preprocessing {
                 input:
                     bam = sampleJobs.outputBam,
@@ -147,7 +160,7 @@ workflow RNAseq {
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
                     dockerImages = dockerImages,
-                    scatterSize = scatterSize
+                    scatters = select_first([scatterList.scatters])
             }
 
             call variantCallingWorkflow.SingleSampleCalling as variantcalling {
@@ -184,7 +197,7 @@ workflow RNAseq {
     }
 
     if (lncRNAdetection) {
-        call gffread.GffRead as gffread {
+        call gffread.GffRead as gffreadTask {
             input:
                 inputGff = select_first([expression.mergedGtfFile]),
                 genomicSequence = referenceFasta,
@@ -195,7 +208,7 @@ workflow RNAseq {
 
         call cpat.CPAT as CPAT {
             input:
-                gene = select_first([gffread.exonsFasta]),
+                gene = select_first([gffreadTask.exonsFasta]),
                 referenceGenome = referenceFasta,
                 referenceGenomeIndex = referenceFastaFai,
                 hex = select_first([cpatHex]),
@@ -219,7 +232,8 @@ workflow RNAseq {
     Array[File] sampleJobReports = flatten(sampleJobs.reports)
     Array[File] baseRecalibrationReports = select_all(flatten([preprocessing.BQSRreport]))
     Array[File] quantificationReports = flatten([expression.sampleFragmentsPerGeneTables, [expression.fragmentsPerGeneTable]])
-    Array[File] allReports = flatten([sampleJobReports, baseRecalibrationReports, quantificationReports])
+    Array[File] variantCallingReports = flatten(select_all(variantcalling.reports))
+    Array[File] allReports = flatten([sampleJobReports, baseRecalibrationReports, quantificationReports, variantCallingReports])
 
     call multiqc.MultiQC as multiqcTask {
         input:

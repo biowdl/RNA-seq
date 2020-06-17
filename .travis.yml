@@ -38,8 +38,8 @@ script:
 matrix:
   include:
     - env: TEST=Rna3PairedEndVariantCalling
+    - env: TEST=Rna3SingleEndVariantCalling
     - env: TEST=Rna3PairedEndLncRna
-    - env: TEST=Rna3SingleEndLncRna
     - env: TEST=Rna3PairedEndUmi
     - env: TEST=Rna3PairedEndHisat2
     - env: TEST=Rna3PairedEndHisat2AndStar
