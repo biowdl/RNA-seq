@@ -11,6 +11,8 @@ that users understand how the changes affect the new version.
 
 version 4.0.0-dev
 -----------------
++ The output directory was simplified. All files related to a sample are now
+  in the `samples/<sample_id>` directory.
 + Use the scatter-regions tool to replace biopet-scatterregions.
 + The pipeline was renamed from "pipeline" to "RNAseq".
 + Tasks were updated to contain the `time_minutes` runtime attribute and
