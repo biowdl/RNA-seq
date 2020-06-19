@@ -245,18 +245,16 @@ measures.
     preprocessing performed used for variantcalling (`*.markdup.bsqr.bam`).
     This second BAM file should not be used for expression quantification, because
     splicing events have  been split into separate reads to improve variantcalling.
-    It also contains a directory per library.
-    
-    - **&lt;library>**: 
-    This directory also contains a directory per readgroup.
-      - **&lt;readgroup>**: Contains QC metrics and preprocessed FastQ files,
-      in case preprocessing was necessary.
-- **variants**: If variantcalling is enabled, the variant calling results.
+    It also contains a directory per library. The vcf files for each sample are also 
+    here.
+    - **&lt;library--readgroup>**: Contains QC metrics and preprocessed FastQ files,
+      in case preprocessing was necessary. Also contains alignment reports for
+      the individual readgroup.
 - **lncrna**: contains all the files for detecting long non-coding RNA transcripts
     - **coding-potential**. Contains a transcripts.fasta file with transcripts from
       the  GFF. In cpat.tsv these transcripts are rated for their coding potential.
     - **&lt;reference.gtf.d>** Folders where the found transcripts are compared to gtf files from databases.
-- **multiqc**: Contains the multiqc report.
+- **multiqc_report.html**: The multiqc report.
 
 ## Contact
 <p>
