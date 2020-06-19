@@ -23,7 +23,7 @@
     - path: "test-output/STAR_index/sjdbList.fromGTF.out.tab"
     - path: "test-output/STAR_index/sjdbList.out.tab"
     - path: "test-output/STAR_index/transcriptInfo.tab"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
 
 - name: Rna3PairedEndVariantCalling
   tags:
@@ -32,12 +32,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndVariantCalling.json RNA-seq.wdl
   files:
-    - path: "test-output/variants/rna3-paired-end.vcf.gz"
-    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
 
 - name: Rna3SingleEndLncRna
   tags:
@@ -51,7 +51,7 @@
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
 
 - name: Rna3PairedEndLncRna
   tags:
@@ -60,11 +60,11 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndLncRna.json RNA-seq.wdl
   files:
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
 
@@ -86,8 +86,8 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndHisat2.json RNA-seq.wdl
   files:
-    - path: "test-output/variants/rna3-single-end.vcf.gz"
-    - path: "test-output/variants/rna3-single-end.vcf.gz.tbi"
+    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz"
+    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
@@ -101,12 +101,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndHisat2.json RNA-seq.wdl
   files:
-    - path: "test-output/variants/rna3-paired-end.vcf.gz"
-    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
 
@@ -129,12 +129,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndHisat2AndStar.json RNA-seq.wdl
   files:
-    - path: "test-output/variants/rna3-paired-end.vcf.gz"
-    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
     - path: "test-output/lncrna/coding-potential/cpat.tsv"
     - path: "test-output/lncrna/reference.gtf.d"
 
@@ -145,12 +145,12 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/functional/PairedEndVariantCalling.json RNA-seq.wdl
   files:
-    - path: "test-output/variants/rna3-paired-end.vcf.gz"
-    - path: "test-output/variants/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"
 
 - name: FunctionalPairedEndLncRna
   tags:
@@ -162,4 +162,4 @@
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc/multiqc_report.html"
+    - path: "test-output/multiqc_report.html"

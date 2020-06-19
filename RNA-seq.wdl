@@ -169,7 +169,7 @@ workflow RNAseq {
                     bamIndex = preprocessing.recalibratedBamIndex,
                     gender = select_first([sample.gender, "unknown"]),
                     sampleName = sample.id,
-                    outputDir = outputDir + "/variants/",
+                    outputDir = outputDir + "/samples/" + sample.id,
                     referenceFasta = referenceFasta,
                     referenceFastaFai = referenceFastaFai,
                     referenceFastaDict = referenceFastaDict,
@@ -238,7 +238,7 @@ workflow RNAseq {
     call multiqc.MultiQC as multiqcTask {
         input:
             reports = allReports,
-            outDir = outputDir + "/multiqc",
+            outDir = outputDir,
             dockerImage = dockerImages["multiqc"]
     }
 
@@ -254,6 +254,8 @@ workflow RNAseq {
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
         Array[File] bamFilesIndex = sampleJobs.outputBamIndex
+        Array[File] recalibratedBamFiles = select_all(preprocessing.recalibratedBam)
+        Array[File] recalibratedBamFilesIndex = select_all(preprocessing.recalibratedBamIndex)
         Array[File?] umiEditDistance = sampleJobs.umiEditDistance
         Array[File?] umiStats = sampleJobs.umiStats
         Array[File?] umiPositionStats = sampleJobs.umiPositionStats

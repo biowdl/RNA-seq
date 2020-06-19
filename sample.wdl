@@ -52,8 +52,7 @@ workflow SampleWorkflow {
     }
 
     scatter (readgroup in sample.readgroups) {
-        String libDir = outputDir + "/lib_" + readgroup.lib_id
-        String readgroupDir = libDir + "/rg_" + readgroup.id
+        String readgroupDir = outputDir + "/lib_" + readgroup.lib_id + "--rg_" + readgroup.id
         String rgLine ='"ID:${readgroup.id}" "LB:${readgroup.lib_id}" "PL:${platform}" "SM:${sample.id}"'
 
         call qcWorkflow.QC as qc {
@@ -71,7 +70,7 @@ workflow SampleWorkflow {
                 input:
                     inputR1 = [qc.qcRead1],
                     inputR2 = select_all([qc.qcRead2]),
-                    outFileNamePrefix = outputDir + "/star/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".",
+                    outFileNamePrefix = readgroupDir + "/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".star.",
                     outSAMattrRGline = [rgLine],
                     indexFiles = select_first([starIndex]),
                     dockerImage = dockerImages["star"]
@@ -91,7 +90,8 @@ workflow SampleWorkflow {
                     indexFiles = select_first([hisat2Index]),
                     inputR1 = qc.qcRead1,
                     inputR2 = qc.qcRead2,
-                    outputBam = outputDir + "/hisat2/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".bam",
+                    outputBam = readgroupDir + "/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".hisat2.bam",
+                    summaryFilePath = readgroupDir + "/" + sample.id + "-" + readgroup.lib_id + "-" + readgroup.id + ".hisat2.summary.txt",
                     sample = sample.id,
                     library = readgroup.lib_id,
                     readgroup = readgroup.id,
