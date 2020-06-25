@@ -24,7 +24,7 @@ The pipeline can then be run with the following command:
 java -jar cromwell-<version>.jar run \
   -o options.json \
   -i inputs.json \
-  --imports RNA-seq_v<version>.zip
+  --imports RNA-seq_v<version>.zip \
   RNA-seq_<version>.wdl
 ```
 
