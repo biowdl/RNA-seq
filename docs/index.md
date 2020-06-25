@@ -14,9 +14,15 @@ developed by the SASC team at [Leiden University Medical Center](https://www.lum
 
 ## Usage
 This pipeline can be run using
-[Cromwell](http://cromwell.readthedocs.io/en/stable/):
+[Cromwell](http://cromwell.readthedocs.io/en/stable/)
+
+First download the latest version of the pipeline wdl file and 
+zip imports package from the [releases page](https://github.com/biowdl/RNA-seq/releases).
+
+The pipeline can then be run with the following command:
 ```bash
-java -jar cromwell-<version>.jar run -o options.json -i inputs.json RNA-seq.wdl
+java -jar cromwell-<version>.jar run -o options.json -i inputs.json
+-- imports RNA-seq_v<version>.zip RNA-seq_v<version>.wdl
 ```
 
 Where `options.json` contains the following json:
