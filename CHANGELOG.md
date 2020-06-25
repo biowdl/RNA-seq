@@ -11,6 +11,8 @@ that users understand how the changes affect the new version.
 
 version 4.0.0-dev
 -----------------
++ WDL files and imports zip packages are now provided each release to make
+  running pipelines easier.
 + The output directory was simplified. All files related to a sample are now
   in the `samples/<sample_id>` directory.
 + Use the scatter-regions tool to replace biopet-scatterregions.
