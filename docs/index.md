@@ -21,8 +21,11 @@ zip imports package from the [releases page](https://github.com/biowdl/RNA-seq/r
 
 The pipeline can then be run with the following command:
 ```bash
-java -jar cromwell-<version>.jar run -o options.json -i inputs.json
--- imports RNA-seq_v<version>.zip RNA-seq_v<version>.wdl
+java -jar cromwell-<version>.jar run \
+  -o options.json \
+  -i inputs.json \
+  --imports RNA-seq_v<version>.zip
+  RNA-seq_<version>.wdl
 ```
 
 Where `options.json` contains the following json:
