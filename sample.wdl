@@ -23,7 +23,6 @@ version 1.0
 import "BamMetrics/bammetrics.wdl" as metrics
 import "QC/QC.wdl" as qcWorkflow
 import "structs.wdl" as structs
-import "tasks/samtools.wdl" as samtools
 import "tasks/star.wdl" as starTask
 import "tasks/hisat2.wdl" as hisat2Task
 import "tasks/picard.wdl" as picard
@@ -75,13 +74,6 @@ workflow SampleWorkflow {
                     indexFiles = select_first([starIndex]),
                     dockerImage = dockerImages["star"]
             }
-
-            # This creates the index only in the cromwell-executions directory
-            # this is the least headache-inducing way of doing this.
-            call samtools.Index as indexStarBam {
-                input:
-                    bamFile = star.bamFile
-            }
         }
 
         if (defined(hisat2Index)) {
@@ -101,8 +93,7 @@ workflow SampleWorkflow {
         }
         # Choose whether to use the STAR or HISAT2 bamfiles for downstream analyses,
         # star is taken over hisat2.
-        File continuationBam = select_first([indexStarBam.indexedBam, hisat2.bamFile])
-        File continuationBamIndex = select_first([indexStarBam.index, hisat2.bamIndex])
+        File continuationBam = select_first([star.bamFile, hisat2.bamFile])
 
         # Determine if the sample is paired-end
         Boolean paired = defined(readgroup.R2)
@@ -111,7 +102,6 @@ workflow SampleWorkflow {
     call picard.MarkDuplicates as markDuplicates {
         input:
             inputBams = continuationBam,
-            inputBamIndexes = continuationBamIndex,
             outputBamPath = outputDir + "/" + sample.id + ".markdup.bam",
             metricsPath = outputDir + "/" + sample.id + ".markdup.metrics",
             dockerImage = dockerImages["picard"]
@@ -133,7 +123,6 @@ workflow SampleWorkflow {
         call picard.MarkDuplicates as postUmiDedupMarkDuplicates {
             input:
                 inputBams = [umiDedup.deduppedBam],
-                inputBamIndexes = [umiDedup.deduppedBamIndex],
                 outputBamPath = outputDir + "/" + sample.id + ".dedup.markdup.bam",
                 metricsPath = outputDir + "/" + sample.id + ".dedup.markdup.metrics",
                 dockerImage = dockerImages["picard"]
