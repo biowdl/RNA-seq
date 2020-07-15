@@ -191,5 +191,6 @@ workflow SampleWorkflow {
         WDL_AID: {
             exclude: ["star.outSAMtype", "star.readFilesCommand", "DONOTDEFINE"]
         }
+        allowNestedInputs: true
     }
 }

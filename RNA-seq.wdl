@@ -68,6 +68,7 @@ workflow RNAseq {
         File? YNonParRegions
         File? variantCallingRegions
     }
+
     meta {allowNestedInputs: true}
 
     String expressionDir = outputDir + "/expression_measures/"

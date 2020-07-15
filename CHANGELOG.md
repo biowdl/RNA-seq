@@ -11,6 +11,12 @@ that users understand how the changes affect the new version.
 
 version 4.0.0-dev
 -----------------
++ Changes in Cromwell 48 made it impossible to use the wide array of inputs
+  in our documentation (such as 
+  `RNAseq.sampleJobs.qc.Cutadapt.minimumLength`). Fixes have been made 
+  upstream and in the pipeline. From Cromwell 52 onwards these options will be
+  available again.
++ Bam files are no longer indexed after alignment, saving compute time.
 + WDL files and imports zip packages are now provided each release to make
   running pipelines easier.
 + The output directory was simplified. All files related to a sample are now
