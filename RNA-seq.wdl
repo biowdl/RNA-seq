@@ -67,8 +67,9 @@ workflow RNAseq {
         File? XNonParRegions
         File? YNonParRegions
         File? variantCallingRegions
-
     }
+
+    meta {allowNestedInputs: true}
 
     String expressionDir = outputDir + "/expression_measures/"
     String genotypingDir = outputDir + "/multisample_variants/"
