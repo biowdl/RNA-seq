@@ -1,10 +1,13 @@
-### STAR   --runMode genomeGenerate   --genomeDir star   --genomeFastaFiles reference.fasta      --genomeSAindexNbases 8
+### STAR   --runMode genomeGenerate   --genomeDir star   --genomeFastaFiles reference.fasta      --genomeSAindexNbases 7
 ### GstrandBit 32
-versionGenome	2.7.1a
+versionGenome	2.7.4a
+genomeType	Full
 genomeFastaFiles	reference.fasta 
-genomeSAindexNbases	8
+genomeSAindexNbases	7
 genomeChrBinNbits	18
 genomeSAsparseD	1
+genomeTransformType	None
+genomeTransformVCF	-
 sjdbOverhang	0
 sjdbFileChrStartEnd	- 
 sjdbGTFfile	-
