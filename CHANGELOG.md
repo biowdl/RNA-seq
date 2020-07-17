@@ -11,6 +11,7 @@ that users understand how the changes affect the new version.
 
 version 4.0.0-dev
 -----------------
++ Default docker images for various tools have been updated.
 + Changes in Cromwell 48 made it impossible to use the wide array of inputs
   in our documentation (such as 
   `RNAseq.sampleJobs.qc.Cutadapt.minimumLength`). Fixes have been made 
