@@ -7,26 +7,27 @@
 # command.
 
 # Tools are sorted alphabetically for ease of use.
+bcftools: "quay.io/biocontainers/bcftools:1.10.2--h4f4756c_2"
 bedtools: "quay.io/biocontainers/bedtools:2.23.0--hdbcaa40_3"
 biowdl-input-converter: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_0"
-chunked-scatter: "quay.io/biocontainers/chunked-scatter:0.2.0--py_0"
-cutadapt: "quay.io/biocontainers/cutadapt:2.8--py37h516909a_0"
+chunked-scatter: "quay.io/biocontainers/chunked-scatter:1.0.0--py_0"
+cutadapt: "quay.io/biocontainers/cutadapt:2.10--py37h516909a_0"
 cpat: "biocontainers/cpat:v1.2.4_cv1"
 collect-columns: "quay.io/biocontainers/collect-columns:0.2.0--py_1"
 fastqc: "quay.io/biocontainers/fastqc:0.11.9--0"
-gatk4: "quay.io/biocontainers/gatk4:4.1.0.0--0"
+gatk4: "quay.io/biocontainers/gatk4:4.1.8.0--py38h37ae868_0"
 gffcompare: "quay.io/biocontainers/gffcompare:0.10.6--h2d50403_0"
 gffread: "quay.io/biocontainers/gffread:0.9.12--0"
 # "hisat2" uses a combined container that has both hisat2 and samtools
 # quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1
 # hisat2=2.2.0, samtools=1.10
 hisat2: "quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1:2880dd9d8ad0a7b221d4eacda9a818e92983128d-0"
-htseq: "quay.io/biocontainers/htseq:0.11.2--py37h637b7d7_1"
-multiqc: "quay.io/biocontainers/multiqc:1.7--py_1"
-picard: "quay.io/biocontainers/picard:2.20.5--0"
-samtools: "quay.io/biocontainers/samtools:1.8--h46bd0b3_5"
-star:  "quay.io/biocontainers/star:2.7.3a--0"
-stringtie: "quay.io/biocontainers/stringtie:1.3.4--py35_0"
+htseq: "quay.io/biocontainers/htseq:0.12.4--py37hb3f55d8_0"
+multiqc: "quay.io/biocontainers/multiqc:1.9--pyh9f0ad1d_0"
+picard: "quay.io/biocontainers/picard:2.23.2--0"
+samtools: "quay.io/biocontainers/samtools:1.10--h9402c20_2"
+star:  "quay.io/biocontainers/star:2.7.5a--0"
+stringtie: "quay.io/biocontainers/stringtie:2.1.2--h7e0af3c_1"
 tabix: "quay.io/biocontainers/tabix:0.2.6--ha92aebf_0"
 # "UMI-tools" uses a combined container that has both UMI-tools and samtools
 # quay.io/biocontainers/mulled-v2-509311a44630c01d9cb7d2ac5727725f51ea43af
