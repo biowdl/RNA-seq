@@ -178,7 +178,7 @@ workflow RNAseq {
                     dbsnpVCFIndex = select_first([dbsnpVCFIndex]),
                     XNonParRegions = calculateRegions.Xregions,
                     YNonParRegions = calculateRegions.Yregions,
-                    timeMinutes = ceil(size(preprocessing.recalibratedBam, "G") * 200),  # Somewhat more time is needed for rna samples.
+                    timeMinutes = ceil(size(preprocessing.recalibratedBam, "G") * 300),  # Somewhat more time is needed for rna samples.
                     dontUseSoftClippedBases = true,  # This is necessary for RNA
                     standardMinConfidenceThresholdForCalling = 20.0,  # GATK best practice
                     autosomalRegionScatters = select_first([calculateRegions.autosomalRegionScatters]),
