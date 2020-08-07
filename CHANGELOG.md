@@ -9,7 +9,7 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 4.0.0-dev
+version 4.0.0
 -----------------
 + Default docker images for various tools have been updated.
 + Changes in Cromwell 48 made it impossible to use the wide array of inputs
