@@ -3,6 +3,7 @@
 # For more information on how to set up conda with bioconda channel see:
 # http://bioconda.github.io/#install-conda
 # this file can be installed with "conda install --file requirements-test.txt"
+python==3.6
 cromwell
 pytest-workflow
 pysam
