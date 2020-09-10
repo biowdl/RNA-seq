@@ -13,7 +13,7 @@ biowdl-input-converter: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_
 chunked-scatter: "quay.io/biocontainers/chunked-scatter:1.0.0--py_0"
 cutadapt: "quay.io/biocontainers/cutadapt:2.10--py37hf01694f_1"
 cpat: "biocontainers/cpat:v1.2.4_cv1"
-collect-columns: "quay.io/biocontainers/collect-columns:0.2.0--py_1"
+collect-columns: "quay.io/biocontainers/collect-columns:1.0.0--py_0"
 fastqc: "quay.io/biocontainers/fastqc:0.11.9--0"
 gatk4: "quay.io/biocontainers/gatk4:4.1.8.0--py38h37ae868_0"
 gffcompare: "quay.io/biocontainers/gffcompare:0.10.6--h2d50403_0"
