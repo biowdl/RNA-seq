@@ -34,6 +34,7 @@ import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/gffread.wdl" as gffread
 import "tasks/multiqc.wdl" as multiqc
 import "tasks/star.wdl" as star
+import "tasks/prepareShiny.wdl" as shiny
 
 workflow RNAseq {
     input {
@@ -88,6 +89,21 @@ workflow RNAseq {
             outputFile = outputDir + "/samples.json"
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
+
+    # Create sample sheet and collect count data
+    call shiny.CreateSampleGetCount as shinySampleCount {
+        input:
+            countTable = expression.fragmentsPerGeneTable,
+            shinyDir = outputDir + "/shiny/"
+    }
+
+    # Create annotation file
+    call shiny.CreateAnnotation as shinyAnnotation {
+        input:
+            referenceFasta = referenceFasta,
+            referenceGtfFile = referenceGtfFile,
+            shinyDir = outputDir + "/shiny/"
+    }
 
     # Generate STAR index of no indexes are given
     if (!defined(starIndex) && !defined(hisat2Index)) {
