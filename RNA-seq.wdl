@@ -94,15 +94,17 @@ workflow RNAseq {
     call shiny.CreateSampleGetCount as shinySampleCount {
         input:
             countTable = expression.fragmentsPerGeneTable,
-            shinyDir = outputDir + "/shiny/"
+            shinyDir = outputDir + "/dgeAnalysis/"
     }
 
     # Create annotation file
-    call shiny.CreateAnnotation as shinyAnnotation {
-        input:
-            referenceFasta = referenceFasta,
-            referenceGtfFile = referenceGtfFile,
-            shinyDir = outputDir + "/shiny/"
+    if (defined(referenceGtfFile)) {
+        call shiny.CreateAnnotation as shinyAnnotation {
+            input:
+                referenceFasta = referenceFasta,
+                referenceGtfFile = select_first([referenceGtfFile]),
+                shinyDir = outputDir + "/dgeAnalysis/"
+        }
     }
 
     # Generate STAR index of no indexes are given
