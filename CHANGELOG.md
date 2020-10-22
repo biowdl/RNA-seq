@@ -11,8 +11,8 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 -----------------
-+ Add call to create annotation file for shiny app
-+ Add call to create samplesheet template for shiny app
++ Add call to create annotation file for shiny app.
++ Add call to create samplesheet template for shiny app.
 + When multiple TPM/FPKM values are returned for a single gene by 
   stringtie, they will now be added together in the multi-sample
   expression tables. Previously only the last value encountered would be
