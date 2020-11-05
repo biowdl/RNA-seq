@@ -33,16 +33,16 @@ script:
 
 matrix:
   include:
-    - env: TEST=Rna3PairedEndVariantCalling
-    - env: TEST=Rna3SingleEndVariantCalling
-    - env: TEST=Rna3PairedEndLncRna
-    - env: TEST=Rna3PairedEndUmi
-    - env: TEST=Rna3PairedEndHisat2
-    - env: TEST=Rna3PairedEndHisat2AndStar
-    - env: TEST="Womtool validate and submodule up to date"
+    - env: TEST="Womtool validate and submodule up to date."
       stage: lint
       install:
         - conda install cromwell miniwdl wdl-aid
       script: bash scripts/biowdl_lint.sh
       after_failure:
         - echo "Linting failed"
+    - env: TEST=Rna3PairedEndVariantCalling
+    - env: TEST=Rna3SingleEndVariantCalling
+    - env: TEST=Rna3PairedEndLncRna
+    - env: TEST=Rna3PairedEndUmi
+    - env: TEST=Rna3PairedEndHisat2
+    - env: TEST=Rna3PairedEndHisat2AndStar

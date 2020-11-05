@@ -35,19 +35,27 @@ workflow SampleWorkflow {
         File referenceFasta
         File referenceFastaFai
         File referenceFastaDict
-        Array[File]+? starIndex
-        Array[File]+? hisat2Index
         String strandedness
-        File? refflatFile
         Boolean umiDeduplication
-        String? adapterForward
-        String? adapterReverse
         String platform
         Boolean collectUmiStats
+
+        Array[File]+? starIndex
+        Array[File]+? hisat2Index
+        File? refflatFile
+        String? adapterForward
+        String? adapterReverse
 
         Map[String, String] dockerImages
 
         String? DONOTDEFINE
+    }
+
+    meta {
+        WDL_AID: {
+            exclude: ["star.outSAMtype", "star.readFilesCommand", "DONOTDEFINE"]
+        }
+        allowNestedInputs: true
     }
 
     scatter (readgroup in sample.readgroups) {
@@ -91,11 +99,12 @@ workflow SampleWorkflow {
                     dockerImage = dockerImages["hisat2"]
             }
         }
-        # Choose whether to use the STAR or HISAT2 bamfiles for downstream analyses,
-        # star is taken over hisat2.
+
+        # Choose whether to use the STAR or HISAT2 bamfiles for downstream
+        # analyses, star is taken over hisat2.
         File continuationBam = select_first([star.bamFile, hisat2.bamFile])
 
-        # Determine if the sample is paired-end
+        # Determine if the sample is paired-end.
         Boolean paired = defined(readgroup.R2)
     }
 
@@ -116,7 +125,8 @@ workflow SampleWorkflow {
                 statsPrefix = if collectUmiStats
                     then outputDir + "/" + sample.id
                     else DONOTDEFINE,
-                paired = paired[0], # Assumes that if one readgroup is paired, all are
+                # Assumes that if one readgroup is paired, all are.
+                paired = paired[0],
                 dockerImage = dockerImages["umi-tools"]
         }
 
@@ -129,7 +139,7 @@ workflow SampleWorkflow {
         }
     }
 
-    # Gather BAM Metrics
+    # Gather BAM Metrics.
     call metrics.BamMetrics as bamMetrics {
         input:
             bam = select_first([postUmiDedupMarkDuplicates.outputBam, markDuplicates.outputBam]),
@@ -147,14 +157,14 @@ workflow SampleWorkflow {
         String sampleName = sample.id
         File outputBam = select_first([postUmiDedupMarkDuplicates.outputBam, markDuplicates.outputBam])
         File outputBamIndex = select_first([postUmiDedupMarkDuplicates.outputBamIndex, markDuplicates.outputBamIndex])
-        File? umiEditDistance = umiDedup.editDistance
-        File? umiStats = umiDedup.umiStats
-        File? umiPositionStats = umiDedup.positionStats
         Array[File] qcReports = flatten(qc.reports)
         Array[File] bamMetricsReports = bamMetrics.reports 
         Array[File] markdupReports = select_all([markDuplicates.metricsFile, postUmiDedupMarkDuplicates.metricsFile])
         Array[File] umiReports = select_all([umiStats, umiPositionStats])
         Array[File] alignmentReports = flatten([select_all(star.logFinalOut), select_all(hisat2.summaryFile)])
+        File? umiEditDistance = umiDedup.editDistance
+        File? umiStats = umiDedup.umiStats
+        File? umiPositionStats = umiDedup.positionStats
         Array[File] reports = flatten([
             qcReports,
             bamMetricsReports,
@@ -167,30 +177,18 @@ workflow SampleWorkflow {
     parameter_meta {
         sample: {description: "The sample data.", category: "required"}
         outputDir: {description: "The output directory.", category: "required"}
-        referenceFasta: { description: "The reference fasta file", category: "required" }
-        referenceFastaFai: { description: "Fasta index (.fai) file of the reference", category: "required" }
-        referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference", category: "required" }
-        starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses.",
-                    category: "common"}
-        hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses.",
-                      category: "common"}
-        strandedness: {description: "The strandedness of the RNA sequencing library preparation. One of \"None\" (unstranded), \"FR\" (forward-reverse: first read equal transcript) or \"RF\" (reverse-forward: second read equals transcript).",
-                       category: "required"}
-        refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.",
-                      category: "common"}
+        referenceFasta: { description: "The reference fasta file.", category: "required" }
+        referenceFastaFai: { description: "Fasta index (.fai) file of the reference.", category: "required" }
+        referenceFastaDict: { description: "Sequence dictionary (.dict) file of the reference.", category: "required" }
+        strandedness: {description: "The strandedness of the RNA sequencing library preparation. One of \"None\" (unstranded), \"FR\" (forward-reverse: first read equal transcript) or \"RF\" (reverse-forward: second read equals transcript).", category: "required"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
+        platform: {description: "The platform used for sequencing.", category: "advanced"}
+        collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.", category: "advanced"}
+        starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses.", category: "common"}
+        hisat2Index: {description: "The hisat2 index files. Defining this will cause the hisat2 aligner to run. Note that is starIndex is also defined the star results will be used for downstream analyses.", category: "common"}
+        refflatFile: {description: "A refflat files describing the genes. If this is defined RNAseq metrics will be collected.", category: "common"}
         adapterForward: {description: "The adapter to be removed from the reads first or single end reads.", category: "common"}
         adapterReverse: {description: "The adapter to be removed from the reads second end reads.", category: "common"}
-        collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.",
-                          category: "advanced"}
-        platform: {description: "The platform used for sequencing.", category: "advanced"}
         dockerImages: {description: "The docker images used.", category: "advanced"}
-    }
-
-    meta {
-        WDL_AID: {
-            exclude: ["star.outSAMtype", "star.readFilesCommand", "DONOTDEFINE"]
-        }
-        allowNestedInputs: true
     }
 }
