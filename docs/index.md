@@ -4,28 +4,33 @@ title: Home
 ---
 
 This pipeline can be used to process RNA-seq data, starting from FastQ files.
-It will perform quality control (using FastQC and MultiQC), adapter clipping (using cutadapt),
-mapping (using STAR or HISAT2) and expression quantification and transcript assembly (using 
-HTSeq-Count and Stringtie). Optionally variantcalling (based on the GATK Best Practises) and
-lncRNA detection (using CPAT) can also be performed.
+It will perform quality control (using FastQC and MultiQC), adapter
+clipping (using cutadapt), mapping (using STAR or HISAT2) and expression
+quantification an transcript assembly (using HTSeq-Count and Stringtie).
+Optionally variantcalling (based on the GATK Best Practises) and lncRNA
+detection (using CPAT) can also be performed.
 
 This pipeline is part of [BioWDL](https://biowdl.github.io/)
-developed by the SASC team at [Leiden University Medical Center](https://www.lumc.nl/).
+developed by the SASC team
+at [Leiden University Medical Center](https://www.lumc.nl/).
 
 ## Usage
-This pipeline can be run using
-[Cromwell](http://cromwell.readthedocs.io/en/stable/)
+This workflow can be run using
+[Cromwell](http://cromwell.readthedocs.io/en/stable/):
 
 First download the latest version of the pipeline wdl file and 
-zip imports package from the [releases page](https://github.com/biowdl/RNA-seq/releases).
+zip imports package from
+the [releases page](https://github.com/biowdl/RNA-seq/releases).
 
 The pipeline can then be run with the following command:
 ```bash
-java -jar cromwell-<version>.jar run \
-  -o options.json \
-  -i inputs.json \
-  --imports RNA-seq_v<version>.zip \
-  RNA-seq_<version>.wdl
+java \
+    -jar cromwell-<version>.jar \
+    run \
+    -o options.json \
+    -i inputs.json \
+    --imports RNA-seq_v<version>.zip \
+    RNA-seq_<version>.wdl
 ```
 
 Where `options.json` contains the following json:

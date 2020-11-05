@@ -1,23 +1,23 @@
 {
-  "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd_umi.csv",
-  "RNAseq.dockerImagesFile": "dockerImages.yml",
-  "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
-  "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
-  "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
-  "RNAseq.strandedness": "None",
-  "RNAseq.starIndex": [
-    "tests/data/reference/star/chrLength.txt",
-    "tests/data/reference/star/chrName.txt",
-    "tests/data/reference/star/chrNameLength.txt",
-    "tests/data/reference/star/chrStart.txt",
-    "tests/data/reference/star/Genome",
-    "tests/data/reference/star/genomeParameters.txt",
-    "tests/data/reference/star/SA",
-    "tests/data/reference/star/SAindex"
-  ],
-  "RNAseq.referenceGtfFile": "tests/data/reference/reference.gtf",
-  "RNAseq.refflatFile": "tests/data/reference/reference.refflat",
-  "RNAseq.variantCalling": false,
-  "RNAseq.lncRNAdetection": false,
-  "RNAseq.umiDeduplication": true
+    "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd_umi.csv",
+    "RNAseq.dockerImagesFile": "dockerImages.yml",
+    "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
+    "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+    "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
+    "RNAseq.strandedness": "None",
+    "RNAseq.starIndex": [
+        "tests/data/reference/star/chrLength.txt",
+        "tests/data/reference/star/chrName.txt",
+        "tests/data/reference/star/chrNameLength.txt",
+        "tests/data/reference/star/chrStart.txt",
+        "tests/data/reference/star/Genome",
+        "tests/data/reference/star/genomeParameters.txt",
+       "tests/data/reference/star/SA",
+        "tests/data/reference/star/SAindex"
+    ],
+    "RNAseq.referenceGtfFile": "tests/data/reference/reference.gtf",
+    "RNAseq.refflatFile": "tests/data/reference/reference.refflat",
+    "RNAseq.variantCalling": false,
+    "RNAseq.lncRNAdetection": false,
+    "RNAseq.umiDeduplication": true
 }
