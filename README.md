@@ -5,8 +5,8 @@ performs QC (including adapter clipping), mapping, variant-calling
 and expression quantification.
 
 ## Documentation
-Documentation for this pipeline can be
-found [here](https://biowdl.github.io/RNA-seq/)).
+Documentation for this workflow can be
+found [here](https://biowdl.github.io/RNA-seq/).
 
 ## About
 This workflow is part of [Biowdl](https://github.com/biowdl) developed by the

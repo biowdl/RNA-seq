@@ -175,6 +175,7 @@ workflow SampleWorkflow {
     }
 
     parameter_meta {
+        # inputs
         sample: {description: "The sample data.", category: "required"}
         outputDir: {description: "The output directory.", category: "required"}
         referenceFasta: { description: "The reference fasta file.", category: "required" }
@@ -190,5 +191,19 @@ workflow SampleWorkflow {
         adapterForward: {description: "The adapter to be removed from the reads first or single end reads.", category: "common"}
         adapterReverse: {description: "The adapter to be removed from the reads second end reads.", category: "common"}
         dockerImages: {description: "The docker images used.", category: "advanced"}
+
+        # outputs
+        sampleName: {description: ""}
+        outputBam: {description: ""}
+        outputBamIndex: {description: ""}
+        qcReports: {description: ""}
+        bamMetricsReports: {description: ""}
+        markdupReports: {description: ""}
+        umiEditDistance: {description: ""}
+        umiStats: {description: ""}
+        umiPositionStats: {description: ""}
+        umiReports: {description: ""}
+        alignmentReports: {description: ""}
+        reports: {description: ""}
     }
 }
