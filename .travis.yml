@@ -31,6 +31,10 @@ install:
 script:
   - travis_wait 30 pytest --keep-workflow-wd-on-fail --tag $TEST tests/
 
+after_failure:
+  # Get the last 1000 lines of the cromwell log to catch the error.
+  - bash -c 'tail -n 1000 /tmp/pytest_workflow_*/*/log.out'
+
 matrix:
   include:
     - env: TEST="Womtool validate and submodule up to date."

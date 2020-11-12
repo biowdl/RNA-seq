@@ -1,6 +1,6 @@
 # RNA-seq
 This repository contains the [Biowdl](https://github.com/biowdl)
-workflows usable for processing RNA-seq data. This pipeline will
+workflow usable for processing RNA-seq data. This workflow will
 performs QC (including adapter clipping), mapping, variant-calling
 and expression quantification.
 
