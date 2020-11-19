@@ -90,8 +90,8 @@ workflow RNAseq {
     }
     SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
 
-    # Create sample sheet template
-    call shiny.CreateSamplesheet as shinySamples {
+    # Create design matrix template
+    call shiny.CreateDesignMatrix as shinyDesign {
         input:
             countTable = expression.fragmentsPerGeneTable,
             shinyDir = outputDir + "/dgeAnalysis/"
@@ -264,7 +264,7 @@ workflow RNAseq {
     output {
         File report = multiqcTask.multiqcReport
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
-        File dgeSamples = shinySamples.dgeSamples
+        File dgeDesign = shinyDesign.dgeDesign
         File? dgeAnnotation = shinyAnnotation.dgeAnnotation
         File FPKMTable = expression.FPKMTable
         File TMPTable = expression.TPMTable
