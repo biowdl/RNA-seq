@@ -246,8 +246,8 @@ workflow RNAseq {
     output {
         File report = multiqcTask.multiqcReport
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
-        File FPKMTable = expression.FPKMTable
-        File TMPTable = expression.TPMTable
+        File? FPKMTable = expression.FPKMTable
+        File? TPMTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
         Array[File] singleSampleVcfs = select_all(variantcalling.outputVcf)
         Array[File] singleSampleVcfsIndex = select_all(variantcalling.outputVcfIndex)
