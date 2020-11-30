@@ -22,12 +22,12 @@ gffread: "quay.io/biocontainers/gffread:0.9.12--0"
 # quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1
 # hisat2=2.2.0, samtools=1.10
 hisat2: "quay.io/biocontainers/mulled-v2-a97e90b3b802d1da3d6958e0867610c718cb5eb1:2880dd9d8ad0a7b221d4eacda9a818e92983128d-0"
-htseq: "quay.io/biocontainers/htseq:0.12.4--py37hb3f55d8_0"
+htseq: "quay.io/biocontainers/htseq:0.12.4--py37h0498b6d_2"
 multiqc: "quay.io/biocontainers/multiqc:1.9--pyh9f0ad1d_0"
 picard: "quay.io/biocontainers/picard:2.23.2--0"
 samtools: "quay.io/biocontainers/samtools:1.10--h9402c20_2"
 star:  "quay.io/biocontainers/star:2.7.5a--0"
-stringtie: "quay.io/biocontainers/stringtie:2.1.2--h7e0af3c_1"
+stringtie: "quay.io/biocontainers/stringtie:1.3.6--h92e31bf_0"
 tabix: "quay.io/biocontainers/tabix:0.2.6--ha92aebf_0"
 # "UMI-tools" uses a combined container that has both UMI-tools and samtools
 # quay.io/biocontainers/mulled-v2-509311a44630c01d9cb7d2ac5727725f51ea43af
