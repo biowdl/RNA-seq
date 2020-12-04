@@ -51,6 +51,7 @@ workflow RNAseq {
         Boolean umiDeduplication = false
         Boolean collectUmiStats = false
         Int scatterSizeMillions = 1000
+        runStringtieQuantification = true
 
         File? dbsnpVCF
         File? dbsnpVCFIndex
@@ -196,6 +197,7 @@ workflow RNAseq {
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscripts,
+            runStringtieQuantification = runStringtieQuantification
             dockerImages = dockerImages
     }
 

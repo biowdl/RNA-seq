@@ -29,7 +29,7 @@ install:
   - conda install --file requirements-test.txt
 
 script:
-  - travis_wait 30 pytest --keep-workflow-wd-on-fail --tag $TEST tests/
+  - pytest --keep-workflow-wd-on-fail --tag $TEST tests/
 
 after_failure:
   # Get the last 1000 lines of the cromwell log to catch the error.

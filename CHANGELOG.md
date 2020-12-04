@@ -10,6 +10,8 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 -----------------
++ Make running stringtie optional by exposing the boolean
+  `runStringtieQuantification`.
 + Downgrade stringtie to version 1.3.6, as version 2 returns unstranded
   transcripts which is incompatible with htseq-count.
 + When multiple TPM/FPKM values are returned for a single gene by
