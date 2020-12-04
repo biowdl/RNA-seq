@@ -163,3 +163,38 @@
     - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multiqc_report.html"
+
+- name: Rna3SingleEndHisat2NoStringtie
+  tags:
+    - integration
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/SingleEndHisat2NoStringtie.json RNA-seq.wdl
+  files:
+    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz"
+    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
+      should_exist: false
+    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
+      should_exist: false
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/lncrna/coding-potential/cpat.tsv"
+    - path: "test-output/lncrna/reference.gtf.d"
+
+- name: Rna3PairedEndHisat2NoStringtie
+  tags:
+    - integration
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndHisat2NoStringtie.json RNA-seq.wdl
+  files:
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
+      should_exist: false
+    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
+      should_exist: false
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc_report.html"
+    - path: "test-output/lncrna/coding-potential/cpat.tsv"
+    - path: "test-output/lncrna/reference.gtf.d"

@@ -50,3 +50,5 @@ matrix:
     - env: TEST=Rna3PairedEndUmi
     - env: TEST=Rna3PairedEndHisat2
     - env: TEST=Rna3PairedEndHisat2AndStar
+    - env: TEST=Rna3SingleEndHisat2NoStringtie
+    - env: TEST=Rna3PairedEndHisat2NoStringtie
