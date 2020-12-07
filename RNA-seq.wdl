@@ -51,7 +51,7 @@ workflow RNAseq {
         Boolean umiDeduplication = false
         Boolean collectUmiStats = false
         Int scatterSizeMillions = 1000
-        runStringtieQuantification = true
+        Boolean runStringtieQuantification = true
 
         File? dbsnpVCF
         File? dbsnpVCFIndex
@@ -197,7 +197,7 @@ workflow RNAseq {
             strandedness = strandedness,
             referenceGtfFile = referenceGtfFile,
             detectNovelTranscripts = lncRNAdetection || detectNovelTranscripts,
-            runStringtieQuantification = runStringtieQuantification
+            runStringtieQuantification = runStringtieQuantification,
             dockerImages = dockerImages
     }
 
@@ -285,7 +285,8 @@ workflow RNAseq {
         detectNovelTranscripts: {description: "Whether or not a transcripts assembly should be used. If set to true Stringtie will be used to create a new GTF file based on the BAM files. This generated GTF file will be used for expression quantification. If `referenceGtfFile` is also provided this reference GTF will be used to guide the assembly.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.", category: "advanced"}
-        scatterSizeMillions:{ description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily.", category: "advanced"}
+        scatterSizeMillions: {description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily.", category: "advanced"}
+        runStringtieQuantification: {description: "Option to disable running stringtie for quantification. This does not affect the usage of stringtie for novel transcript detection.", category: "common"}
         dbsnpVCF: {description: "dbsnp VCF file used for checking known sites.", category: "common"}
         dbsnpVCFIndex: {description: "Index (.tbi) file for the dbsnp VCF.", category: "common"}
         starIndex: {description: "The star index files. Defining this will cause the star aligner to run and be used for downstream analyses. May be ommited if hisat2Index is defined.", category: "required"}
