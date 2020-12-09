@@ -171,6 +171,7 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/SingleEndHisat2NoStringtie.json RNA-seq.wdl
   files:
+    - path: "test-output/dockerImages.json"
     - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz"
     - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"
@@ -188,6 +189,7 @@
     cromwell run -o tests/cromwell_options.json
     -i tests/integration/PairedEndHisat2NoStringtie.json RNA-seq.wdl
   files:
+    - path: "test-output/dockerImages.json"
     - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
     - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
     - path: "test-output/expression_measures/stringtie/all_samples.TPM"

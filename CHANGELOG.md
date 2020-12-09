@@ -10,6 +10,7 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 -----------------
++ Add the dockerImages to the output section.
 + Make running stringtie optional by exposing the boolean
   `runStringtieQuantification`.
 + Downgrade stringtie to version 1.3.6, as version 2 returns unstranded

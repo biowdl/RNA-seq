@@ -77,21 +77,21 @@ workflow RNAseq {
     String genotypingDir = outputDir + "/multisample_variants/"
 
     # Parse docker Tags configuration and sample sheet.
-    call common.YamlToJson as ConvertDockerTagsFile {
+    call common.YamlToJson as convertDockerTagsFile {
         input:
             yaml = dockerImagesFile,
             outputJson = outputDir + "/dockerImages.json"
     }
 
-    Map[String, String] dockerImages = read_json(ConvertDockerTagsFile.json)
+    Map[String, String] dockerImages = read_json(convertDockerTagsFile.json)
 
-    call biowdl.InputConverter as ConvertSampleConfig {
+    call biowdl.InputConverter as convertSampleConfig {
         input:
             samplesheet = sampleConfigFile,
             outputFile = outputDir + "/samples.json"
     }
 
-    SampleConfig sampleConfig = read_json(ConvertSampleConfig.json)
+    SampleConfig sampleConfig = read_json(convertSampleConfig.json)
 
     # Generate STAR index of no indexes are given.
     if (!defined(starIndex) && !defined(hisat2Index)) {
@@ -250,6 +250,7 @@ workflow RNAseq {
 
     output {
         File report = multiqcTask.multiqcReport
+        File dockerImages = convertDockerTagsFile.json
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
         File? FPKMTable = expression.FPKMTable
         File? TPMTable = expression.TPMTable
@@ -306,6 +307,7 @@ workflow RNAseq {
 
         # outputs
         report: {description: ""}
+        dockerImages: {description: ""}
         fragmentsPerGeneTable: {description: ""}
         FPKMTable: {description: ""}
         TMPTable: {description: ""}
