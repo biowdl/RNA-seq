@@ -10,6 +10,7 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 -----------------
++ Replace travis with github CI.
 + Add the dockerImages to the output section.
 + Make running stringtie optional by exposing the boolean
   `runStringtieQuantification`.

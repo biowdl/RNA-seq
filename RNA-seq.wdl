@@ -307,7 +307,7 @@ workflow RNAseq {
 
         # outputs
         report: {description: ""}
-        dockerImages: {description: ""}
+        dockerImages: {description: "Json file describing the docker images used by the pipeline."}
         fragmentsPerGeneTable: {description: ""}
         FPKMTable: {description: ""}
         TMPTable: {description: ""}
