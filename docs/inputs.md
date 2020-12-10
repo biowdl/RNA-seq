@@ -155,7 +155,7 @@
 <p name="RNAseq.variantcalling.callAutosomal.pedigree">
         <b>RNAseq.variantcalling.callAutosomal.pedigree</b><br />
         <i>File? &mdash; Default: None</i><br />
-        Pedigree file for determining the population "founders"
+        Pedigree file for determining the population "founders".
 </p>
 <p name="RNAseq.variantcalling.callAutosomal.ploidy">
         <b>RNAseq.variantcalling.callAutosomal.ploidy</b><br />
@@ -170,7 +170,7 @@
 <p name="RNAseq.variantcalling.callX.pedigree">
         <b>RNAseq.variantcalling.callX.pedigree</b><br />
         <i>File? &mdash; Default: None</i><br />
-        Pedigree file for determining the population "founders"
+        Pedigree file for determining the population "founders".
 </p>
 <p name="RNAseq.variantcalling.callY.excludeIntervalList">
         <b>RNAseq.variantcalling.callY.excludeIntervalList</b><br />
@@ -180,7 +180,7 @@
 <p name="RNAseq.variantcalling.callY.pedigree">
         <b>RNAseq.variantcalling.callY.pedigree</b><br />
         <i>File? &mdash; Default: None</i><br />
-        Pedigree file for determining the population "founders"
+        Pedigree file for determining the population "founders".
 </p>
 <p name="RNAseq.variantcalling.gvcf">
         <b>RNAseq.variantcalling.gvcf</b><br />
@@ -291,48 +291,48 @@
         <i>Boolean &mdash; Default: false</i><br />
         Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.
 </p>
-<p name="RNAseq.ConvertDockerTagsFile.dockerImage">
-        <b>RNAseq.ConvertDockerTagsFile.dockerImage</b><br />
+<p name="RNAseq.convertDockerTagsFile.dockerImage">
+        <b>RNAseq.convertDockerTagsFile.dockerImage</b><br />
         <i>String &mdash; Default: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_0"</i><br />
         The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
 </p>
-<p name="RNAseq.ConvertDockerTagsFile.memory">
-        <b>RNAseq.ConvertDockerTagsFile.memory</b><br />
+<p name="RNAseq.convertDockerTagsFile.memory">
+        <b>RNAseq.convertDockerTagsFile.memory</b><br />
         <i>String &mdash; Default: "128M"</i><br />
         The maximum amount of memory the job will need.
 </p>
-<p name="RNAseq.ConvertDockerTagsFile.timeMinutes">
-        <b>RNAseq.ConvertDockerTagsFile.timeMinutes</b><br />
+<p name="RNAseq.convertDockerTagsFile.timeMinutes">
+        <b>RNAseq.convertDockerTagsFile.timeMinutes</b><br />
         <i>Int &mdash; Default: 1</i><br />
         The maximum amount of time the job will run in minutes.
 </p>
-<p name="RNAseq.ConvertSampleConfig.checkFileMd5sums">
-        <b>RNAseq.ConvertSampleConfig.checkFileMd5sums</b><br />
+<p name="RNAseq.convertSampleConfig.checkFileMd5sums">
+        <b>RNAseq.convertSampleConfig.checkFileMd5sums</b><br />
         <i>Boolean &mdash; Default: false</i><br />
         Whether or not the MD5 sums of the files mentioned in the samplesheet should be checked.
 </p>
-<p name="RNAseq.ConvertSampleConfig.dockerImage">
-        <b>RNAseq.ConvertSampleConfig.dockerImage</b><br />
+<p name="RNAseq.convertSampleConfig.dockerImage">
+        <b>RNAseq.convertSampleConfig.dockerImage</b><br />
         <i>String &mdash; Default: "quay.io/biocontainers/biowdl-input-converter:0.2.1--py_0"</i><br />
         The docker image used for this task. Changing this may result in errors which the developers may choose not to address.
 </p>
-<p name="RNAseq.ConvertSampleConfig.memory">
-        <b>RNAseq.ConvertSampleConfig.memory</b><br />
+<p name="RNAseq.convertSampleConfig.memory">
+        <b>RNAseq.convertSampleConfig.memory</b><br />
         <i>String &mdash; Default: "128M"</i><br />
         The amount of memory needed for the job.
 </p>
-<p name="RNAseq.ConvertSampleConfig.old">
-        <b>RNAseq.ConvertSampleConfig.old</b><br />
+<p name="RNAseq.convertSampleConfig.old">
+        <b>RNAseq.convertSampleConfig.old</b><br />
         <i>Boolean &mdash; Default: false</i><br />
         Whether or not the old samplesheet format should be used.
 </p>
-<p name="RNAseq.ConvertSampleConfig.skipFileCheck">
-        <b>RNAseq.ConvertSampleConfig.skipFileCheck</b><br />
+<p name="RNAseq.convertSampleConfig.skipFileCheck">
+        <b>RNAseq.convertSampleConfig.skipFileCheck</b><br />
         <i>Boolean &mdash; Default: true</i><br />
         Whether or not the existance of the files mentioned in the samplesheet should be checked.
 </p>
-<p name="RNAseq.ConvertSampleConfig.timeMinutes">
-        <b>RNAseq.ConvertSampleConfig.timeMinutes</b><br />
+<p name="RNAseq.convertSampleConfig.timeMinutes">
+        <b>RNAseq.convertSampleConfig.timeMinutes</b><br />
         <i>Int &mdash; Default: 1</i><br />
         The maximum amount of time the job will run in minutes.
 </p>
@@ -1814,7 +1814,7 @@
 <p name="RNAseq.variantcalling.callAutosomal.emitRefConfidence">
         <b>RNAseq.variantcalling.callAutosomal.emitRefConfidence</b><br />
         <i>String &mdash; Default: if gvcf then "GVCF" else "NONE"</i><br />
-        Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'
+        Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'.
 </p>
 <p name="RNAseq.variantcalling.callAutosomal.javaXmxMb">
         <b>RNAseq.variantcalling.callAutosomal.javaXmxMb</b><br />
@@ -1839,7 +1839,7 @@
 <p name="RNAseq.variantcalling.callX.emitRefConfidence">
         <b>RNAseq.variantcalling.callX.emitRefConfidence</b><br />
         <i>String &mdash; Default: if gvcf then "GVCF" else "NONE"</i><br />
-        Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'
+        Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'.
 </p>
 <p name="RNAseq.variantcalling.callX.javaXmxMb">
         <b>RNAseq.variantcalling.callX.javaXmxMb</b><br />
@@ -1864,7 +1864,7 @@
 <p name="RNAseq.variantcalling.callY.emitRefConfidence">
         <b>RNAseq.variantcalling.callY.emitRefConfidence</b><br />
         <i>String &mdash; Default: if gvcf then "GVCF" else "NONE"</i><br />
-        Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'
+        Whether to include reference calls. Three modes: 'NONE', 'BP_RESOLUTION' and 'GVCF'.
 </p>
 <p name="RNAseq.variantcalling.callY.javaXmxMb">
         <b>RNAseq.variantcalling.callY.javaXmxMb</b><br />
@@ -1904,7 +1904,7 @@
 <p name="RNAseq.variantcalling.mergeSingleSampleVcf.compressionLevel">
         <b>RNAseq.variantcalling.mergeSingleSampleVcf.compressionLevel</b><br />
         <i>Int &mdash; Default: 1</i><br />
-        The compression level at which the BAM files are written
+        The compression level at which the BAM files are written.
 </p>
 <p name="RNAseq.variantcalling.mergeSingleSampleVcf.javaXmx">
         <b>RNAseq.variantcalling.mergeSingleSampleVcf.javaXmx</b><br />
