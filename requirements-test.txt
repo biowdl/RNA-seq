@@ -9,6 +9,6 @@ pysam
 cromwell
 womtool
 python==3.6
-pytest-workflow
+pytest-workflow>=1.4.0
 miniwdl
 wdl-aid
