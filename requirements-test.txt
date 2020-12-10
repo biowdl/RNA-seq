@@ -6,7 +6,7 @@
 # This file can be installed with "conda install --file requirements-test.txt".
 
 pysam
-cromwell
+cromwell==51
 womtool
 python==3.6
 pytest-workflow>=1.4.0
