@@ -250,7 +250,7 @@ workflow RNAseq {
 
     output {
         File report = multiqcTask.multiqcReport
-        File dockerImages = convertDockerTagsFile.json
+        File dockerImagesList = convertDockerTagsFile.json
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
         File? FPKMTable = expression.FPKMTable
         File? TPMTable = expression.TPMTable
@@ -307,7 +307,7 @@ workflow RNAseq {
 
         # outputs
         report: {description: ""}
-        dockerImages: {description: "Json file describing the docker images used by the pipeline."}
+        dockerImagesList: {description: "Json file describing the docker images used by the pipeline."}
         fragmentsPerGeneTable: {description: ""}
         FPKMTable: {description: ""}
         TMPTable: {description: ""}
