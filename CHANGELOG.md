@@ -9,7 +9,7 @@ that users understand how the changes affect the new version.
 -->
 
 version 4.1.0-dev
------------------
+---------------------------
 + Replace travis with github CI.
 + Add the dockerImages to the output section.
 + Make running stringtie optional by exposing the boolean
@@ -24,7 +24,7 @@ version 4.1.0-dev
   instead of 0.2.0).
 
 version 4.0.0
------------------
+---------------------------
 + Default docker images for various tools have been updated.
 + Changes in Cromwell 48 made it impossible to use the wide array of inputs
   in our documentation (such as
@@ -58,7 +58,7 @@ version 4.0.0
   HaplotypeCaller in concordance with GATK best practices.
 
 version 3.0.0
------------------
+---------------------------
 In version 3.0.0 the RNA-seq pipeline was brought up to date with the
 GATK best practices pipeline. Several errors in the variant calling part of
 the pipeline were fixed.
