@@ -27,7 +27,7 @@ jobs:
           channels: conda-forge,bioconda,defaults
         # Conda-incubator uses 'test' environment by default.
       - name: Install requirements.
-        run: conda install -n test cromwell womtool python>=3.9.1 pytest-workflow>=1.4.0 miniwdl wdl-aid
+        run: conda install -n test cromwell miniwdl wdl-aid
       - name: Run linting.
         run: bash scripts/biowdl_lint.sh
   test:
@@ -54,7 +54,7 @@ jobs:
       - name: Install miniconda.
         uses: conda-incubator/setup-miniconda@v2.0.1 # https://github.com/conda-incubator/setup-miniconda.
         with:
-          channels: defaults,bioconda,conda-forge
+          channels: conda-forge,bioconda,defaults
       - name: Install requirements.
         run: conda install -n test --file requirements-test.txt
       - name: Run test.
