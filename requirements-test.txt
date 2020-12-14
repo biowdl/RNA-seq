@@ -1,11 +1,13 @@
-# These are the programs used for testing this biowdl workflow
-# These requirements can be installed with conda with the bioconda channel activated
+# These are the programs used for testing this biowdl workflow.
+# These requirements can be installed with conda with the bioconda channel
+# activated.
 # For more information on how to set up conda with bioconda channel see:
 # http://bioconda.github.io/#install-conda
-# this file can be installed with "conda install --file requirements-test.txt"
+# This file can be installed with "conda install --file requirements-test.txt".
+
 python==3.6
+pysam
 cromwell
 pytest-workflow
-pysam
 miniwdl
 wdl-aid

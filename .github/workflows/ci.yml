@@ -1,0 +1,65 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    paths:
+      - "**.wdl"  # Workflow files and task.
+      - "**.yml"  # Ci configuration, tests and docker images.
+      - "!docs/**"
+
+defaults:
+  run:
+    # This is needed for miniconda, see:
+    # https://github.com/marketplace/actions/setup-miniconda#important.
+    shell: bash -l {0}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Womtool validate and submodule up to date.
+    steps:
+      - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
+        with:
+          submodules: recursive
+      - name: Install miniconda.
+        uses: conda-incubator/setup-miniconda@v2.0.1 # https://github.com/conda-incubator/setup-miniconda.
+        with:
+          channels: conda-forge,bioconda,defaults
+        # Conda-incubator uses 'test' environment by default.
+      - name: Install requirements.
+        run: conda install -n test cromwell miniwdl wdl-aid
+      - name: Run linting.
+        run: bash scripts/biowdl_lint.sh
+  test:
+    needs: lint  # Don't start testing before the lint has succeeded.
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test:
+          - Rna3PairedEndHisat2
+          - Rna3PairedEndHisat2AndStar
+          - Rna3PairedEndHisat2NoStringtie
+          - Rna3PairedEndLncRna
+          - Rna3PairedEndUmi
+          - Rna3PairedEndVariantCalling
+          - Rna3SingleEndHisat2
+          - Rna3SingleEndHisat2NoStringtie
+          - Rna3SingleEndLncRna
+          - Rna3SingleEndUmi
+          - Rna3SingleEndVariantCalling
+    steps:
+      - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
+        with:
+          submodules: recursive
+      - name: Install miniconda.
+        uses: conda-incubator/setup-miniconda@v2.0.1 # https://github.com/conda-incubator/setup-miniconda.
+        with:
+          channels: conda-forge,bioconda,defaults
+      - name: Install requirements.
+        run: conda install -n test --file requirements-test.txt
+      - name: Run test.
+        run: pytest --keep-workflow-wd-on-fail --tag ${{ matrix.test }} tests/
+      - name: Check logs in case of failure.
+        if: ${{ failure() }}
+        # Get the last 1000 lines of the cromwell log to catch the error.
+        run: bash -c 'tail -n 1000 /tmp/pytest_workflow_*/*/log.out'

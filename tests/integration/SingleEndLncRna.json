@@ -1,25 +1,25 @@
 {
-  "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
-  "RNAseq.dockerImagesFile": "dockerImages.yml",
-  "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
-  "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
-  "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
-  "RNAseq.strandedness": "None",
-  "RNAseq.starIndex": [
-    "tests/data/reference/star/chrLength.txt",
-    "tests/data/reference/star/chrName.txt",
-    "tests/data/reference/star/chrNameLength.txt",
-    "tests/data/reference/star/chrStart.txt",
-    "tests/data/reference/star/Genome",
-    "tests/data/reference/star/genomeParameters.txt",
-    "tests/data/reference/star/SA",
-    "tests/data/reference/star/SAindex"
-  ],
-  "RNAseq.variantCalling": false,
-  "RNAseq.lncRNAdetection": true,
-  "RNAseq.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
-  "RNAseq.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
-  "RNAseq.lncRNAdatabases": [
-    "tests/data/reference/reference.gtf"
-  ]
+    "RNAseq.sampleConfigFile": "tests/samplesheets/Rna3SingleEnd.csv",
+    "RNAseq.dockerImagesFile": "dockerImages.yml",
+    "RNAseq.referenceFasta": "tests/data/reference/reference.fasta",
+    "RNAseq.referenceFastaFai": "tests/data/reference/reference.fasta.fai",
+    "RNAseq.referenceFastaDict": "tests/data/reference/reference.dict",
+    "RNAseq.strandedness": "None",
+    "RNAseq.starIndex": [
+        "tests/data/reference/star/chrLength.txt",
+        "tests/data/reference/star/chrName.txt",
+        "tests/data/reference/star/chrNameLength.txt",
+        "tests/data/reference/star/chrStart.txt",
+        "tests/data/reference/star/Genome",
+        "tests/data/reference/star/genomeParameters.txt",
+        "tests/data/reference/star/SA",
+        "tests/data/reference/star/SAindex"
+    ],
+    "RNAseq.variantCalling": false,
+    "RNAseq.lncRNAdetection": true,
+    "RNAseq.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
+    "RNAseq.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
+    "RNAseq.lncRNAdatabases": [
+        "tests/data/reference/reference.gtf"
+    ]
 }

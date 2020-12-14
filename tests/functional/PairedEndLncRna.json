@@ -1,28 +1,28 @@
 {
-  "RNAseq.sampleConfigFile": "tests/samplesheets/FunctionalPairedEnd.yml",
-  "RNAseq.dockerTagsFile": "dockerTags.yml",
-  "RNAseq.reference": {
-    "fasta": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa",
-    "fai": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa.fai",
-    "dict": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.dict"
-  },
-  "RNAseq.strandedness": "None",
-  "RNAseq.starIndex": [
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrLength.txt",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrName.txt",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrNameLength.txt",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrStart.txt",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/Genome",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/genomeParameters.txt",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SA",
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SAindex"
-  ],
-  "RNAseq.variantCalling": false,
-  "RNAseq.lncRNAdetection": true,
-  "RNAseq.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
-  "RNAseq.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
-  "RNAseq.lncRNAdatabases": [
-    "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/features/ensembl_87/ensembl.87.gtf"
-  ],
-  "RNAseq.sample.Sample.library.Library.starAlignment.AlignStar.star.runThreadN": 8
+    "RNAseq.sampleConfigFile": "tests/samplesheets/FunctionalPairedEnd.yml",
+    "RNAseq.dockerTagsFile": "dockerTags.yml",
+    "RNAseq.reference": {
+        "fasta": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa",
+        "fai": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa.fai",
+        "dict": "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/reference.dict"
+    },
+    "RNAseq.strandedness": "None",
+    "RNAseq.starIndex": [
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrLength.txt",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrName.txt",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrNameLength.txt",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/chrStart.txt",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/Genome",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/genomeParameters.txt",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SA",
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c/SAindex"
+    ],
+    "RNAseq.variantCalling": false,
+    "RNAseq.lncRNAdetection": true,
+    "RNAseq.cpatLogitModel": "tests/data/CPAT/Human_logitModel.RData",
+    "RNAseq.cpatHex": "tests/data/CPAT/Human_Hexamer.tsv",
+    "RNAseq.lncRNAdatabases": [
+        "/exports/sasc-testing/fixtures/references/H.sapiens/GRCh38_no_alt_analysis_set/annotation/features/ensembl_87/ensembl.87.gtf"
+    ],
+    "RNAseq.sample.Sample.library.Library.starAlignment.AlignStar.star.runThreadN": 8
 }
