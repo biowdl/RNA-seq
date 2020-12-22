@@ -10,6 +10,9 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 ---------------------------
++ Add call to create annotation file for shiny app.
++ Add call to create design matrix template for shiny app.
++ Add predex container to dockerImages.
 + Replace travis with github CI.
 + Add the dockerImages to the output section.
 + Make running stringtie optional by exposing the boolean
