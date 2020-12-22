@@ -34,6 +34,7 @@ import "tasks/gffcompare.wdl" as gffcompare
 import "tasks/gffread.wdl" as gffread
 import "tasks/multiqc.wdl" as multiqc
 import "tasks/star.wdl" as star
+import "tasks/prepareShiny.wdl" as shiny
 
 workflow RNAseq {
     input {
@@ -92,6 +93,25 @@ workflow RNAseq {
     }
 
     SampleConfig sampleConfig = read_json(convertSampleConfig.json)
+
+    # Create design matrix template
+    call shiny.CreateDesignMatrix as shinyDesign {
+        input:
+            countTable = expression.fragmentsPerGeneTable,
+            dockerImage = dockerImages["predex"],
+            shinyDir = outputDir + "/dgeAnalysis/"
+    }
+
+    # Create annotation file
+    if (defined(referenceGtfFile)) {
+        call shiny.CreateAnnotation as shinyAnnotation {
+            input:
+                referenceFasta = referenceFasta,
+                referenceGtfFile = select_first([referenceGtfFile]),
+                dockerImage = dockerImages["predex"],
+                shinyDir = outputDir + "/dgeAnalysis/"
+        }
+    }
 
     # Generate STAR index of no indexes are given.
     if (!defined(starIndex) && !defined(hisat2Index)) {
@@ -252,6 +272,8 @@ workflow RNAseq {
         File report = multiqcTask.multiqcReport
         File dockerImagesList = convertDockerTagsFile.json
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
+        File dgeDesign = shinyDesign.dgeDesign
+        File? dgeAnnotation = shinyAnnotation.dgeAnnotation
         File? FPKMTable = expression.FPKMTable
         File? TPMTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
@@ -308,6 +330,8 @@ workflow RNAseq {
         # outputs
         report: {description: ""}
         dockerImagesList: {description: "Json file describing the docker images used by the pipeline."}
+        dgeDesign: {description: "Design matrix template to add sample information for DGE analysis."}
+        dgeAnnotation: {description: "Annotation file for DGE analysis."}
         fragmentsPerGeneTable: {description: ""}
         FPKMTable: {description: ""}
         TMPTable: {description: ""}
