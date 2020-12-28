@@ -53,4 +53,4 @@ tabix: "quay.io/biocontainers/tabix:0.2.6--ha92aebf_0"
 # quay.io/biocontainers/mulled-v2-509311a44630c01d9cb7d2ac5727725f51ea43af
 # this particular tag has versions umi_tools=0.5.5,samtools=1.9.
 umi-tools: "quay.io/biocontainers/mulled-v2-509311a44630c01d9cb7d2ac5727725f51ea43af:6089936aca6219b5bb5f54210ac5eb456c7503f2-0"
-predex: "quay.io/biocontainers/predex:0.9.1--pyh3252c3a_0"
+predex: "quay.io/biocontainers/predex:0.9.2--pyh3252c3a_0"
