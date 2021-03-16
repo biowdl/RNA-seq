@@ -49,6 +49,7 @@ workflow RNAseq {
         Boolean variantCalling = false
         Boolean lncRNAdetection = false
         Boolean detectNovelTranscripts = false
+        Boolean dgeFiles = false
         Boolean umiDeduplication = false
         Boolean collectUmiStats = false
         Int scatterSizeMillions = 1000
@@ -94,22 +95,24 @@ workflow RNAseq {
 
     SampleConfig sampleConfig = read_json(convertSampleConfig.json)
 
-    # Create design matrix template
-    call shiny.CreateDesignMatrix as shinyDesign {
-        input:
-            countTable = expression.fragmentsPerGeneTable,
-            dockerImage = dockerImages["predex"],
-            shinyDir = outputDir + "/dgeAnalysis/"
-    }
-
-    # Create annotation file
-    if (defined(referenceGtfFile)) {
-        call shiny.CreateAnnotation as shinyAnnotation {
+    if (dgeFiles) {
+        # Create design matrix template.
+        call shiny.CreateDesignMatrix as createDesign {
             input:
-                referenceFasta = referenceFasta,
-                referenceGtfFile = select_first([referenceGtfFile]),
+                countTable = expression.fragmentsPerGeneTable,
                 dockerImage = dockerImages["predex"],
                 shinyDir = outputDir + "/dgeAnalysis/"
+        }
+
+        # Create annotation file.
+        if (defined(referenceGtfFile)) {
+            call shiny.CreateAnnotation as createAnnotation {
+                input:
+                    referenceFasta = referenceFasta,
+                    referenceGtfFile = select_first([referenceGtfFile]),
+                    dockerImage = dockerImages["predex"],
+                    shinyDir = outputDir + "/dgeAnalysis/"
+            }
         }
     }
 
@@ -272,8 +275,8 @@ workflow RNAseq {
         File report = multiqcTask.multiqcReport
         File dockerImagesList = convertDockerTagsFile.json
         File fragmentsPerGeneTable = expression.fragmentsPerGeneTable
-        File dgeDesign = shinyDesign.dgeDesign
-        File? dgeAnnotation = shinyAnnotation.dgeAnnotation
+        File? dgeDesign = createDesign.dgeDesign
+        File? dgeAnnotation = createAnnotation.dgeAnnotation
         File? FPKMTable = expression.FPKMTable
         File? TPMTable = expression.TPMTable
         File? mergedGtfFile = expression.mergedGtfFile
@@ -306,6 +309,7 @@ workflow RNAseq {
         variantCalling: {description: "Whether or not variantcalling should be performed.", category: "common"}
         lncRNAdetection: {description: "Whether or not lncRNA detection should be run. This will enable detectNovelTranscript (this cannot be disabled by setting detectNovelTranscript to false). This will require cpatLogitModel and cpatHex to be defined.", category: "common"}
         detectNovelTranscripts: {description: "Whether or not a transcripts assembly should be used. If set to true Stringtie will be used to create a new GTF file based on the BAM files. This generated GTF file will be used for expression quantification. If `referenceGtfFile` is also provided this reference GTF will be used to guide the assembly.", category: "common"}
+        dgeFiles: {description: "Whether or not input files for DGE should be generated.", category: "common"}
         umiDeduplication: {description: "Whether or not UMI based deduplication should be performed.", category: "common"}
         collectUmiStats: {description: "Whether or not UMI deduplication stats should be collected. This will potentially cause a massive increase in memory usage of the deduplication step.", category: "advanced"}
         scatterSizeMillions: {description: "Same as scatterSize, but is multiplied by 1000000 to get scatterSize. This allows for setting larger values more easily.", category: "advanced"}
