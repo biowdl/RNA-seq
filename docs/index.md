@@ -253,7 +253,7 @@ Images from [biocontainers](https://biocontainers.pro) are preferred for
 biowdl workflows. The list of default images for this workflow can be
 found in the default for the `dockerImages` input.
 
-### Output
+## Output
 This workflow will produce a number of directories and files:
 - **expression_measures**: Contains a number of directories with expression
 measures.
