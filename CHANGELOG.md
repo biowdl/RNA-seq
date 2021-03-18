@@ -9,7 +9,10 @@ that users understand how the changes affect the new version.
 -->
 
 version 4.1.0-dev
----------------------------'
+---------------------------
++ Add call to create annotation file for shiny app.
++ Add call to create design matrix template for shiny app.
++ Add predex v0.9.2 container to dockerImages.
 + test/cromwell_options.json: add memory attribute.
 + dockerImages.yml: update umitools to version 1.1.1 (multi-package including samtools).
 + Replace travis with github CI.
