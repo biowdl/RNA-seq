@@ -3,6 +3,6 @@
     "use_relative_output_paths": true,
     "default_runtime_attributes": {
         "docker_user": "$EUID",
-        "memory": "5G"
+        "memory": "2 GiB"
     }
 }
