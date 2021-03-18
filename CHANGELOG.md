@@ -10,8 +10,8 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 ---------------------------'
-+ test/cromwell_options.json: add memory attribute
-+ dockerImages.yml: update umitools (multi-package including samtools)
++ test/cromwell_options.json: add memory attribute.
++ dockerImages.yml: update umitools (multi-package including samtools).
 + Replace travis with github CI.
 + Add the dockerImages to the output section.
 + Make running stringtie optional by exposing the boolean
