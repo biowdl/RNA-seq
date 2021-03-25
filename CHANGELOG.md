@@ -10,6 +10,7 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 ---------------------------'
++ dockerImages.yml: update umitools (v1.1.1) image with correct version of samtools (1.10).
 + test/cromwell_options.json: add memory attribute.
 + dockerImages.yml: update umitools to version 1.1.1 (multi-package including samtools).
 + Replace travis with github CI.
