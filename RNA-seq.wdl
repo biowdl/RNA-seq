@@ -332,7 +332,7 @@ workflow RNAseq {
 
 
         # outputs
-        report: {description: ""}
+        report: {description: "The MultiQC report."}
         dockerImagesList: {description: "Json file describing the docker images used by the pipeline."}
         dgeDesign: {description: "Design matrix template to add sample information for DGE analysis."}
         dgeAnnotation: {description: "Annotation file for DGE analysis."}
