@@ -10,6 +10,7 @@ that users understand how the changes affect the new version.
 
 version 4.1.0-dev
 ---------------------------
++ Update default CPAT version to 3.0.4.
 + Use gffcompare to merge stringtie assembly GTF files, rather than stringtie merge.
 + Add call to create annotation file for shiny app.
 + Add call to create design matrix template for shiny app.

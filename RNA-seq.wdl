@@ -241,7 +241,7 @@ workflow RNAseq {
                 referenceGenomeIndex = referenceFastaFai,
                 hex = select_first([cpatHex]),
                 logitModel = select_first([cpatLogitModel]),
-                outFilePath = outputDir + "/lncrna/coding-potential/cpat.tsv",
+                outputPrefix = outputDir + "/lncrna/coding-potential/cpat",
                 dockerImage = dockerImages["cpat"]
         }
 
@@ -282,7 +282,11 @@ workflow RNAseq {
         File? mergedGtfFile = expression.mergedGtfFile
         Array[File] singleSampleVcfs = select_all(variantcalling.outputVcf)
         Array[File] singleSampleVcfsIndex = select_all(variantcalling.outputVcfIndex)
-        File? cpatOutput = CPAT.outFile
+        File? orfSeqs = CPAT.orfSeqs
+        File? orfProb = CPAT.orfProb
+        File? orfProbBest = CPAT.orfProbBest
+        File? noOrf = CPAT.noOrf
+        File? rScript = CPAT.rScript
         Array[File]? annotatedGtf = GffCompare.annotated
         Array[File] bamFiles = sampleJobs.outputBam
         Array[File] bamFilesIndex = sampleJobs.outputBamIndex
