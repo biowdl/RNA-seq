@@ -8,7 +8,7 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
-version 4.1.0
+version 5.0.0
 ---------------------------
 + Update default CPAT version to 3.0.4.
 + Use gffcompare to merge stringtie assembly GTF files, rather than stringtie merge.
