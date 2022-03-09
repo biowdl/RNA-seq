@@ -8,6 +8,15 @@ This document is user facing. Please word the changes in such a way
 that users understand how the changes affect the new version.
 -->
 
+version develop
+---------------------------
++ Adapters should be set by the user from now on. The default adapter 
+  `AGATCGGAAGAG` (illumina universal adapter short version) actually appears 
+  several times in the human genome. It is recommended to use the full adapter
+  sequence instead: 
+  + forward reads: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+  + reverse reads: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT 
+
 version 5.0.0
 ---------------------------
 + Update default CPAT version to 3.0.4.
