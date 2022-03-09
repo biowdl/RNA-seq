@@ -59,8 +59,8 @@ workflow RNAseq {
         File? dbsnpVCFIndex
         Array[File]+? starIndex
         Array[File]+? hisat2Index
-        String? adapterForward = "AGATCGGAAGAG" # Illumina universal adapter.
-        String? adapterReverse = "AGATCGGAAGAG" # Illumina universal adapter.
+        String? adapterForward
+        String? adapterReverse
         File? refflatFile
         File? referenceGtfFile
         File? cpatLogitModel
