@@ -1,0 +1,13 @@
+[
+  "Rna3PairedEndHisat2",
+  "Rna3PairedEndHisat2AndStar",
+  "Rna3PairedEndHisat2NoStringtie",
+  "Rna3PairedEndLncRna",
+  "Rna3PairedEndUmi",
+  "Rna3PairedEndVariantCalling",
+  "Rna3SingleEndHisat2",
+  "Rna3SingleEndHisat2NoStringtie",
+  "Rna3SingleEndLncRna",
+  "Rna3SingleEndUmi",
+  "Rna3SingleEndVariantCalling"
+]

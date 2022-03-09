@@ -14,49 +14,73 @@ defaults:
     shell: bash -l {0}
 
 jobs:
-  lint:
+  get_workflow_tests:
     runs-on: ubuntu-latest
-    name: Womtool validate and submodule up to date.
+    outputs:
+      test_list: ${{ steps.get_tests.outputs.tests }}
     steps:
       - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
-        with:
-          submodules: recursive
-      - name: Install miniconda.
-        uses: conda-incubator/setup-miniconda@v2.0.1 # https://github.com/conda-incubator/setup-miniconda.
-        with:
-          channels: conda-forge,bioconda,defaults
-        # Conda-incubator uses 'test' environment by default.
-      - name: Install requirements.
-        run: conda install -n test cromwell miniwdl wdl-aid
-      - name: Run linting.
-        run: bash scripts/biowdl_lint.sh
+        with:  # Use fastest possible checkout.
+          submodules: false
+          fetch-depth: 1
+      - id: get_tests
+        run: |
+          # Remove all whitespace first
+          TESTS="$(cat ci_tests.json | tr -d '\r\n\t ')"
+          echo "$TESTS"
+          echo "::set-output name=tests::$TESTS"
   test:
-    needs: lint  # Don't start testing before the lint has succeeded.
+    needs: 
+      - get_workflow_tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test:
-          - Rna3PairedEndHisat2
-          - Rna3PairedEndHisat2AndStar
-          - Rna3PairedEndHisat2NoStringtie
-          - Rna3PairedEndLncRna
-          - Rna3PairedEndUmi
-          - Rna3PairedEndVariantCalling
-          - Rna3SingleEndHisat2
-          - Rna3SingleEndHisat2NoStringtie
-          - Rna3SingleEndLncRna
-          - Rna3SingleEndUmi
-          - Rna3SingleEndVariantCalling
+        test: ${{fromJson(needs.get_workflow_tests.outputs.test_list)}}
     steps:
       - uses: actions/checkout@v2.3.4 # https://github.com/actions/checkout.
         with:
           submodules: recursive
-      - name: Install miniconda.
-        uses: conda-incubator/setup-miniconda@v2.0.1 # https://github.com/conda-incubator/setup-miniconda.
+      - name: Set cache date
+        run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+      
+      - name: Cache conda environment
+        # Use an always upload cache to prevent solving conda environment again and again on failing linting.
+        uses: pat-s/always-upload-cache@v2.1.5
+        env:
+          # Increase this value to manually invalidate the cache
+          CACHE_NUMBER: 0
+        with:
+          path: /usr/share/miniconda/envs/workflow-test
+          key:
+            ${{runner.os}}-workflow-test-${{ env.CACHE_NUMBER }}-${{env.DATE}}-${{ hashFiles('requirements-test.txt') }}
+        id: env_cache
+
+      # Use the builtin conda. This is the fastest installation. It may not be
+      # the fastest for resolving, but the package cache mitigates that problem.
+      # Since this installs fastest, it is fastest for all runs where a cache
+      # hit occurs.
+      - name: install miniconda
+        uses: conda-incubator/setup-miniconda@v2.1.1
         with:
           channels: conda-forge,bioconda,defaults
-      - name: Install requirements.
-        run: conda install -n test --file requirements-test.txt
+          channel-priority: strict
+          auto-activate-base: false
+          use-only-tar-bz2: true  # Needed for proper caching according to the documentation.
+        # activate-environment is broken! This always seems to create a new environment.
+        # Activation is therefore done separately.    
+
+      - name: Create test environment if no cache is present
+        run: |
+          conda create -n workflow-test
+          conda install -n workflow-test --file requirements-test.txt
+        if: steps.env_cache.outputs.cache-hit != 'true'
+      
+      - name: Activate test environment
+        # The new PATH should be passed to the environment, otherwise it won't register.
+        run: |
+          conda activate workflow-test
+          echo "PATH=$PATH" >> $GITHUB_ENV
+
       - name: Run test.
         run: pytest --keep-workflow-wd-on-fail --tag ${{ matrix.test }} tests/
       - name: Check logs in case of failure.
