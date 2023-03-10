@@ -106,6 +106,20 @@
     - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
     - path: "test-output/multiqc_report.html"
 
+- name: Rna3PairedEndVariantCallingCromwell
+  tags:
+    - cromwell
+  command: >-
+    cromwell run -o tests/cromwell_options.json
+    -i tests/integration/PairedEndVariantCalling.json RNA-seq.wdl
+  files:
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/multiqc_report.html"
+
 - name: Rna3SingleEndHisat2
   tags:
     - integration
