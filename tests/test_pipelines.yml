@@ -2,109 +2,109 @@
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/PairedEndHisat2.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
 
 - name: Rna3PairedEndHisat2AndStar
   tags:
     - integration
     - docker_conf
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/PairedEndHisat2AndStar.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
 
 - name: Rna3PairedEndHisat2NoStringtie
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/PairedEndHisat2NoStringtie.json RNA-seq.wdl
   files:
-    - path: "test-output/dockerImages.json"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/dockerImages.json"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
       should_exist: false
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
       should_exist: false
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
 
 - name: Rna3PairedEndLncRna
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/PairedEndLncRna.json RNA-seq.wdl
   files:
-    - path: "test-output/multiqc_report.html"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/out/multiqc_report.html"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
 
 - name: Rna3PairedEndUmi
   tags:
     - umi
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/PairedEndUmi.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bam"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bai"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bam"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.dedup.markdup.bai"
 
 - name: Rna3PairedEndVariantCalling
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/PairedEndVariantCalling.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
 
 - name: Rna3PairedEndVariantCallingCromwell
   tags:
@@ -124,121 +124,121 @@
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/SingleEndHisat2.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz"
-    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/out/samples/rna3-single-end/rna3-single-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
 
 - name: Rna3SingleEndHisat2NoStringtie
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/SingleEndHisat2NoStringtie.json RNA-seq.wdl
   files:
-    - path: "test-output/dockerImages.json"
-    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz"
-    - path: "test-output/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/dockerImages.json"
+    - path: "test-output/out/samples/rna3-single-end/rna3-single-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-single-end/rna3-single-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
       should_exist: false
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
       should_exist: false
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
 
 - name: Rna3SingleEndLncRna
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/SingleEndLncRna.json RNA-seq.wdl
   files:
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_seqs.fa"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
-    - path: "test-output/lncrna/coding-potential/cpat.no_ORF.txt"
-    - path: "test-output/lncrna/coding-potential/cpat.r"
-    - path: "test-output/lncrna/reference.gtf.d"
-    - path: "test-output/multiqc_report.html"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_seqs.fa"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.ORF_prob.best.tsv"
+    - path: "test-output/out/lncrna/coding-potential/cpat.no_ORF.txt"
+    - path: "test-output/out/lncrna/coding-potential/cpat.r"
+    - path: "test-output/out/lncrna/reference.gtf.d"
+    - path: "test-output/out/multiqc_report.html"
 
 - name: Rna3SingleEndUmi
   tags:
     - umi
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/SingleEndUmi.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bam"
-    - path: "test-output/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bai"
+    - path: "test-output/out/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bam"
+    - path: "test-output/out/samples/rna-3-single-end/rna-3-single-end.dedup.markdup.bai"
 
 - name: Rna3SingleEndVariantCalling
   tags:
     - integration
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/integration/SingleEndVariantCalling.json RNA-seq.wdl
   files:
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/STAR_index/chrLength.txt"
-    - path: "test-output/STAR_index/chrNameLength.txt"
-    - path: "test-output/STAR_index/chrName.txt"
-    - path: "test-output/STAR_index/chrStart.txt"
-    - path: "test-output/STAR_index/Genome"
-    - path: "test-output/STAR_index/genomeParameters.txt"
-    - path: "test-output/STAR_index/SA"
-    - path: "test-output/STAR_index/SAindex"
-    - path: "test-output/STAR_index/exonGeTrInfo.tab"
-    - path: "test-output/STAR_index/exonInfo.tab"
-    - path: "test-output/STAR_index/geneInfo.tab"
-    - path: "test-output/STAR_index/sjdbInfo.txt"
-    - path: "test-output/STAR_index/sjdbList.fromGTF.out.tab"
-    - path: "test-output/STAR_index/sjdbList.out.tab"
-    - path: "test-output/STAR_index/transcriptInfo.tab"
-    - path: "test-output/multiqc_report.html"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/STAR_index/chrLength.txt"
+    - path: "test-output/out/STAR_index/chrNameLength.txt"
+    - path: "test-output/out/STAR_index/chrName.txt"
+    - path: "test-output/out/STAR_index/chrStart.txt"
+    - path: "test-output/out/STAR_index/Genome"
+    - path: "test-output/out/STAR_index/genomeParameters.txt"
+    - path: "test-output/out/STAR_index/SA"
+    - path: "test-output/out/STAR_index/SAindex"
+    - path: "test-output/out/STAR_index/exonGeTrInfo.tab"
+    - path: "test-output/out/STAR_index/exonInfo.tab"
+    - path: "test-output/out/STAR_index/geneInfo.tab"
+    - path: "test-output/out/STAR_index/sjdbInfo.txt"
+    - path: "test-output/out/STAR_index/sjdbList.fromGTF.out.tab"
+    - path: "test-output/out/STAR_index/sjdbList.out.tab"
+    - path: "test-output/out/STAR_index/transcriptInfo.tab"
+    - path: "test-output/out/multiqc_report.html"
 
 - name: FunctionalPairedEndLncRna
   tags:
     - functional
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/functional/PairedEndLncRna.json RNA-seq.wdl
   files:
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
 
 - name: FunctionalPairedEndVariantCalling
   tags:
     - functional
   command: >-
-    cromwell run -o tests/cromwell_options.json
+    miniwdl run --cfg tests/miniwdl.cfg -d test-output/.
     -i tests/functional/PairedEndVariantCalling.json RNA-seq.wdl
   files:
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
-    - path: "test-output/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
-    - path: "test-output/expression_measures/stringtie/all_samples.TPM"
-    - path: "test-output/expression_measures/stringtie/all_samples.FPKM"
-    - path: "test-output/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
-    - path: "test-output/multiqc_report.html"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz"
+    - path: "test-output/out/samples/rna3-paired-end/rna3-paired-end.vcf.gz.tbi"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.TPM"
+    - path: "test-output/out/expression_measures/stringtie/all_samples.FPKM"
+    - path: "test-output/out/expression_measures/fragments_per_gene/all_samples.fragments_per_gene"
+    - path: "test-output/out/multiqc_report.html"
